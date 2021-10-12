@@ -12,19 +12,9 @@
 #include "Functions.hpp"
 #include "Structs.hpp"
 
+#include "Assets/XAnimParts.hpp"
 #include "Assets/XModel.hpp"
 #include "Assets/Material.hpp"
-#include "Assets/XAnimParts.hpp"
-#include "Assets/Techset.hpp"
-#include "Assets/GfxWorld.hpp"
-#include "Assets/GfxImage.hpp"
-#include "Assets/GameWorldMp.hpp"
-#include "Assets/LoadedSound.hpp"
-#include "Assets/Sound.hpp"
-#include "Assets/FxEffectDef.hpp"
-#include "Assets/ClipMap.hpp"
-#include "Assets/MapEnts.hpp"
-#include "Assets/ComWorld.hpp"
 
 // oh nee toch niet
 

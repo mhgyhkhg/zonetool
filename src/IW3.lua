@@ -30,6 +30,6 @@ function IW3:project()
         }
 
         self:include()
-        IW4:include()
+        IW6:include()
         ZoneUtils:include()
 end

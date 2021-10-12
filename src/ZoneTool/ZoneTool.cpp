@@ -11,10 +11,6 @@
 
 // include zonetool linkers
 #include <IW3/IW3.hpp>
-#include <IW4/IW4.hpp>
-#include <IW5/IW5.hpp>
-#include <CODO/CODO.hpp>
-#include "Utils/Swizzle.hpp"
 
 #pragma comment(lib, "Dbghelp")
 
@@ -136,50 +132,6 @@ namespace ZoneTool
 			{
 				parse_csv_file(linker, zone, fastfile, row->fields_[1]);
 			}
-			// 
-			else if (row->fields_[0] == "target"s)
-			{
-				if (row->fields_[1] == "xbox360"s)
-				{
-					zone->set_target(zone_target::xbox360);
-				}
-				else if (row->fields_[1] == "ps3"s)
-				{
-					zone->set_target(zone_target::ps3);
-				}
-				else if (row->fields_[1] == "pc"s)
-				{
-					zone->set_target(zone_target::pc);
-				}
-				else
-				{
-					ZONETOOL_ERROR("Invalid zone target \"%s\"!", row->fields_[1]);
-				}
-			}
-			//
-			else if (row->fields_[0] == "target_version"s)
-			{
-				auto found_version = false;
-				for (auto i = 0u; i < static_cast<std::size_t>(zone_target_version::max); i++)
-				{
-					if (zone_target_version_str[i] == row->fields_[1])
-					{
-						const auto target_version = static_cast<zone_target_version>(i);
-						if (!linker->supports_version(target_version))
-						{
-							ZONETOOL_FATAL("Current linker (%s) does not support target version %s.", linker->version(), row->fields_[1]);
-						}
-
-						zone->set_target_version(target_version);
-						found_version = true;
-					}
-				}
-
-				if (!found_version)
-				{
-					ZONETOOL_FATAL("Invalid target version \"%s\".", row->fields_[1]);
-				}
-			}
 			// this allows us to reference assets instead of rewriting them
 			else if (row->fields_[0] == "reference"s)
 			{
@@ -293,15 +245,6 @@ namespace ZoneTool
 
 		// set default zone target to PC
 		zone->set_target(zone_target::pc);
-
-		if (linker->version() == "IW4"s)
-		{
-			zone->set_target_version(zone_target_version::iw4_release);
-		}
-		else if (linker->version() == "IW5"s)
-		{
-			zone->set_target_version(zone_target_version::iw5_release);
-		}
 		
 		parse_csv_file(linker, zone.get(), fastfile, fastfile);
 
@@ -488,6 +431,7 @@ namespace ZoneTool
 		}
 	}
 
+#pragma warning(disable: 4244)
 	std::vector<std::string> get_command_line_arguments()
 	{
 		LPWSTR* szArglist;
@@ -560,9 +504,6 @@ namespace ZoneTool
 
 		// Register linkers
 		register_linker<IW3::Linker>();
-		register_linker<IW4::Linker>();
-		register_linker<IW5::Linker>();
-		register_linker<CODO::Linker>();
 
 		// check if a custom linker is present in the current game directory
 		if (is_custom_linker_present())

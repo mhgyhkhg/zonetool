@@ -18,4 +18,4 @@
 using namespace std::string_literals;
 
 #include "IW3.hpp"
-#include "IW4/Structs.hpp"
+#include "IW6/Structs.hpp"

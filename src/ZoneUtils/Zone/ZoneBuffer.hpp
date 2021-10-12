@@ -81,7 +81,6 @@ namespace ZoneTool
 		std::uint8_t iv[16];
 	};
 
-	class PakFile;
 	class ZoneBuffer
 	{
 	protected:
@@ -135,20 +134,14 @@ namespace ZoneTool
 
 		std::unordered_map<std::uintptr_t, std::uintptr_t> m_zonepointers;
 
-		std::shared_ptr<PakFile> image_pak_;
 		std::vector<XAssetStreamFile> stream_files_;
 		
 	public:
 		ZoneBuffer();
 		~ZoneBuffer();
-
-		PakFile* image_pak();
 		
 		ZoneBuffer(std::vector<std::uint8_t> data);
 		ZoneBuffer(std::size_t size);
-
-		void add_image(const std::vector<std::uint8_t>& pixels);
-		void alloc_image_pak(const std::uint32_t version);
 
 		std::vector<XAssetStreamFile> stream_files()
 		{

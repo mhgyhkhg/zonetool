@@ -76,27 +76,6 @@ namespace ZoneTool
 		this->m_zonepointers.clear();
 	}
 
-	void ZoneBuffer::alloc_image_pak(const std::uint32_t version)
-	{
-		image_pak_ = std::make_shared<PakFile>(version);
-	}
-	PakFile* ZoneBuffer::image_pak()
-	{
-		return image_pak_.get();
-	}
-
-	void ZoneBuffer::add_image(const std::vector<std::uint8_t>& pixels)
-	{
-		const auto stream_data = this->image_pak()->add_entry(pixels);
-
-		XAssetStreamFile stream_file = {};
-		stream_file.fileIndex = 5;
-		stream_file.offset = stream_data.first;
-		stream_file.offsetEnd = stream_data.second;
-
-		this->stream_files_.push_back(stream_file);
-	}
-
 	void ZoneBuffer::init_streams(std::size_t streams)
 	{
 		this->m_numstreams = streams;
@@ -250,11 +229,6 @@ namespace ZoneTool
 
 		// Close file
 		_fb.close();
-	}
-
-	void ZoneBuffer::save_image_pak(const std::string& filename)
-	{
-		this->image_pak()->save(filename);
 	}
 
 	std::vector<std::uint8_t> ZoneBuffer::compress_zlib(const std::uint8_t* data, const std::size_t data_size, bool compress_blocks)

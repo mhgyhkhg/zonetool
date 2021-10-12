@@ -138,10 +138,8 @@ namespace ZoneTool
 
 #include "IPatch.hpp"
 #include "CSV.hpp"
-#include "Utils/Swizzle.hpp"
 #include "Zone/ZoneMemory.hpp"
 #include "Zone/ZoneBuffer.hpp"
-#include "Utils/PakFile.hpp"
 #include "Zone/Zone.hpp"
 #include "IAsset.hpp"
 #include "Utils/FileReader.hpp"

@@ -7,68 +7,70 @@
 // License: GNU GPL v3.0
 // ========================================================
 #include "stdafx.hpp"
+#include "IW6/Structs.hpp"
 
-// Material parsing
-#define MATERIAL_INT(entry) \
-	mat->entry = matdata[#entry].get<int>();
+#include "Json.hpp"
+using json = nlohmann::json;
+using ordered_json = nlohmann::ordered_json;
 
-#define MATERIAL_DUMP_INT(entry) \
-	matdata[#entry] = mat->entry;
+std::uint64_t depthStencilStateBits[11] =
+{
+	9938018369538,
+	246300270658114,
+	246300270690882,
+	4418985394178,
+	2211374301763,
+	9938018369539,
+	246300270658115,
+	246300270690883,
+	281474443903811,
+	281474443903811,
+	281474440757250
+}; // idk
 
 #define MATERIAL_DUMP_STRING(entry) \
-	matdata[#entry] = std::string(mat->entry);
+	matdata[#entry] = std::string(asset->entry);
 
-#define MATERIAL_DUMP_MATIMG_ARRAY(entry,size) \
-	nlohmann::json matimg##entry; \
-	for (int i = 0; i < size; i++) \
-	{ \
-		nlohmann::json img##entry; \
-		img##entry["image"] = mat->entry[i].image->name; \
-		img##entry["semantic"] = (int)mat->entry[i].semantic; \
-		img##entry["sampleState"] = (int)mat->entry[i].sampleState; \
-		img##entry["lastCharacter"] = (char)mat->entry[i].secondLastCharacter; \
-		img##entry["firstCharacter"] = (char)mat->entry[i].firstCharacter; \
-		img##entry["typeHash"] = (unsigned int)mat->entry[i].typeHash; \
-		matimg##entry[i] = img##entry; \
-	} \
-	matdata[#entry] = matimg##entry;
+#define MATERIAL_DUMP_INT(entry) \
+	matdata[#entry] = asset->entry;
 
 #define MATERIAL_DUMP_CONST_ARRAY(entry,size) \
-	nlohmann::json carr##entry; \
+	ordered_json carr##entry; \
 	for (int i = 0; i < size; i++) \
 	{ \
-		nlohmann::json cent##entry; \
-		cent##entry["name"] = mat->entry[i].name; \
+		ordered_json cent##entry; \
+		std::string name = asset->constantTable[i].name; \
+		name.resize(12); \
+		cent##entry["name"] = name.data(); \
+		cent##entry["nameHash"] = asset->entry[i].nameHash; \
 		nlohmann::json centliteral##entry; \
-		centliteral##entry[0] = mat->entry[i].literal[0]; \
-		centliteral##entry[1] = mat->entry[i].literal[1]; \
-		centliteral##entry[2] = mat->entry[i].literal[2]; \
-		centliteral##entry[3] = mat->entry[i].literal[3]; \
-		cent##entry["nameHash"] = mat->entry[i].nameHash; \
+		centliteral##entry[0] = asset->entry[i].literal[0]; \
+		centliteral##entry[1] = asset->entry[i].literal[1]; \
+		centliteral##entry[2] = asset->entry[i].literal[2]; \
+		centliteral##entry[3] = asset->entry[i].literal[3]; \
 		cent##entry["literal"] = centliteral##entry; \
 		carr##entry[i] = cent##entry; \
 	} \
 	matdata[#entry] = carr##entry;
 
 #define MATERIAL_DUMP_STATE_MAP(entry,size) \
-	nlohmann::json carr##entry; \
+	ordered_json carr##entry; \
 	for (int i = 0; i < size; i++) \
 	{ \
-		nlohmann::json cent##entry; \
-		cent##entry[0] = mat->entry[i].loadBits[0]; \
-		cent##entry[1] = mat->entry[i].loadBits[1]; \
+		ordered_json cent##entry; \
+		cent##entry["loadBits"][0] = asset->entry[i].loadBits[0]; \
+		cent##entry["loadBits"][1] = asset->entry[i].loadBits[1]; \
+		cent##entry["loadBits"][2] = 0; \
+		for (int j = 0; j < 11; j++) \
+		{ \
+			cent##entry["depthStencilStateBits"][j] = depthStencilStateBits[j]; \
+		} \
+		cent##entry["blendState"][0] = 0; \
+		cent##entry["blendState"][1] = 0; \
+		cent##entry["rasterizerState"] = 0; \
 		carr##entry[i] = cent##entry; \
 	} \
 	matdata[#entry] = carr##entry;
-
-#define MATERIAL_DUMP_BITS_ENTRY(entry,size) \
-	nlohmann::json carr##entry; \
-	for (int i = 0; i < size; i++) \
-	{ \
-		carr##entry[i] = mat->entry[i]; \
-	} \
-	matdata[#entry] = carr##entry;
-
 
 namespace ZoneTool
 {
@@ -78,119 +80,90 @@ namespace ZoneTool
 		{
 			if (mat && mat->techniqueSet)
 			{
-				ITechset::dump_statebits(va("iw3/%s", mat->techniqueSet->name), mat->stateBitsEntry);
+				//ITechset::dump_statebits(va("iw3/%s", mat->techniqueSet->name), mat->stateBitsEntry);
 			}
 		}
-		
-		//std::map<std::uint32_t, std::uint32_t> mapped_keys
-		//{
-		//	{ 0, 43 },
-		//	{ 3, 0 },
-		//	{ 4, 1 },
-		//	{ 5, 2 },
-		//	{ 6, 3 },
-		//	{ 7, 4 },
-		//	{ 8, 5 },
-		//	{ 9, 6 },
-		//	{ 10, 7 },
-		//	{ 11, 8 },
-		//	{ 12, 9 },
-		//	{ 24, 13 },
-		//	{ 38, 24 },
-		//	{ 39, 25 },
-		//	{ 40, 26 },
-		//	{ 41, 27 },
-		//	{ 42, 28 },
-		//	{ 43, 29 },
-		//	{ 48, 48 },
-		//	{ 58, 51 },
-		//	{ 59, 33 },
-		//};
 
-		std::map<std::uint32_t, std::uint32_t> mapped_keys
+		void IMaterial::dump(Material* asset, ZoneMemory* mem)
 		{
-			{ 0, 43 },
-			{ 3, 0 },
-			{ 4, 1 },
-			{ 5, 2 },
-			{ 9, 6 },				// not sure!
-			{ 10, 7 },
-			{ 11, 8 },				// not sure!
-			{ 12, 0 },
-			{ 24, 9 },
-			{ 38, 28 },				// not sure!
-			{ 39, 29 },
-			{ 43, 29 },				// was 47 but that crashes, not sure!
-			{ 48, 48 },
-			{ 59, 53 },
-		};
-
-		void IMaterial::dump(Material* mat, ZoneMemory* mem)
-		{
-			if (mat)
+			if (asset)
 			{
-				dump_statebits(mat);
+				dump_statebits(asset);
 
-				auto path = "materials\\"s + mat->name;
+				std::string asset_name = asset->name;
+
+				// clean name
+				if (asset_name.starts_with('*'))
+				{
+					asset_name.erase(0, 1);
+					asset_name.insert(0, "_");
+				}
+
+				auto path = "materials\\"s + asset_name;
 
 				auto file = FileSystem::FileOpen(path, "wb");
 				if (!file)
 				{
 					return;
 				}
-				
-				nlohmann::json matdata;
+
+				nlohmann::ordered_json matdata;
 
 				MATERIAL_DUMP_STRING(name);
 
-				if (mat->techniqueSet)
+				if (asset->techniqueSet)
 				{
-					matdata["techniqueSet->name"] = va("iw3/%s", mat->techniqueSet->name);
+					matdata["techniqueSet->name"] = va("iw3/%s", asset->techniqueSet->name);
 				}
 
 				MATERIAL_DUMP_INT(gameFlags);
-				// MATERIAL_DUMP_INT(sortKey);
-				MATERIAL_DUMP_INT(animationX);
-				MATERIAL_DUMP_INT(animationY);
+				MATERIAL_DUMP_INT(sortKey); // needs to be recalculated
+				matdata["renderFlags"] = 0;
 
-				auto key_itr = mapped_keys.find(mat->sortKey);
-				if (key_itr != mapped_keys.end())
+				MATERIAL_DUMP_INT(surfaceTypeBits);
+				matdata["hashIndex"] = 0;
+
+				MATERIAL_DUMP_INT(stateFlags);
+				MATERIAL_DUMP_INT(cameraRegion);
+				matdata["materialType"] = 0;
+				matdata["assetFlags"] = 0;
+
+				if (asset->constantTable->name == "envMapParms"s)
 				{
-					matdata["sortKey"] = key_itr->second;
+					IW3::vec4_t copy;
+					memcpy(copy, asset->constantTable->literal, sizeof(float) * 4);
+					asset->constantTable->literal[0] *= 0.0875f;
+					asset->constantTable->literal[1] *= 0.165f;
+					asset->constantTable->literal[2] *= 1.4f;
+					asset->constantTable->literal[3] *= 3.2f;
+					MATERIAL_DUMP_CONST_ARRAY(constantTable, asset->constantCount);
+					memmove(asset->constantTable->literal, copy, sizeof(float) * 4);
 				}
 				else
 				{
-					matdata["sortKey"] = mat->sortKey;
-					ZONETOOL_WARNING("[%s]: sortKey %u is not mapped!", mat->name, mat->sortKey);
+					MATERIAL_DUMP_CONST_ARRAY(constantTable, asset->constantCount);
 				}
 
-				matdata["unknown"] = 0;
-
-				MATERIAL_DUMP_INT(surfaceTypeBits);
-				MATERIAL_DUMP_INT(stateFlags);
-				MATERIAL_DUMP_INT(cameraRegion);
-
-				MATERIAL_DUMP_CONST_ARRAY(constantTable, mat->constantCount);
-				MATERIAL_DUMP_STATE_MAP(stateMap, mat->stateBitsCount);
+				MATERIAL_DUMP_STATE_MAP(stateMap, asset->stateBitsCount);
 
 				nlohmann::json material_images;
-				for (int i = 0; i < mat->numMaps; i++)
+				for (int i = 0; i < asset->numMaps; i++)
 				{
 					nlohmann::json image;
 
 					// watermap
-					if (mat->maps[i].semantic == 11)
+					if (asset->maps[i].semantic == 11)
 					{
-						water_t* waterData = reinterpret_cast<water_t*>(mat->maps[i].image);
+						water_t* waterData = reinterpret_cast<water_t*>(asset->maps[i].image);
 
 						image["image"] = waterData->image->name;
 
 						nlohmann::json waterdata;
 						waterdata["floatTime"] = waterData->writable.floatTime;
-						waterdata["codeConstant"][0] = waterData->codeConstant[0];
-						waterdata["codeConstant"][1] = waterData->codeConstant[1];
-						waterdata["codeConstant"][2] = waterData->codeConstant[2];
-						waterdata["codeConstant"][3] = waterData->codeConstant[3];
+						//waterdata["codeConstant"][0] = waterData->codeConstant[0];
+						//waterdata["codeConstant"][1] = waterData->codeConstant[1];
+						//waterdata["codeConstant"][2] = waterData->codeConstant[2];
+						//waterdata["codeConstant"][3] = waterData->codeConstant[3];
 						waterdata["M"] = waterData->M;
 						waterdata["N"] = waterData->N;
 						waterdata["Lx"] = waterData->Lx;
@@ -224,19 +197,26 @@ namespace ZoneTool
 					}
 					else
 					{
-						image["image"] = mat->maps[i].image->name;
+						if (asset->maps[i].image->name)
+						{
+							image["image"] = asset->maps[i].image->name;
+						}
+						else
+						{
+							image["image"] = "";
+						}
 					}
 
-					image["semantic"] = mat->maps[i].semantic;
-					image["sampleState"] = mat->maps[i].sampleState;
-					image["lastCharacter"] = mat->maps[i].secondLastCharacter;
-					image["firstCharacter"] = mat->maps[i].firstCharacter;
-					image["typeHash"] = mat->maps[i].typeHash;
+					image["semantic"] = asset->maps[i].semantic;
+					image["samplerState"] = asset->maps[i].sampleState;
+					image["lastCharacter"] = asset->maps[i].secondLastCharacter;
+					image["firstCharacter"] = asset->maps[i].firstCharacter;
+					image["typeHash"] = asset->maps[i].typeHash;
 
 					// add image data to material
 					material_images[i] = image;
 				}
-				matdata["maps"] = material_images;
+				matdata["textureTable"] = material_images;
 
 				auto assetData = matdata.dump(4);
 
