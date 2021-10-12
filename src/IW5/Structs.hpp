@@ -1171,8 +1171,8 @@ namespace ZoneTool
 		struct SoundFile // 0x10
 		{
 			char type;
-			char _pad[2];
 			bool exists;
+			char _pad[2];
 			SoundData sound;
 		};
 
@@ -2273,6 +2273,7 @@ namespace ZoneTool
 
 			DynEntityHingeDef* hinge;
 			PhysMass mass;
+			int contents;
 		};
 
 		struct DynEntityPose

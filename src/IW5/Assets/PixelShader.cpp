@@ -26,7 +26,7 @@ namespace ZoneTool
 					return nullptr;
 				}
 
-				ZONETOOL_INFO("Parsing pixelshader \"%s\"...", name.data());
+				//ZONETOOL_INFO("Parsing pixelshader \"%s\"...", name.data());
 
 				auto asset = read.read_array<PixelShader>();
 				asset->name = read.read_string();
@@ -36,9 +36,10 @@ namespace ZoneTool
 				return asset;
 			}
 
-			ZONETOOL_INFO("Parsing custom DirectX pixelshader \"%s\"...", name.data());
-
 			auto fp = FileSystem::FileOpen(path, "rb");
+			if (!fp) return nullptr;
+
+			ZONETOOL_INFO("Parsing custom DirectX pixelshader \"%s\"...", name.data());
 
 			auto asset = mem->Alloc<PixelShader>();
 			asset->name = mem->StrDup(name);

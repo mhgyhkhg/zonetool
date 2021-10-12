@@ -33,11 +33,11 @@ namespace ZoneTool
 
 					rawfile->len = size;
 					rawfile->compressedLen = compressed.size();
-					rawfile->buffer = mem->Alloc<char>(size);
+					rawfile->buffer = mem->Alloc<char>(compressed.size());
 					memcpy(
 						const_cast<char*>(rawfile->buffer),
 						compressed.data(),
-						size);
+						compressed.size());
 
 					FileSystem::FileClose(file);
 				}

@@ -22,7 +22,7 @@ namespace ZoneTool
 				return nullptr;
 			}
 
-			ZONETOOL_INFO("Parsing vertexdecl \"%s\"...", name.data());
+			//ZONETOOL_INFO("Parsing vertexdecl \"%s\"...", name.data());
 
 			auto asset = read.read_array<VertexDecl>();
 			asset->name = read.read_string();

@@ -169,100 +169,31 @@ namespace ZoneTool
 			colmap->smodelNodeCount = read.read_int();
 			colmap->smodelNodes = read.read_array<SModelAabbNode>();
 
-#ifdef IW4
-			colmap->dynEntCount[0] = read.Int();
-			DynEntityDef_IW5* newEntDef = read.Array<DynEntityDef_IW5>();
-			colmap->dynEntDefList[0] = new DynEntityDef[colmap->dynEntCount[0]];
-#define dynEntDefCopy(_num1, _num2, _item) \
-colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
-
-			for (Int i = 0; i < colmap->dynEntCount[0]; i++)
+			for (int i = 0; i < 2; i++)
 			{
-				dynEntDefCopy(0, i, type);
-				dynEntDefCopy(0, i, pose.quat[0]);
-				dynEntDefCopy(0, i, pose.quat[1]);
-				dynEntDefCopy(0, i, pose.quat[2]);
-				dynEntDefCopy(0, i, pose.quat[3]);
-				dynEntDefCopy(0, i, pose.origin[0]);
-				dynEntDefCopy(0, i, pose.origin[1]);
-				dynEntDefCopy(0, i, pose.origin[2]);
-				dynEntDefCopy(0, i, health);
-				dynEntDefCopy(0, i, mass.centerOfMass[0]);
-				dynEntDefCopy(0, i, mass.centerOfMass[1]);
-				dynEntDefCopy(0, i, mass.centerOfMass[2]);
-				dynEntDefCopy(0, i, mass.momentsOfInertia[0]);
-				dynEntDefCopy(0, i, mass.momentsOfInertia[1]);
-				dynEntDefCopy(0, i, mass.momentsOfInertia[2]);
-				dynEntDefCopy(0, i, mass.productsOfInertia[0]);
-				dynEntDefCopy(0, i, mass.productsOfInertia[1]);
-				dynEntDefCopy(0, i, mass.productsOfInertia[2]);
-				dynEntDefCopy(0, i, mass.contents);
-				dynEntDefCopy(0, i, xModel);
-				dynEntDefCopy(0, i, physPreset);
-				colmap->dynEntDefList[0][i].destroyFx = nullptr;
-				if (colmap->dynEntDefList[0][i].xModel)
+				colmap->dynEntCount[i] = static_cast<unsigned short>(read.read_int());
+				if (colmap->dynEntCount[i] <= 0)
 				{
-					colmap->dynEntDefList[0][i].xModel = read.Asset<XModel>();
+					continue;
 				}
-				if (colmap->dynEntDefList[0][i].physPreset)
+
+				colmap->dynEntDefList[i] = mem->Alloc<DynEntityDef>(colmap->dynEntCount[i]);
+				colmap->dynEntPoseList[i] = mem->Alloc<DynEntityPose>(colmap->dynEntCount[i]);
+				colmap->dynEntClientList[i] = mem->Alloc<DynEntityClient>(colmap->dynEntCount[i]);
+				colmap->dynEntCollList[i] = mem->Alloc<DynEntityColl>(colmap->dynEntCount[i]);
+				
+				for (int j = 0; j < colmap->dynEntCount[i]; j++)
 				{
-					colmap->dynEntDefList[0][i].physPreset = read.Asset<PhysPreset>();
+					colmap->dynEntDefList[i][j] = *read.read_single<DynEntityDef>();
+					colmap->dynEntDefList[i][j].xModel = read.read_asset<XModel>();
+					colmap->dynEntDefList[i][j].destroyFx = read.read_asset<FxEffectDef>();
+					colmap->dynEntDefList[i][j].physPreset = read.read_asset<PhysPreset>();
+
+					colmap->dynEntPoseList[i][j] = *read.read_single<DynEntityPose>();
+					colmap->dynEntClientList[i][j] = *read.read_single<DynEntityClient>();
+					colmap->dynEntCollList[i][j] = *read.read_single<DynEntityColl>();
 				}
 			}
-
-			colmap->dynEntCount[1] = read.Int();
-			newEntDef = read.Array<DynEntityDef_IW5>();
-			colmap->dynEntDefList[1] = new DynEntityDef[colmap->dynEntCount[1]];
-			for (Int i = 0; i < colmap->dynEntCount[1]; i++)
-			{
-				dynEntDefCopy(1, i, type);
-				dynEntDefCopy(1, i, pose.quat[0]);
-				dynEntDefCopy(1, i, pose.quat[1]);
-				dynEntDefCopy(1, i, pose.quat[2]);
-				dynEntDefCopy(1, i, pose.quat[3]);
-				dynEntDefCopy(1, i, pose.origin[0]);
-				dynEntDefCopy(1, i, pose.origin[1]);
-				dynEntDefCopy(1, i, pose.origin[2]);
-				dynEntDefCopy(1, i, health);
-				dynEntDefCopy(1, i, mass.centerOfMass[0]);
-				dynEntDefCopy(1, i, mass.centerOfMass[1]);
-				dynEntDefCopy(1, i, mass.centerOfMass[2]);
-				dynEntDefCopy(1, i, mass.momentsOfInertia[0]);
-				dynEntDefCopy(1, i, mass.momentsOfInertia[1]);
-				dynEntDefCopy(1, i, mass.momentsOfInertia[2]);
-				dynEntDefCopy(1, i, mass.productsOfInertia[0]);
-				dynEntDefCopy(1, i, mass.productsOfInertia[1]);
-				dynEntDefCopy(1, i, mass.productsOfInertia[2]);
-				dynEntDefCopy(1, i, mass.contents);
-				colmap->dynEntDefList[1][i].destroyFx = nullptr;
-				if (colmap->dynEntDefList[1][i].xModel)
-				{
-					colmap->dynEntDefList[1][i].xModel = read.Asset<XModel>();
-				}
-				if (colmap->dynEntDefList[1][i].physPreset)
-				{
-					colmap->dynEntDefList[1][i].physPreset = read.Asset<PhysPreset>();
-				}
-			}
-
-			colmap->dynEntPoseList[0] = new DynEntityPose[colmap->dynEntCount[0]];
-			colmap->dynEntPoseList[1] = new DynEntityPose[colmap->dynEntCount[1]];
-			colmap->dynEntClientList[0] = new DynEntityClient[colmap->dynEntCount[0]];
-			colmap->dynEntClientList[1] = new DynEntityClient[colmap->dynEntCount[1]];
-			colmap->dynEntCollList[0] = new DynEntityColl[colmap->dynEntCount[0]];
-			colmap->dynEntCollList[1] = new DynEntityColl[colmap->dynEntCount[1]];
-#else
-			colmap->dynEntDefList[0] = 0;
-			colmap->dynEntDefList[1] = 0;
-			colmap->dynEntPoseList[0] = 0;
-			colmap->dynEntPoseList[1] = 0;
-			colmap->dynEntClientList[0] = 0;
-			colmap->dynEntClientList[1] = 0;
-			colmap->dynEntCollList[0] = 0;
-			colmap->dynEntCollList[1] = 0;
-			colmap->dynEntCount[0] = 0;
-			colmap->dynEntCount[1] = 0;
-#endif
 
 			// parse stages
 			AssetReader stageReader(mem);
@@ -330,43 +261,27 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 				}
 			}
 
-			//if (data->dynEntDefList[0])
-			//{
-			//	for (int i = 0; i < data->dynEntCount[0]; i++)
-			//	{
-			//		if (data->dynEntDefList[0][i].xModel)
-			//		{
-			//			zone->add_asset_of_type(xmodel, data->dynEntDefList[0][i].xModel->name);
-			//		}
-			//		if (data->dynEntDefList[0][i].destroyFx)
-			//		{
-			//			zone->add_asset_of_type(fx, data->dynEntDefList[0][i].destroyFx->name);
-			//		}
-			//		if (data->dynEntDefList[0][i].physPreset)
-			//		{
-			//			zone->add_asset_of_type(physpreset, data->dynEntDefList[0][i].physPreset->name);
-			//		}
-			//	}
-			//}
-
-			//if (data->dynEntDefList[1])
-			//{
-			//	for (int i = 0; i < data->dynEntCount[1]; i++)
-			//	{
-			//		if (data->dynEntDefList[1][i].xModel)
-			//		{
-			//			zone->add_asset_of_type(xmodel, data->dynEntDefList[1][i].xModel->name);
-			//		}
-			//		if (data->dynEntDefList[1][i].destroyFx)
-			//		{
-			//			zone->add_asset_of_type(fx, data->dynEntDefList[1][i].destroyFx->name);
-			//		}
-			//		if (data->dynEntDefList[1][i].physPreset)
-			//		{
-			//			zone->add_asset_of_type(physpreset, data->dynEntDefList[1][i].physPreset->name);
-			//		}
-			//	}
-			//}
+			for (int i = 0; i < 2; i++)
+			{
+				if (data->dynEntDefList[i])
+				{
+					for (int j = 0; j < data->dynEntCount[i]; j++)
+					{
+						if (data->dynEntDefList[i][j].xModel)
+						{
+							zone->add_asset_of_type(xmodel, data->dynEntDefList[i][j].xModel->name);
+						}
+						if (data->dynEntDefList[i][j].destroyFx)
+						{
+							zone->add_asset_of_type(fx, data->dynEntDefList[i][j].destroyFx->name);
+						}
+						if (data->dynEntDefList[i][j].physPreset)
+						{
+							zone->add_asset_of_type(physpreset, data->dynEntDefList[i][j].physPreset->name);
+						}
+					}
+				}
+			}
 
 			if (data->mapEnts)
 			{
@@ -542,8 +457,6 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 			auto offset = buf->get_zone_offset();
 			auto dest = buf->write<clipMap_t>(data);
 
-			sizeof clipMap_t;
-
 			dest->isPlutoniumMap = 0x13370420;
 
 			buf->push_stream(3);
@@ -574,8 +487,6 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 							xmodel, data->staticModelList[i].xmodel->name));
 					}
 				}
-
-				ZoneBuffer::clear_pointer(&data->staticModelList);
 			}
 
 			if (data->cNodes)
@@ -590,43 +501,36 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 						node[i].plane = buf->write_s(3, data->cNodes[i].plane);
 					}
 				}
-
-				ZoneBuffer::clear_pointer(&dest->cNodes);
 			}
 
 			if (data->cLeaf)
 			{
 				buf->align(3);
 				buf->write(data->cLeaf, data->numCLeaf);
-				ZoneBuffer::clear_pointer(&dest->cLeaf);
 			}
 
 			if (data->verts)
 			{
 				buf->align(3);
 				buf->write(data->verts, data->numVerts);
-				ZoneBuffer::clear_pointer(&dest->verts);
 			}
 
 			if (data->triIndices)
 			{
 				buf->align(1);
 				buf->write(data->triIndices, data->numTriIndices * 3);
-				ZoneBuffer::clear_pointer(&dest->triIndices);
 			}
 
 			if (data->triEdgeIsWalkable)
 			{
 				buf->align(0);
 				buf->write(data->triEdgeIsWalkable, 4 * ((3 * data->numTriIndices + 31) >> 5));
-				ZoneBuffer::clear_pointer(&dest->triEdgeIsWalkable);
 			}
 
 			if (data->collisionBorders)
 			{
 				buf->align(3);
 				buf->write_p(data->collisionBorders, data->numCollisionBorders);
-				ZoneBuffer::clear_pointer(&dest->collisionBorders);
 			}
 
 			if (data->collisionPartitions)
@@ -641,15 +545,12 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 						collision_partition[i].borders = buf->write_s(3, data->collisionPartitions[i].borders);
 					}
 				}
-
-				ZoneBuffer::clear_pointer(&dest->collisionPartitions);
 			}
 
 			if (data->collisionAABBTrees)
 			{
 				buf->align(15);
 				buf->write(data->collisionAABBTrees, data->numCollisionAABBTrees);
-				ZoneBuffer::clear_pointer(&dest->collisionAABBTrees);
 			}
 
 			if (data->cModels)
@@ -674,15 +575,12 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 
 					buf->pop_stream();
 				}
-
-				ZoneBuffer::clear_pointer(&dest->cModels);
 			}
 
 			if (data->smodelNodes)
 			{
 				buf->align(3);
 				buf->write(data->smodelNodes, data->smodelNodeCount);
-				ZoneBuffer::clear_pointer(&dest->smodelNodes);
 			}
 
 			if (data->mapEnts)
@@ -703,8 +601,6 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 						ZoneBuffer::clear_pointer(&destStages[i].name);
 					}
 				}
-
-				ZoneBuffer::clear_pointer(&dest->stages);
 			}
 
 			// copy trigger data from mapents
@@ -741,8 +637,6 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 						dyn_entity_def[i].hinge = buf->write_s(3, dyn_entity_def[i].hinge, 1);
 					}
 				}
-
-				ZoneBuffer::clear_pointer(&dest->dynEntDefList[0]);
 			}
 
 			if (data->dynEntDefList[1])
@@ -773,8 +667,6 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 						dyn_entity_def[i].hinge = buf->write_s(3, dyn_entity_def[i].hinge, 1);
 					}
 				}
-
-				ZoneBuffer::clear_pointer(&dest->dynEntDefList[1]);
 			}
 
 			buf->push_stream(2);
@@ -783,42 +675,36 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 			{
 				buf->align(3);
 				buf->write(data->dynEntPoseList[0], data->dynEntCount[0]);
-				ZoneBuffer::clear_pointer(&dest->dynEntPoseList[0]);
 			}
 
 			if (data->dynEntPoseList[1])
 			{
 				buf->align(3);
 				buf->write(data->dynEntPoseList[1], data->dynEntCount[1]);
-				ZoneBuffer::clear_pointer(&dest->dynEntPoseList[1]);
 			}
 
 			if (data->dynEntClientList[0])
 			{
 				buf->align(3);
 				buf->write(data->dynEntClientList[0], data->dynEntCount[0]);
-				ZoneBuffer::clear_pointer(&dest->dynEntClientList[0]);
 			}
 
 			if (data->dynEntClientList[1])
 			{
 				buf->align(3);
 				buf->write(data->dynEntClientList[1], data->dynEntCount[1]);
-				ZoneBuffer::clear_pointer(&dest->dynEntClientList[1]);
 			}
 
 			if (data->dynEntCollList[0])
 			{
 				buf->align(3);
 				buf->write(data->dynEntCollList[0], data->dynEntCount[0]);
-				ZoneBuffer::clear_pointer(&dest->dynEntCollList[0]);
 			}
 
 			if (data->dynEntCollList[1])
 			{
 				buf->align(3);
 				buf->write(data->dynEntCollList[1], data->dynEntCount[1]);
-				ZoneBuffer::clear_pointer(&dest->dynEntCollList[1]);
 			}
 
 			buf->pop_stream();
@@ -981,6 +867,28 @@ colmap->dynEntDefList[_num1][_num2]._item = newEntDef[_num2]._item;
 
 			write.dump_int(asset->smodelNodeCount);
 			write.dump_array(asset->smodelNodes, asset->smodelNodeCount);
+
+			for (int i = 0; i < 2; i++)
+			{
+				write.dump_int(asset->dynEntCount[i]);
+
+				if (asset->dynEntCount[i] <= 0)
+				{
+					continue;
+				}
+
+				for (int j = 0; j < asset->dynEntCount[i]; j++)
+				{
+					write.dump_single(&asset->dynEntDefList[i][j]);
+					write.dump_asset(asset->dynEntDefList[i][j].xModel);
+					write.dump_asset(asset->dynEntDefList[i][j].destroyFx);
+					write.dump_asset(asset->dynEntDefList[i][j].physPreset);
+
+					write.dump_single(&asset->dynEntPoseList[i][j]);
+					write.dump_single(&asset->dynEntClientList[i][j]);
+					write.dump_single(&asset->dynEntCollList[i][j]);
+				}
+			}
 
 			// save file to disk
 			write.close();

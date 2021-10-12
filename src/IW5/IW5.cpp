@@ -103,7 +103,7 @@ namespace ZoneTool
 		{
 			ZONETOOL_INFO("Unloading zones...");
 
-			static XZoneInfo zone = {"", 0, 20};
+			static XZoneInfo zone = {0, 0, 70};
 			DB_LoadXAssets(&zone, 1, 1);
 		}
 
@@ -149,9 +149,12 @@ namespace ZoneTool
 			FileSystem::SetFastFile(name);
 			AssetHandler::SetDump(true);
 			load_zone(name);
-
 			while (!is_dumping_complete)
 			{
+				if (!*reinterpret_cast<bool*>(0x1294A00))
+				{
+					AssetHandler::StopDump();
+				}
 				Sleep(1);
 			}
 		}

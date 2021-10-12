@@ -65,7 +65,9 @@ namespace ZoneTool
 	for (int i = 0; i < size; i++) \
 	{ \
 		nlohmann::json cent##entry; \
-		cent##entry["name"] = asset->entry[i].name; \
+		std::string name = asset->constantTable[i].name; \
+		name.resize(12); \
+		cent##entry["name"] = name.data(); \
 		cent##entry["nameHash"] = asset->entry[i].nameHash; \
 		nlohmann::json centliteral##entry; \
 		centliteral##entry[0] = asset->entry[i].literal[0]; \

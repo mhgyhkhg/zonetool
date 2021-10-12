@@ -23,6 +23,7 @@
 
 #include "Json.hpp"
 using Json = nlohmann::json;
+using Orderer_Json = nlohmann::ordered_json;
 
 #undef xor
 #undef and

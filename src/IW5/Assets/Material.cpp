@@ -80,7 +80,9 @@ namespace ZoneTool
 	for (int i = 0; i < size; i++) \
 	{ \
 		nlohmann::json cent##entry; \
-		cent##entry["name"] = asset->entry[i].name; \
+		std::string name = asset->constantTable[i].name; \
+		name.resize(12); \
+		cent##entry["name"] = name.data(); \
 		cent##entry["nameHash"] = asset->entry[i].nameHash; \
 		nlohmann::json centliteral##entry; \
 		centliteral##entry[0] = asset->entry[i].literal[0]; \
@@ -311,8 +313,7 @@ namespace ZoneTool
 				auto constant_def = mem->Alloc<MaterialConstantDef>(constantTable.size());
 				for (int i = 0; i < constantTable.size(); i++)
 				{
-					strncpy(constant_def[i].name, constantTable[i]["name"].get<std::string>().c_str(), 11);
-					constant_def[i].name[11] = '\0';
+					strcat(constant_def[i].name, constantTable[i]["name"].get<std::string>().data());
 					if (constantTable[i].find("nameHash") == constantTable[i].end())
 					{
 						ZONETOOL_WARNING(
@@ -335,7 +336,6 @@ namespace ZoneTool
 				mat->constantTable = nullptr;
 			}
 			mat->constantCount = constantTable.size();
-
 
 			nlohmann::json stateMap = matdata["stateMap"];
 			if (stateMap.size() > 0)

@@ -207,6 +207,18 @@ namespace ZoneTool
 					ZONETOOL_FATAL("A fatal exception occured while building zone \"%s\", exception was: %s\n", fastfile.data(), ex.what());
 				}
 			}
+			// this will use a directory iterator to add all techsets
+			else if (row->fields_[0] == "iterate_techsets"s)
+			{
+				try
+				{
+					add_assets_using_iterator(fastfile, "techset", "techsets", ".techset", true, zone);
+				}
+				catch (std::exception& ex)
+				{
+					ZONETOOL_FATAL("A fatal exception occured while building zone \"%s\", exception was: %s\n", fastfile.data(), ex.what());
+				}
+			}
 			// this will force external assets to be used
 			else if (row->fields_[0] == "forceExternalAssets"s)
 			{
@@ -216,7 +228,7 @@ namespace ZoneTool
 			// if entry is not an option, it should be an asset.
 			else
 			{
-				if (row->fields_[0] == "localize"s && row->numOfFields_ >= 3)
+				/*if (row->fields_[0] == "localize"s && row->numOfFields_ >= 3)
 				{
 					ZONETOOL_INFO("Adding localized string to zone...");
 
@@ -245,7 +257,7 @@ namespace ZoneTool
 						ZONETOOL_FATAL("A fatal exception occured while building zone \"%s\", exception was: %s\n", fastfile.data(), ex.what());
 					}
 				}
-				else
+				else*/
 				{
 					if (row->numOfFields_ >= 2)
 					{
@@ -459,6 +471,14 @@ namespace ZoneTool
 				current_linker->dump_zone(args[1]);
 			}
 		});
+		register_command("unloadzones"s, [](std::vector<std::string> args)
+		{
+			// Unload zones
+			if (current_linker)
+			{
+				current_linker->unload_zones();
+			}
+	});
 
 #ifdef USE_VMPROTECT
 		VMProtectEnd();
@@ -502,7 +522,10 @@ namespace ZoneTool
 		for (int i = 0; i < nArgs; i++)
 		{
 			auto curArg = std::wstring(szArglist[i]);
+#pragma warning( push )
+#pragma warning( disable : 4244 )
 			args[i] = std::string(curArg.begin(), curArg.end());
+#pragma warning( pop )
 		}
 
 		// return arguments

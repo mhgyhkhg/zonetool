@@ -102,7 +102,10 @@ namespace ZoneTool
 				}
 				else
 				{
-					parse_visuals(&read, def, &def->visuals.instance);
+					if (def->visualCount)
+					{
+						parse_visuals(&read, def, &def->visuals.instance);
+					}
 				}
 
 				def->effectOnImpact = read.read_asset<FxEffectDefRef>();
@@ -206,7 +209,7 @@ namespace ZoneTool
 						zone->add_asset_of_type(xmodel, vis->instance.xmodel->name);
 					else
 					{
-						if (def->elemType != 8)
+						if (def->elemType != 8 && vis->instance.material)
 							zone->add_asset_of_type(material, vis->instance.material->name);
 					}
 				}
@@ -226,7 +229,8 @@ namespace ZoneTool
 					zone->add_asset_of_type(fx, def.effectOnImpact->name);
 
 				// Visuals
-				load_FxElemVisuals(&def, &def.visuals);
+				if(def.visualCount)
+					load_FxElemVisuals(&def, &def.visuals);
 			}
 		}
 
@@ -280,9 +284,9 @@ namespace ZoneTool
 					if (def->elemType != FX_ELEM_TYPE_OMNI_LIGHT)
 					{
 						dest->material = (data->material)
-							                 ? reinterpret_cast<Material*>(zone->get_asset_pointer(
-								                 material, data->material->name))
-							                 : nullptr;
+							? reinterpret_cast<Material*>(zone->get_asset_pointer(
+								material, data->material->name))
+							: nullptr;
 					}
 				}
 			}
@@ -321,7 +325,7 @@ namespace ZoneTool
 					write_fx_elem_visuals(zone, buf, def, &vis[i]);
 				}
 			}
-			else
+			else if (def->visualCount)
 			{
 				write_fx_elem_visuals(zone, buf, def, &dest->instance);
 			}
@@ -695,7 +699,7 @@ count.amplitude)[0]);
 						dump_visuals(&dump, def, &def->visuals.array[vis]);
 					}
 				}
-				else
+				else if(def->visualCount)
 				{
 					dump_visuals(&dump, def, &def->visuals.instance);
 				}

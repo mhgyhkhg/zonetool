@@ -3804,11 +3804,11 @@ namespace ZoneTool
 			XModel* xModel;
 			unsigned __int16 brushModel;
 			unsigned __int16 physicsBrushModel;
-			void* destroyFx; // FxEffectDef
+			FxEffectDef* destroyFx;
 			PhysPreset* physPreset;
 			int health;
 			PhysMass mass;
-			//char *unknown;
+			int contents;
 		};
 
 		struct DynEntityPose

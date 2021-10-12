@@ -31,7 +31,7 @@ namespace ZoneTool
 					return nullptr;
 				}
 
-				ZONETOOL_INFO("Parsing vertexshader \"%s\"...", name.data());
+				//ZONETOOL_INFO("Parsing vertexshader \"%s\"...", name.data());
 
 				auto asset = read.read_array<VertexShader>();
 				asset->name = read.read_string();
@@ -41,9 +41,10 @@ namespace ZoneTool
 				return asset;
 			}
 
-			ZONETOOL_INFO("Parsing custom DirectX vertexshader \"%s\"...", name.data());
-
 			auto fp = FileSystem::FileOpen(path, "rb");
+			if (!fp) return nullptr;
+
+			ZONETOOL_INFO("Parsing custom DirectX vertexshader \"%s\"...", name.data());
 
 			auto asset = mem->Alloc<VertexShader>();
 			asset->name = mem->StrDup(name);

@@ -223,11 +223,6 @@ namespace ZoneTool
 			AssetDumper dump;
 			dump.open("XSurface\\"s + asset->name + ".xse");
 
-			if (asset->name == "tntbomb_mp_low10"s)
-			{
-				return;
-			}
-
 			dump.dump_array(asset, 1);
 			dump.dump_string(asset->name);
 
