@@ -500,7 +500,7 @@ namespace ZoneTool
 
 		if (linker)
 		{
-			ZONETOOL_INFO("Initializing linker for game \"%s\"...\n", linker->version());
+			ZONETOOL_INFO("Initialized linker for game \"%s\"...\n", linker->version());
 		}
 		else
 		{

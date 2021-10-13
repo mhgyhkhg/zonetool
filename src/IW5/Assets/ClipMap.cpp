@@ -487,6 +487,8 @@ namespace ZoneTool
 							xmodel, data->staticModelList[i].xmodel->name));
 					}
 				}
+
+				ZoneBuffer::clear_pointer(&data->staticModelList);
 			}
 
 			if (data->cNodes)
@@ -501,36 +503,43 @@ namespace ZoneTool
 						node[i].plane = buf->write_s(3, data->cNodes[i].plane);
 					}
 				}
+
+				ZoneBuffer::clear_pointer(&dest->cNodes);
 			}
 
 			if (data->cLeaf)
 			{
 				buf->align(3);
 				buf->write(data->cLeaf, data->numCLeaf);
+				ZoneBuffer::clear_pointer(&dest->cLeaf);
 			}
 
 			if (data->verts)
 			{
 				buf->align(3);
 				buf->write(data->verts, data->numVerts);
+				ZoneBuffer::clear_pointer(&dest->verts);
 			}
 
 			if (data->triIndices)
 			{
 				buf->align(1);
 				buf->write(data->triIndices, data->numTriIndices * 3);
+				ZoneBuffer::clear_pointer(&dest->triIndices);
 			}
 
 			if (data->triEdgeIsWalkable)
 			{
 				buf->align(0);
 				buf->write(data->triEdgeIsWalkable, 4 * ((3 * data->numTriIndices + 31) >> 5));
+				ZoneBuffer::clear_pointer(&dest->triEdgeIsWalkable);
 			}
 
 			if (data->collisionBorders)
 			{
 				buf->align(3);
 				buf->write_p(data->collisionBorders, data->numCollisionBorders);
+				ZoneBuffer::clear_pointer(&dest->collisionBorders);
 			}
 
 			if (data->collisionPartitions)
@@ -545,12 +554,15 @@ namespace ZoneTool
 						collision_partition[i].borders = buf->write_s(3, data->collisionPartitions[i].borders);
 					}
 				}
+
+				ZoneBuffer::clear_pointer(&dest->collisionPartitions);
 			}
 
 			if (data->collisionAABBTrees)
 			{
 				buf->align(15);
 				buf->write(data->collisionAABBTrees, data->numCollisionAABBTrees);
+				ZoneBuffer::clear_pointer(&dest->collisionAABBTrees);
 			}
 
 			if (data->cModels)
@@ -575,12 +587,15 @@ namespace ZoneTool
 
 					buf->pop_stream();
 				}
+
+				ZoneBuffer::clear_pointer(&dest->cModels);
 			}
 
 			if (data->smodelNodes)
 			{
 				buf->align(3);
 				buf->write(data->smodelNodes, data->smodelNodeCount);
+				ZoneBuffer::clear_pointer(&dest->smodelNodes);
 			}
 
 			if (data->mapEnts)
@@ -601,6 +616,8 @@ namespace ZoneTool
 						ZoneBuffer::clear_pointer(&destStages[i].name);
 					}
 				}
+
+				ZoneBuffer::clear_pointer(&dest->stages);
 			}
 
 			// copy trigger data from mapents
@@ -637,6 +654,8 @@ namespace ZoneTool
 						dyn_entity_def[i].hinge = buf->write_s(3, dyn_entity_def[i].hinge, 1);
 					}
 				}
+
+				ZoneBuffer::clear_pointer(&dest->dynEntDefList[0]);
 			}
 
 			if (data->dynEntDefList[1])
@@ -667,6 +686,8 @@ namespace ZoneTool
 						dyn_entity_def[i].hinge = buf->write_s(3, dyn_entity_def[i].hinge, 1);
 					}
 				}
+
+				ZoneBuffer::clear_pointer(&dest->dynEntDefList[1]);
 			}
 
 			buf->push_stream(2);
@@ -675,36 +696,42 @@ namespace ZoneTool
 			{
 				buf->align(3);
 				buf->write(data->dynEntPoseList[0], data->dynEntCount[0]);
+				ZoneBuffer::clear_pointer(&dest->dynEntPoseList[0]);
 			}
 
 			if (data->dynEntPoseList[1])
 			{
 				buf->align(3);
 				buf->write(data->dynEntPoseList[1], data->dynEntCount[1]);
+				ZoneBuffer::clear_pointer(&dest->dynEntPoseList[1]);
 			}
 
 			if (data->dynEntClientList[0])
 			{
 				buf->align(3);
 				buf->write(data->dynEntClientList[0], data->dynEntCount[0]);
+				ZoneBuffer::clear_pointer(&dest->dynEntClientList[0]);
 			}
 
 			if (data->dynEntClientList[1])
 			{
 				buf->align(3);
 				buf->write(data->dynEntClientList[1], data->dynEntCount[1]);
+				ZoneBuffer::clear_pointer(&dest->dynEntClientList[1]);
 			}
 
 			if (data->dynEntCollList[0])
 			{
 				buf->align(3);
 				buf->write(data->dynEntCollList[0], data->dynEntCount[0]);
+				ZoneBuffer::clear_pointer(&dest->dynEntCollList[0]);
 			}
 
 			if (data->dynEntCollList[1])
 			{
 				buf->align(3);
 				buf->write(data->dynEntCollList[1], data->dynEntCount[1]);
+				ZoneBuffer::clear_pointer(&dest->dynEntCollList[1]);
 			}
 
 			buf->pop_stream();

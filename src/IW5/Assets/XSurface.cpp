@@ -158,13 +158,15 @@ namespace ZoneTool
 							if (data[surf].rigidVertLists[vert].collisionTree->nodes)
 							{
 								buf->align(15);
-								dest[surf].rigidVertLists[vert].collisionTree->nodes = buf->write(data[surf].rigidVertLists[vert].collisionTree->nodes, data[surf].rigidVertLists[vert].collisionTree->nodeCount);
+								buf->write(data[surf].rigidVertLists[vert].collisionTree->nodes, data[surf].rigidVertLists[vert].collisionTree->nodeCount);
+								ZoneBuffer::clear_pointer(&dest[surf].rigidVertLists[vert].collisionTree->nodes);
 							}
 
 							if (data[surf].rigidVertLists[vert].collisionTree->leafs)
 							{
 								buf->align(1);
-								dest[surf].rigidVertLists[vert].collisionTree->leafs = buf->write(data[surf].rigidVertLists[vert].collisionTree->leafs, data[surf].rigidVertLists[vert].collisionTree->leafCount);
+								buf->write(data[surf].rigidVertLists[vert].collisionTree->leafs, data[surf].rigidVertLists[vert].collisionTree->leafCount);
+								ZoneBuffer::clear_pointer(&dest[surf].rigidVertLists[vert].collisionTree->leafs);
 							}
 							ZoneBuffer::clear_pointer(&dest[surf].rigidVertLists[vert].collisionTree);
 						}
