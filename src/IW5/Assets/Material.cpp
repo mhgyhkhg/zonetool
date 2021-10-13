@@ -413,6 +413,23 @@ namespace ZoneTool
 			if (data->techniqueSet)
 			{
 				zone->add_asset_of_type(techset, data->techniqueSet->name);
+
+				// add shadow techset
+				std::string techset_name = data->techniqueSet->name;
+				if (techset_name.starts_with("wc_l_sm_") || techset_name.starts_with("mc_l_sm_"))
+				{
+					std::string shadow_techset_name = std::string(techset_name.begin(), techset_name.begin() + 5);
+					shadow_techset_name.append("hsm_" + std::string(techset_name.begin() + 8, techset_name.end()));
+
+					if (FileSystem::FileExists("techsets\\" + shadow_techset_name + ".techset"))
+					{
+						zone->add_asset_of_type(techset, shadow_techset_name);
+					}
+					else
+					{
+						ZONETOOL_WARNING("Material '%s' doesn't have shadow techset '%s'!", techset_name.data(), shadow_techset_name.data());
+					}
+				}
 			}
 
 			for (char i = 0; i < data->numMaps; i++)
