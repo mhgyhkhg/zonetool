@@ -416,10 +416,11 @@ namespace ZoneTool
 
 				// add shadow techset
 				std::string techset_name = data->techniqueSet->name;
-				if (techset_name.starts_with("wc_l_sm_") || techset_name.starts_with("mc_l_sm_"))
+				auto offset = techset_name.find("_sm_");
+				if (offset != std::string::npos)
 				{
-					std::string shadow_techset_name = std::string(techset_name.begin(), techset_name.begin() + 5);
-					shadow_techset_name.append("hsm_" + std::string(techset_name.begin() + 8, techset_name.end()));
+					std::string shadow_techset_name = std::string(techset_name.begin(), techset_name.begin() + offset);
+					shadow_techset_name.append("_hsm_" + std::string(techset_name.begin() + offset + 4, techset_name.end()));
 
 					if (FileSystem::FileExists("techsets\\" + shadow_techset_name + ".techset"))
 					{
