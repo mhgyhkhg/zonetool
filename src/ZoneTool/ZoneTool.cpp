@@ -101,6 +101,163 @@ namespace ZoneTool
 		}
 	}
 
+	bool parse_localizedstrings_file(IZone* zone, const std::string& fastfile, const std::string& file)
+	{
+		auto* fp = FileSystem::FileOpen(file, "rb");
+		if (fp)
+		{
+			ZONETOOL_INFO("Parsing localizedstrings \"%s\"...", file.c_str());
+
+			auto bytes = FileSystem::ReadBytes(fp, FileSystem::FileSize(fp));
+			std::string str = std::string(bytes.begin(), bytes.end());
+
+			std::stringstream ss(str);
+			std::string s;
+
+			bool failed = false;
+			std::string name;
+			std::string value;
+			size_t line = 0;
+			size_t i = 0;
+			while (getline(ss, s))
+			{
+				++line;
+				if (s.size() < 2)
+					continue;
+				for (i = 0; i < s.size(); i++)
+				{
+					if (i + 1 < s.size() && s.data()[i] == '/' && s.data()[i + 1] == '/')
+						break;
+					if (isspace(s.data()[i]))
+						continue;
+					if (s.data()[i] >= 'A' && s.data()[i] <= 'Z')
+					{
+						if (!strncmp(&s.data()[i], "REFERENCE", 9))
+						{
+							i += 9;
+							while (isspace(s.data()[i]))
+							{
+								if (i >= s.size())
+								{
+									failed = true;
+									break;
+								}
+								i++;
+							}
+							if (failed)
+							{
+								break;
+							}
+
+							name.clear();
+							while (!isspace(s.data()[i]))
+							{
+								if (i >= s.size())
+								{
+									break;
+								}
+								name += s.data()[i];
+								i++;
+							}
+							break;
+						}
+						if (!strncmp(&s.data()[i], "LANG_", 5))
+						{
+							i += 5;
+							while (s.data()[i] != '"')
+							{
+								if (i >= s.size())
+								{
+									failed = true;
+									break;
+								}
+								i++;
+							}
+							if (failed)
+							{
+								break;
+							}
+
+							i++;
+							value.clear();
+							while (s.data()[i] != '"')
+							{
+								if (i >= s.size())
+								{
+									failed = true;
+									break;
+								}
+								if(s.data()[i] == '\\' && i + 1 < s.size())
+								{
+									switch (s.data()[i + 1])
+									{
+									case 'n':
+										value += '\n';
+										i += 2;
+										break;
+									case 't':
+										value += '\t';
+										i += 2;
+										break;
+									default:
+										value += '\\';
+										i++;
+										break;
+									}
+								}
+								else
+								{
+									value += s.data()[i];
+									i++;
+								}
+							}
+							break;
+						}
+						if (!strncmp(&s.data()[i], "ENDMARKER", 9))
+						{
+							return true;
+						}
+					}
+				}
+				if (failed)
+				{
+					ZONETOOL_WARNING("\"%s\" parse failed at line: %zu index: %zu", file.data(), line, i);
+					return false;
+				}
+				if (!name.empty() && !value.empty())
+				{
+					struct LocalizeStruct
+					{
+						const char* value;
+						const char* name;
+					};
+					auto loc = new LocalizeStruct;
+					loc->name = _strdup(name.data());
+					loc->value = _strdup(value.data());
+
+					auto type = zone->get_type_by_name("localize");
+					if (type == -1)
+					{
+						ZONETOOL_ERROR("Could not translate typename localize to an integer!");
+					}
+
+					try
+					{
+						zone->add_asset_of_type_by_pointer(type, loc);
+					}
+					catch (std::exception& ex)
+					{
+						ZONETOOL_FATAL("A fatal exception occured while building zone \"%s\", exception was: %s", fastfile.data(), ex.what());
+					}
+					name.clear();
+					value.clear();
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	void parse_csv_file(ILinker* linker, IZone* zone, const std::string& fastfile, const std::string& csv_file)
 	{
 		auto path = "zone_source\\" + csv_file + ".csv";
@@ -228,36 +385,12 @@ namespace ZoneTool
 			// if entry is not an option, it should be an asset.
 			else
 			{
-				/*if (row->fields_[0] == "localize"s && row->numOfFields_ >= 3)
+				if (row->fields_[0] == "localize"s && row->numOfFields_ >= 2 && 
+					FileSystem::FileExists("localizedstrings/"s + row->fields_[1] + ".str"))
 				{
-					ZONETOOL_INFO("Adding localized string to zone...");
-
-					struct LocalizeStruct
-					{
-						const char* value;
-						const char* name;
-					};
-
-					auto loc = new LocalizeStruct;
-					loc->name = _strdup(row->fields_[1]);
-					loc->value = _strdup(row->fields_[2]);
-
-					auto type = zone->get_type_by_name(row->fields_[0]);
-					if (type == -1)
-					{
-						ZONETOOL_ERROR("Could not translate typename %s to an integer!", row->fields_[0]);
-					}
-
-					try
-					{
-						zone->add_asset_of_type_by_pointer(type, loc);
-					}
-					catch (std::exception& ex)
-					{
-						ZONETOOL_FATAL("A fatal exception occured while building zone \"%s\", exception was: %s\n", fastfile.data(), ex.what());
-					}
+					parse_localizedstrings_file(zone, fastfile, "localizedstrings/"s + row->fields_[1] + ".str");
 				}
-				else*/
+				else
 				{
 					if (row->numOfFields_ >= 2)
 					{
