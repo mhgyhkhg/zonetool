@@ -30,7 +30,7 @@ namespace ZoneTool
 				return nullptr;
 			}
 
-			ZONETOOL_INFO("Parsing technique \"%s\"...", name.data());
+			//ZONETOOL_INFO("Parsing technique \"%s\"...", name.data());
 
 			const auto header = reader.read_single<MaterialTechniqueHeader>();
 			const auto passes = reader.read_array<MaterialPass>();

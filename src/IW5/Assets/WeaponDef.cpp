@@ -25,6 +25,16 @@ namespace ZoneTool
 		} \
 	}
 
+#define WEAPON_READ_FIELD_ARR_ALLOC(__type__, __field__, __size__) \
+	if (!data[#__field__].is_null()) \
+	{ \
+		weapon->__field__ = mem->Alloc<__type__>(__size__); \
+		for (auto idx##__field__ = 0u; idx##__field__ < __size__; idx##__field__++) \
+		{ \
+			*(__type__*)(&weapon->__field__[idx##__field__]) = (__type__)data[#__field__][idx##__field__].get<__type__>(); \
+		} \
+	}
+
 #define WEAPON_READ_STRING(__field__) \
 	if (!data[#__field__].is_null()) weapon->__field__ = mem->StrDup(data[#__field__].get<std::string>())
 
@@ -357,7 +367,7 @@ namespace ZoneTool
 			WEAPON_READ_FIELD(float, destabilizationRateTime);
 			WEAPON_READ_FIELD(float, destabilizationCurvatureMax);
 			WEAPON_READ_FIELD(int, destabilizeDistance);
-			WEAPON_READ_FIELD_ARR(float, locationDamageMultipliers, 20);
+			WEAPON_READ_FIELD_ARR_ALLOC(float, locationDamageMultipliers, 20);
 			WEAPON_READ_STRING(fireRumble);
 			WEAPON_READ_STRING(meleeImpactRumble);
 			WEAPON_READ_ASSET(tracer, tracer, tracerType);
