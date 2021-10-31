@@ -59,8 +59,8 @@ namespace ZoneTool
 					std::string dir = fullpath.parent_path().string();
 					std::string name = fullpath.filename().string();
 
-					asset->soundFile->sound.streamSnd.dir = _strdup(dir.data());
-					asset->soundFile->sound.streamSnd.dir = _strdup(name.data());
+					asset->soundFile->sound.streamSnd.dir = mem->StrDup(dir.data());
+					asset->soundFile->sound.streamSnd.name = mem->StrDup(name.data());
 				}
 
 				SOUND_INT(sequence);
@@ -534,7 +534,7 @@ namespace ZoneTool
 			sound["head"] = aliases;
 
 			std::string assetstr = sound.dump(4);
-			FILE* fp = FileSystem::FileOpen("sounds\\"s + asset->name, "wb");
+			FILE* fp = FileSystem::FileOpen(path, "wb");
 
 			if (fp)
 			{
