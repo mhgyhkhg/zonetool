@@ -114,6 +114,9 @@ namespace ZoneTool
 			std::stringstream ss(str);
 			std::string s;
 
+			char* data;
+			size_t size = 0;
+
 			bool failed = false;
 			std::string name;
 			std::string value;
@@ -121,23 +124,25 @@ namespace ZoneTool
 			size_t i = 0;
 			while (getline(ss, s))
 			{
+				data = s.data();
+				size = s.size();
 				++line;
-				if (s.size() < 2)
+				if (size < 2)
 					continue;
-				for (i = 0; i < s.size(); i++)
+				for (i = 0; i < size; i++)
 				{
-					if (i + 1 < s.size() && s.data()[i] == '/' && s.data()[i + 1] == '/')
+					if (i + 1 < size && data[i] == '/' && data[i + 1] == '/')
 						break;
-					if (isspace(s.data()[i]))
+					if (isspace(data[i]))
 						continue;
-					if (s.data()[i] >= 'A' && s.data()[i] <= 'Z')
+					if (data[i] >= 'A' && data[i] <= 'Z')
 					{
-						if (!strncmp(&s.data()[i], "REFERENCE", 9))
+						if (!strncmp(&data[i], "REFERENCE", 9))
 						{
 							i += 9;
-							while (isspace(s.data()[i]))
+							while (isspace(data[i]))
 							{
-								if (i >= s.size())
+								if (i >= size)
 								{
 									failed = true;
 									break;
@@ -150,23 +155,23 @@ namespace ZoneTool
 							}
 
 							name.clear();
-							while (!isspace(s.data()[i]))
+							while (!isspace(data[i]))
 							{
-								if (i >= s.size())
+								if (i >= size)
 								{
 									break;
 								}
-								name += s.data()[i];
+								name += data[i];
 								i++;
 							}
 							break;
 						}
-						if (!strncmp(&s.data()[i], "LANG_", 5))
+						if (!strncmp(&data[i], "LANG_", 5))
 						{
 							i += 5;
-							while (s.data()[i] != '"')
+							while (data[i] != '"')
 							{
-								if (i >= s.size())
+								if (i >= size)
 								{
 									failed = true;
 									break;
@@ -180,16 +185,16 @@ namespace ZoneTool
 
 							i++;
 							value.clear();
-							while (s.data()[i] != '"')
+							while (data[i] != '"')
 							{
-								if (i >= s.size())
+								if (i >= size)
 								{
 									failed = true;
 									break;
 								}
-								if(s.data()[i] == '\\' && i + 1 < s.size())
+								if(data[i] == '\\' && i + 1 < size)
 								{
-									switch (s.data()[i + 1])
+									switch (data[i + 1])
 									{
 									case 'n':
 										value += '\n';
@@ -207,13 +212,13 @@ namespace ZoneTool
 								}
 								else
 								{
-									value += s.data()[i];
+									value += data[i];
 									i++;
 								}
 							}
 							break;
 						}
-						if (!strncmp(&s.data()[i], "ENDMARKER", 9))
+						if (!strncmp(&data[i], "ENDMARKER", 9))
 						{
 							return true;
 						}
@@ -240,7 +245,6 @@ namespace ZoneTool
 					{
 						ZONETOOL_ERROR("Could not translate typename localize to an integer!");
 					}
-
 					try
 					{
 						zone->add_asset_of_type_by_pointer(type, loc);
