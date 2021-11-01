@@ -38,7 +38,9 @@
 	for (int i = 0; i < size; i++) \
 	{ \
 		nlohmann::json cent##entry; \
-		cent##entry["name"] = mat->entry[i].name; \
+		std::string name = mat->entry[i].name; \
+		name.resize(12); \
+		cent##entry["name"] = name.data(); \
 		nlohmann::json centliteral##entry; \
 		centliteral##entry[0] = mat->entry[i].literal[0]; \
 		centliteral##entry[1] = mat->entry[i].literal[1]; \
