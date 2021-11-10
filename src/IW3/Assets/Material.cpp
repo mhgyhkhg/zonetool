@@ -7,7 +7,6 @@
 // License: GNU GPL v3.0
 // ========================================================
 #include "stdafx.hpp"
-#include "IW6/Structs.hpp"
 
 #include "Json.hpp"
 using json = nlohmann::json;

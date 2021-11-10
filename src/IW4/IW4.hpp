@@ -14,28 +14,13 @@
 
 #include "IW6/Structs.hpp"
 
-#include "Assets/XAnimParts.hpp"
-#include "Assets/XModel.hpp"
-#include "Assets/Material.hpp"
-
-// oh nee toch niet
-
 namespace ZoneTool
 {
-	namespace IW3
+	namespace IW4
 	{
-		struct XAsset
-		{
-			XAssetType type;
-			XAssetHeader ptr;
-		};
-
 		class Linker : public ILinker
 		{
 		public:
-			Linker();
-			~Linker();
-
 			const char* version() override;
 			bool is_used() override;
 			void startup() override;
@@ -48,15 +33,24 @@ namespace ZoneTool
 			std::string type_to_string(std::int32_t type) override;
             bool supports_building() override;
 			bool supports_version(const zone_target_version version) override;
-
+			
 			void dump_zone(const std::string& name) override;
 			void verify_zone(const std::string& name) override;
+			
+			static void run();
+			static void load_default_zones();
+			static const char* get_asset_name(XAssetType type, XAssetHeader header);
+			
+			static void DB_AddXAsset(XAssetType type, XAssetHeader header);
+			static void DB_AddXAssetStub();
+			static void IncreaseReadPointer();
+			static void IncreaseReadPointer2();
+			static void ReadHeader(void* ptr, int size);
+			static void Load_XSurfaceArray(int shouldLoad, int count);
+            static const char* GetZonePath(const char* zoneName);
 
-			static void* Dedicated_RegisterDvarBool(const char* name, bool defaultValue, unsigned int flags,
-			                                        const char* description);
-			static void* DB_AddXAsset(XAsset* asset, int unk);
-			static const char* GetAssetName(XAsset* asset);
-			static void HandleAsset(XAsset* asset);
+		private:
+			
 		};
 	}
 }

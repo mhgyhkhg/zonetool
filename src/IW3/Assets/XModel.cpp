@@ -7,7 +7,6 @@
 // License: GNU GPL v3.0
 // ========================================================
 #include "stdafx.hpp"
-#include "IW6/Structs.hpp"
 
 namespace ZoneTool
 {
@@ -282,7 +281,7 @@ namespace ZoneTool
 			
 			if (asset->materialHandles)
 			{
-				xmodel->materialHandles = mem->Alloc<IW6::Material* __ptr64>(asset->numsurfs);
+				xmodel->materialHandles = mem->Alloc<IW6::Material*>(asset->numsurfs);
 				for (auto i = 0; i < asset->numsurfs; i++)
 				{
 					if (asset->materialHandles[i])

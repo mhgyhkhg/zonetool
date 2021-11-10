@@ -11,6 +11,12 @@ namespace ZoneTool
 		typedef vec_t vec3_t[3];
 		typedef vec_t vec4_t[4];
 
+		template <std::size_t N>
+		struct VecInternal
+		{
+			float data[N];
+		};
+
 		struct dummy
 		{
 		};
@@ -357,6 +363,16 @@ namespace ZoneTool
 			MaterialTechnique* __ptr64 techniques[412];
 		};
 
+		struct GfxTexture
+		{
+			unsigned char levelCount;
+			unsigned char numElements;
+			int flags;
+			int format;
+			int resourceSize;
+			unsigned char* __ptr64 data;
+		};
+
 		struct GfxImageLoadDef
 		{
 			unsigned char levelCount;
@@ -368,12 +384,12 @@ namespace ZoneTool
 			unsigned char data[1];
 		};
 
-		struct GfxTexture
+		/*struct GfxTexture
 		{
 			GfxImageLoadDef* __ptr64 loadDef;
 			void* __ptr64 shaderView;
 			void* __ptr64 shaderViewAlternate;
-		};
+		};*/
 
 		struct Picmip
 		{
@@ -402,7 +418,7 @@ namespace ZoneTool
 
 		struct GfxImage
 		{
-			char __pad[24]; // 0
+			GfxTexture texture; // 0
 			int imageFormat; // 24
 			MapType mapType; // 28
 			unsigned char sematic; // 29
@@ -423,8 +439,8 @@ namespace ZoneTool
 			unsigned short lowestStreamedWidth; // 64
 			unsigned short lowestStreamedHeight; // 66
 			GfxMip miplevels[3]; // 68
-			unsigned short miplevels3; // 92
-			unsigned short miplevels4; // 94
+			unsigned short miplevels4Width; // 92
+			unsigned short miplevels4Height; // 94
 			const char* __ptr64 name; // 96
 		};
 
@@ -560,7 +576,7 @@ namespace ZoneTool
 			MaterialConstantBufferDef* __ptr64 constantBufferTable; // 912
 			unsigned char constantBufferCount; // 920
 			char __pad4[7]; // 921-928
-			const char* __ptr64* __ptr64 xStringArray; // 928
+			const char** __ptr64 xStringArray; // 928
 		};
 
 		union XAnimDynamicFrames
@@ -908,8 +924,8 @@ namespace ZoneTool
 		{
 			float normal[3];
 			float dist;
-			unsigned type;
-			unsigned pad[3];
+			unsigned char type;
+			//unsigned char pad[3];
 		};
 
 		struct cbrushside_t
@@ -920,12 +936,14 @@ namespace ZoneTool
 			unsigned char edgeCount;
 		};
 
+		typedef unsigned char cbrushedge_t;
+
 		struct cbrush_t
 		{
 			unsigned short numsides;
 			unsigned short glassPieceIndex;
 			cbrushside_t* __ptr64 sides;
-			char* __ptr64 baseAdjacentSide;
+			cbrushedge_t* __ptr64 baseAdjacentSide;
 			short axialMaterialNum[2][3];
 			unsigned char firstAdjacentSideOffsets[2][3];
 			unsigned char edgeCount[2][3];
@@ -995,7 +1013,7 @@ namespace ZoneTool
 			unsigned char* __ptr64 partClassification; // 80
 			DObjAnimMat* __ptr64 baseMat; // 88
 			ReactiveMotionModelPart* __ptr64 reactiveMotionParts; // 96
-			Material* __ptr64* __ptr64 materialHandles; // 104
+			Material** __ptr64 materialHandles; // 104
 			XModelLodInfo lodInfo[6]; // 112
 			char maxLoadedLod; // 496
 			char numLods; // 497
@@ -1009,7 +1027,7 @@ namespace ZoneTool
 			Bounds bounds; // 532
 			int memUsage; // 556
 			unsigned short* __ptr64 __unk; // 560
-			void* __ptr64 __unk2; // 568
+			char __unk2[8]; // 568
 			PhysPreset* __ptr64 physPreset; // 576
 			PhysCollmap* __ptr64 physCollmap; // 584
 			float quantization; // 592
@@ -1214,6 +1232,80 @@ namespace ZoneTool
 			int count;
 		};
 
+		struct ComPrimaryLight
+		{
+			unsigned char type;
+			unsigned char canUseShadowMap;
+			unsigned char exponent;
+			unsigned char unused;
+			float color[3];
+			float dir[3];
+			float up[3];
+			float origin[3];
+			float radius;
+			float cosHalfFovOuter;
+			float cosHalfFovInner;
+			float cosHalfFovExpanded;
+			float rotationLimit;
+			float translationLimit;
+			float cucRotationOffsetRad;
+			float cucRotationSpeedRad;
+			float cucScrollVector[2];
+			float cucScaleVector[2];
+			float cucTransVector[2];
+			const char* __ptr64 defName;
+		};
+
+		struct ComPrimaryLightEnv
+		{
+			unsigned short primaryLightIndices[4];
+			unsigned char numIndices;
+		};
+
+		struct ComWorld
+		{
+			const char* __ptr64 name;
+			int isInUse;
+			unsigned int primaryLightCount;
+			ComPrimaryLight* __ptr64 primaryLights;
+			unsigned int primaryLightEnvCount;
+			ComPrimaryLightEnv* __ptr64 primaryLightEnvs;
+		};
+
+		struct G_GlassPiece
+		{
+			unsigned __int16 damageTaken;
+			unsigned __int16 collapseTime;
+			int lastStateChangeTime;
+			unsigned __int8 impactDir;
+			unsigned __int8 impactPos[2];
+		};
+
+		struct G_GlassName
+		{
+			char* __ptr64 nameStr;
+			scr_string_t name;
+			unsigned __int16 pieceCount;
+			unsigned __int16* __ptr64 pieceIndices;
+		};
+
+		struct G_GlassData
+		{
+			G_GlassPiece* __ptr64 glassPieces;
+			unsigned int pieceCount;
+			unsigned __int16 damageToWeaken;
+			unsigned __int16 damageToDestroy;
+			unsigned int glassNameCount;
+			G_GlassName* __ptr64 glassNames;
+			unsigned __int8 pad[108];
+		};
+
+		struct GlassWorld
+		{
+			const char* __ptr64 name;
+			G_GlassData* __ptr64 g_glassData;
+		};
+
 		struct Glyph
 		{
 			unsigned short letter;
@@ -1323,8 +1415,8 @@ namespace ZoneTool
 			float corridorDims[2];
 			float tangent[3];
 			float distToNextNode;
-			float(* __ptr64 positionCubic)[3];
-			float(* __ptr64 tangentQuadratic)[3];
+			VecInternal<3>* __ptr64 positionCubic;
+			VecInternal<3>* __ptr64 tangentQuadratic;
 		};
 
 		struct SplinePointRecordList
@@ -1350,6 +1442,1227 @@ namespace ZoneTool
 			ClientTriggerBlend clientTriggerBlend;
 			SpawnPointRecordList spawnList;
 			SplineRecordList splineList;
+		};
+
+		struct FxEffectDef;
+		struct FxGlassDef
+		{
+			float halfThickness;
+			float texVecs[2][2];
+			GfxColor color;
+			Material* __ptr64 material;
+			Material* __ptr64 materialShattered;
+			PhysPreset* __ptr64 physPreset;
+			FxEffectDef* __ptr64 pieceBreakEffect;
+			FxEffectDef* __ptr64 shatterEffect;
+			FxEffectDef* __ptr64 shatterSmallEffect;
+			FxEffectDef* __ptr64 crackDecalEffect;
+			snd_alias_list_t* __ptr64 damagedSound;
+			snd_alias_list_t* __ptr64 destroyedSound;
+			snd_alias_list_t* __ptr64 destroyedQuietSound;
+			char __pad[8];
+			int numCrackRings;
+			bool isOpaque;
+		};
+
+		struct FxSpatialFrame
+		{
+			float quat[4];
+			float origin[3];
+		};
+
+		struct $03A8A7B39FA20F64B5AB79125E07CD62
+		{
+			FxSpatialFrame frame;
+			float radius;
+		};
+
+		union FxGlassPiecePlace
+		{
+			$03A8A7B39FA20F64B5AB79125E07CD62 __s0;
+			unsigned int nextFree;
+		};
+
+		struct FxGlassPieceState
+		{
+			float texCoordOrigin[2];
+			unsigned int supportMask;
+			unsigned short initIndex;
+			unsigned short geoDataStart;
+			unsigned short lightingIndex;
+			unsigned char defIndex;
+			unsigned char pad[3];
+			unsigned char vertCount;
+			unsigned char holeDataCount;
+			unsigned char crackDataCount;
+			unsigned char fanDataCount;
+			unsigned short flags;
+			float areaX2;
+		};
+
+		struct FxGlassPieceDynamics
+		{
+			int fallTime;
+			__int64 physObjId;
+			__int64 physJointId;
+			float vel[3];
+			float avel[3];
+		};
+
+		struct FxGlassVertex
+		{
+			short x;
+			short y;
+		};
+
+		struct FxGlassHoleHeader
+		{
+			unsigned short uniqueVertCount;
+			unsigned char touchVert;
+			unsigned char pad[1];
+		};
+
+		struct FxGlassCrackHeader
+		{
+			unsigned short uniqueVertCount;
+			unsigned char beginVertIndex;
+			unsigned char endVertIndex;
+		};
+
+		union FxGlassGeometryData
+		{
+			FxGlassVertex vert;
+			FxGlassHoleHeader hole;
+			FxGlassCrackHeader crack;
+			unsigned char asBytes[4];
+			short anonymous[2];
+		};
+
+		struct FxGlassInitPieceState
+		{
+			FxSpatialFrame frame;
+			float radius;
+			float texCoordOrigin[2];
+			unsigned int supportMask;
+			float areaX2;
+			unsigned short lightingIndex;
+			unsigned char defIndex;
+			unsigned char vertCount;
+			unsigned char fanDataCount;
+			unsigned char pad[1];
+		};
+
+		struct FxGlassSystem
+		{
+			int time;
+			int prevTime;
+			unsigned int defCount;
+			unsigned int pieceLimit;
+			unsigned int pieceWordCount;
+			unsigned int initPieceCount;
+			unsigned int cellCount;
+			unsigned int activePieceCount;
+			unsigned int firstFreePiece;
+			unsigned int geoDataLimit;
+			unsigned int geoDataCount;
+			unsigned int initGeoDataCount;
+			FxGlassDef* __ptr64 defs;
+			FxGlassPiecePlace* __ptr64 piecePlaces;
+			FxGlassPieceState* __ptr64 pieceStates;
+			FxGlassPieceDynamics* __ptr64 pieceDynamics;
+			FxGlassGeometryData* __ptr64 geoData;
+			unsigned int* __ptr64 isInUse;
+			unsigned int* __ptr64 cellBits;
+			unsigned char* __ptr64 visData;
+			VecInternal<3>* __ptr64 linkOrg; //float(* __ptr64 linkOrg)[3];
+			float* __ptr64 halfThickness;
+			unsigned short* __ptr64 lightingHandles;
+			FxGlassInitPieceState* __ptr64 initPieceStates;
+			FxGlassGeometryData* __ptr64 initGeoData;
+			bool needToCompactData;
+			unsigned char initCount;
+			float effectChanceAccum;
+			int lastPieceDeletionTime;
+		};
+
+		struct FxWorld
+		{
+			const char* __ptr64 name;
+			FxGlassSystem glassSys;
+		};
+
+		struct GfxSky
+		{
+			int skySurfCount;
+			int* __ptr64 skyStartSurfs;
+			GfxImage* __ptr64 skyImage;
+			unsigned __int8 skySamplerState;
+		};
+
+		struct GfxWorldDpvsPlanes
+		{
+			int cellCount;
+			cplane_s* __ptr64 planes;
+			unsigned __int16* __ptr64 nodes;
+			unsigned int* __ptr64 sceneEntCellBits;
+		};
+
+		struct GfxCellTreeCount
+		{
+			int aabbTreeCount;
+		};
+
+		struct GfxAabbTree
+		{
+			Bounds bounds;
+			unsigned __int16 childCount;
+			unsigned __int16 surfaceCount;
+			unsigned int startSurfIndex;
+			unsigned __int16 smodelIndexCount;
+			unsigned __int16* __ptr64 smodelIndexes;
+			int childrenOffset;
+		};
+
+		struct GfxCellTree
+		{
+			GfxAabbTree* __ptr64 aabbTree;
+		};
+
+		struct GfxPortal;
+
+		struct GfxPortalWritable
+		{
+			bool isQueued;
+			bool isAncestor;
+			unsigned __int8 recursionDepth;
+			unsigned __int8 hullPointCount;
+			float(* __ptr64 hullPoints)[2];
+			GfxPortal* __ptr64 queuedParent;
+		};
+
+		struct DpvsPlane
+		{
+			float coeffs[4];
+		};
+
+		struct GfxPortal
+		{
+			GfxPortalWritable writable;
+			DpvsPlane plane;
+			float(* __ptr64 vertices)[3];
+			unsigned __int16 cellIndex;
+			unsigned __int16 closeDistance;
+			unsigned __int8 vertexCount;
+			float hullAxis[2][3];
+		};
+
+		struct GfxCell
+		{
+			Bounds bounds;
+			int portalCount;
+			GfxPortal* __ptr64 portals;
+			unsigned __int8 reflectionProbeCount;
+			unsigned __int8* __ptr64 reflectionProbes;
+			unsigned __int8 reflectionProbeReferenceCount;
+			unsigned __int8* __ptr64 reflectionProbeReferences;
+		};
+
+		struct GfxReflectionProbeVolumeData
+		{
+			float volumePlanes[6][4];
+		};
+
+		struct GfxReflectionProbe
+		{
+			float origin[3];
+			GfxReflectionProbeVolumeData* __ptr64 probeVolumes;
+			unsigned int probeVolumeCount;
+		};
+
+		struct GfxReflectionProbeReferenceOrigin
+		{
+			float origin[3];
+		};
+
+		struct GfxReflectionProbeReference
+		{
+			unsigned __int8 index;
+		};
+
+		struct GfxLightmapArray
+		{
+			GfxImage* __ptr64 primary;
+			GfxImage* __ptr64 secondary;
+		};
+
+		struct GfxWorldVertex
+		{
+			float xyz[3];
+			float binormalSign;
+			GfxColor color;
+			float texCoord[2];
+			float lmapCoord[2];
+			PackedUnitVec normal;
+			PackedUnitVec tangent;
+		};
+
+		struct GfxWorldVertexData
+		{
+			GfxWorldVertex* __ptr64 vertices;
+			void* __ptr64 worldVb; //ID3D11Buffer* __ptr64 worldVb;
+		};
+
+		struct GfxWorldVertexLayerData
+		{
+			unsigned __int8* __ptr64 data;
+			void* __ptr64 layerVb; //ID3D11Buffer* __ptr64 layerVb;
+		};
+
+		struct GfxWorldDraw
+		{
+			unsigned int reflectionProbeCount;
+			GfxImage** __ptr64 reflectionProbes;
+			GfxReflectionProbe* __ptr64 reflectionProbeOrigins;
+			GfxTexture* __ptr64 reflectionProbeTextures;
+			unsigned int reflectionProbeReferenceCount;
+			GfxReflectionProbeReferenceOrigin* __ptr64 reflectionProbeReferenceOrigins;
+			GfxReflectionProbeReference* __ptr64 reflectionProbeReferences;
+			int lightmapCount;
+			GfxLightmapArray* __ptr64 lightmaps;
+			GfxTexture* __ptr64 lightmapPrimaryTextures;
+			GfxTexture* __ptr64 lightmapSecondaryTextures;
+			GfxImage* __ptr64 lightmapOverridePrimary;
+			GfxImage* __ptr64 lightmapOverrideSecondary;
+			unsigned int trisType;
+			unsigned int vertexCount;
+			GfxWorldVertexData vd;
+			unsigned int vertexLayerDataSize;
+			GfxWorldVertexLayerData vld;
+			unsigned int indexCount;
+			unsigned __int16* __ptr64 indices;
+			void* __ptr64 indexBuffer; //ID3D11Buffer* __ptr64 indexBuffer;
+		};
+
+		struct GfxLightGridEntry
+		{
+			unsigned int colorsIndex;
+			unsigned __int16 primaryLightEnvIndex;
+			unsigned __int8 unused;
+			unsigned __int8 needsTrace;
+		};
+
+		struct GfxLightGridColors
+		{
+			unsigned __int8 rgb[56][3];
+		};
+
+		struct GfxLightGridColorsHDR
+		{
+			float colorVec3[56][3];
+		};
+
+		struct GfxLightGridTree
+		{
+			unsigned __int8 maxDepth;
+			int nodeCount;
+			int leafCount;
+			int coordMinGridSpace[3];
+			int coordMaxGridSpace[3];
+			int coordHalfSizeGridSpace[3];
+			int defaultColorIndexBitCount;
+			int defaultLightIndexBitCount;
+			unsigned int* __ptr64 p_nodeTable;
+			int leafTableSize;
+			unsigned __int8* __ptr64 p_leafTable;
+		};
+
+		struct GfxLightGrid
+		{
+			bool hasLightRegions;
+			bool useSkyForLowZ;
+			unsigned int lastSunPrimaryLightIndex;
+			unsigned __int16 mins[3];
+			unsigned __int16 maxs[3];
+			unsigned int rowAxis;
+			unsigned int colAxis;
+			unsigned __int16* __ptr64 rowDataStart;
+			unsigned int rawRowDataSize;
+			unsigned __int8* __ptr64 rawRowData;
+			unsigned int entryCount;
+			GfxLightGridEntry* __ptr64 entries;
+			unsigned int colorCount;
+			GfxLightGridColors* __ptr64 colors;
+			unsigned int missingGridColorIndex;
+			int tableVersion;
+			int paletteVersion;
+			char rangeExponent8BitsEncoding;
+			char rangeExponent12BitsEncoding;
+			char rangeExponent16BitsEncoding;
+			unsigned __int8 stageCount;
+			float* __ptr64 stageLightingContrastGain;
+			unsigned int paletteEntryCount;
+			int* __ptr64 paletteEntryAddress;
+			unsigned int paletteBitstreamSize;
+			unsigned __int8* __ptr64 paletteBitstream;
+			GfxLightGridColorsHDR skyLightGridColors;
+			GfxLightGridColorsHDR defaultLightGridColors;
+			GfxLightGridTree tree;
+		};
+
+		struct GfxBrushModelWritable
+		{
+			Bounds bounds;
+		};
+
+		struct GfxBrushModel
+		{
+			GfxBrushModelWritable writable;
+			Bounds bounds;
+			float radius;
+			unsigned int startSurfIndex;
+			unsigned __int16 surfaceCount;
+		};
+
+		struct MaterialMemory
+		{
+			Material* __ptr64 material;
+			int memory;
+		};
+
+		struct sunflare_t
+		{
+			bool hasValidData;
+			Material* __ptr64 spriteMaterial;
+			Material* __ptr64 flareMaterial;
+			float spriteSize;
+			float flareMinSize;
+			float flareMinDot;
+			float flareMaxSize;
+			float flareMaxDot;
+			float flareMaxAlpha;
+			int flareFadeInTime;
+			int flareFadeOutTime;
+			float blindMinDot;
+			float blindMaxDot;
+			float blindMaxDarken;
+			int blindFadeInTime;
+			int blindFadeOutTime;
+			float glareMinDot;
+			float glareMaxDot;
+			float glareMaxLighten;
+			int glareFadeInTime;
+			int glareFadeOutTime;
+			float sunFxPosition[3];
+		};
+
+		struct XModelDrawInfo
+		{
+			unsigned __int8 hasGfxEntIndex;
+			unsigned __int8 lod;
+			unsigned __int16 surfId;
+		};
+
+		struct GfxSceneDynModel
+		{
+			XModelDrawInfo info;
+			unsigned __int16 dynEntId;
+		};
+
+		struct BModelDrawInfo
+		{
+			unsigned __int16 surfId;
+		};
+
+		struct GfxSceneDynBrush
+		{
+			BModelDrawInfo info;
+			unsigned __int16 dynEntId;
+		};
+
+		struct GfxShadowGeometry
+		{
+			unsigned __int16 surfaceCount;
+			unsigned __int16 smodelCount;
+			unsigned int* __ptr64 sortedSurfIndex;
+			unsigned __int16* __ptr64 smodelIndex;
+		};
+
+		struct GfxLightRegionAxis
+		{
+			float dir[3];
+			float midPoint;
+			float halfSize;
+		};
+
+		struct GfxLightRegionHull
+		{
+			float kdopMidPoint[9];
+			float kdopHalfSize[9];
+			unsigned int axisCount;
+			GfxLightRegionAxis* __ptr64 axis;
+		};
+
+		struct GfxLightRegion
+		{
+			unsigned int hullCount;
+			GfxLightRegionHull* __ptr64 hulls;
+		};
+
+		struct GfxStaticModelInst
+		{
+			Bounds bounds;
+			float lightingOrigin[3];
+		};
+
+		struct srfTriangles_t
+		{
+			unsigned int vertexLayerData;
+			unsigned int firstVertex;
+			float maxEdgeLength;
+			unsigned __int16 vertexCount;
+			unsigned __int16 triCount;
+			unsigned int baseIndex;
+		};
+
+		struct GfxSurfaceLightingAndFlagsFields
+		{
+			unsigned __int8 lightmapIndex;
+			unsigned __int8 reflectionProbeIndex;
+			unsigned __int16 primaryLightEnvIndex;
+			unsigned __int8 flags;
+			unsigned __int8 unused[3];
+		};
+
+		union GfxSurfaceLightingAndFlags
+		{
+			GfxSurfaceLightingAndFlagsFields fields;
+			unsigned __int64 packed;
+		};
+
+		struct GfxSurface
+		{
+			srfTriangles_t tris;
+			Material* __ptr64 material;
+			GfxSurfaceLightingAndFlags laf;
+		};
+
+		struct GfxSurfaceBounds
+		{
+			Bounds bounds;
+			unsigned __int8 flags;
+			char __pad[8];
+		};
+
+		struct GfxPackedPlacement
+		{
+			float origin[3];
+			float axis[3][3];
+			float scale;
+		};
+
+		struct GfxStaticModelVertexLighting
+		{
+			unsigned __int8 visibility[4];
+			unsigned __int16 ambientColorFloat16[4];
+			unsigned __int16 highlightColorFloat16[4];
+		};
+
+		struct GfxStaticModelVertexLightingInfo
+		{
+			GfxStaticModelVertexLighting* __ptr64 lightingValues;
+			void* __ptr64 lightingValuesVb; //ID3D11Buffer* __ptr64 lightingValuesVb;
+			int flags;
+			char __pad[4];
+			struct unk
+			{
+				char __pad[24];
+			};
+			unk unk;
+			char __pad2[4];
+			unsigned int numLightingValues;
+		};
+
+		struct GfxStaticModelLightmapInfo
+		{
+			float offset[2];
+			float scale[2];
+			unsigned int lightmapIndex;
+		};
+
+		struct GfxStaticModelDrawInst
+		{
+			GfxPackedPlacement placement;
+			XModel* __ptr64 model;
+			float groundLighting[4];
+			GfxStaticModelVertexLightingInfo vertexLightingInfo;
+			GfxStaticModelLightmapInfo modelLightmapInfo;
+			unsigned __int16 lightingHandle;
+			unsigned __int16 cullDist;
+			unsigned __int16 flags;
+			unsigned __int16 staticModelId;
+			unsigned __int16 primaryLightEnvIndex;
+			unsigned __int8 reflectionProbeIndex;
+			unsigned __int8 firstMtlSkinIndex;
+			unsigned __int8 sunShadowFlags;
+		};
+
+		struct GfxWorldDpvsStatic
+		{
+			unsigned int smodelCount; // 0
+			unsigned int staticSurfaceCount; // 4
+			unsigned int litOpaqueSurfsBegin; // 8
+			unsigned int litOpaqueSurfsEnd; // 12
+			unsigned int litDecalSurfsBegin; // 16
+			unsigned int litDecalSurfsEnd; // 20
+			unsigned int litTransSurfsBegin; // 24
+			unsigned int litTransSurfsEnd; // 28
+			unsigned int shadowCasterSurfsBegin; // 32
+			unsigned int shadowCasterSurfsEnd; // 36
+			unsigned int emissiveSurfsBegin; // 40
+			unsigned int emissiveSurfsEnd; // 44
+			unsigned int smodelVisDataCount; // 48
+			unsigned int surfaceVisDataCount; // 52
+			unsigned int* __ptr64 smodelVisData[3]; // 56
+			unsigned int* __ptr64 surfaceVisData[3]; // 80
+			unsigned int* __ptr64 tessellationCutoffVisData[3]; // 104
+			unsigned int* __ptr64 unknownData[3]; // 128
+			unsigned int* __ptr64 lodData; // 152
+			unsigned int* __ptr64 unknownData2[3]; // 160
+			unsigned int* __ptr64 sortedSurfIndex; // 184
+			GfxStaticModelInst* __ptr64 smodelInsts; // 192
+			GfxSurface* __ptr64 surfaces; // 200
+			GfxSurfaceBounds* __ptr64 surfacesBounds; // 208
+			GfxStaticModelDrawInst* __ptr64 smodelDrawInsts; // 216
+			GfxDrawSurf* __ptr64 surfaceMaterials; // 224
+			unsigned int* __ptr64 surfaceCastsSunShadow; // 232
+			unsigned int sunShadowOptCount; // 240
+			unsigned int sunSurfVisDataCount; // 244
+			unsigned int* __ptr64 surfaceCastsSunShadowOpt; // 248
+			char** __ptr64 constantBuffersLit; // 256
+			char** __ptr64 constantBuffersAmbient; // 264
+			volatile int usageCount; // 272
+		};
+
+		struct GfxWorldDpvsDynamic
+		{
+			unsigned int dynEntClientWordCount[2];
+			unsigned int dynEntClientCount[2];
+			unsigned int* __ptr64 dynEntCellBits[2];
+			unsigned __int8* __ptr64 dynEntVisData[2][3];
+		};
+
+		struct GfxHeroOnlyLight
+		{
+			unsigned __int8 type;
+			unsigned __int8 unused[3];
+			float color[3];
+			float dir[3];
+			float up[3];
+			float origin[3];
+			float radius;
+			float cosHalfFovOuter;
+			float cosHalfFovInner;
+			int exponent;
+		};
+
+		struct GfxWorld
+		{
+			const char* __ptr64 name; // 0
+			const char* __ptr64 baseName; // 8
+			unsigned int bspVersion; // 16
+			int planeCount; // 20
+			int nodeCount; // 24
+			unsigned int surfaceCount; // 28
+			int skyCount; // 32
+			GfxSky* __ptr64 skies; // 40
+			unsigned int lastSunPrimaryLightIndex; // 48
+			unsigned int primaryLightCount; // 52
+			unsigned int primaryLightEnvCount; // 56
+			unsigned int sortKeyLitDecal; // 60
+			unsigned int sortKeyEffectDecal; // 64
+			unsigned int sortKeyTopDecal; // 68
+			unsigned int sortKeyEffectAuto; // 72
+			unsigned int sortKeyDistortion; // 76
+			GfxWorldDpvsPlanes dpvsPlanes; // 80
+			GfxCellTreeCount* __ptr64 aabbTreeCounts; // 112
+			GfxCellTree* __ptr64 aabbTrees; // 120
+			GfxCell* __ptr64 cells; // 128
+			GfxWorldDraw draw; // 136
+			GfxLightGrid lightGrid; // 312
+			int modelCount; // 1880
+			GfxBrushModel* __ptr64 models; // 1888
+			Bounds bounds; // 1896
+			unsigned int checksum; // 1920
+			int materialMemoryCount; // 1924
+			MaterialMemory* __ptr64 materialMemory; // 1928
+			sunflare_t sun; // 1936
+			float outdoorLookupMatrix[4][4]; // 2160
+			GfxImage* __ptr64 outdoorImage; // 2176
+			unsigned int* __ptr64 cellCasterBits; // 2120
+			unsigned int* __ptr64 cellHasSunLitSurfsBits; // 2128
+			GfxSceneDynModel* __ptr64 sceneDynModel; // 2136
+			GfxSceneDynBrush* __ptr64 sceneDynBrush; // 2144
+			unsigned int* __ptr64 primaryLightEntityShadowVis; // 2152
+			unsigned int* __ptr64 primaryLightDynEntShadowVis[2]; // 2160
+			unsigned __int16* __ptr64 nonSunPrimaryLightForModelDynEnt; // 2176
+			GfxShadowGeometry* __ptr64 shadowGeom; // 2184
+			GfxShadowGeometry* __ptr64 shadowGeomOptimized; // 2192
+			GfxLightRegion* __ptr64 lightRegion; // 2200
+			GfxWorldDpvsStatic dpvs; // 2208
+			GfxWorldDpvsDynamic dpvsDyn; // 2488
+			unsigned int mapVtxChecksum; // 2512
+			unsigned int heroOnlyLightCount; // 2520
+			GfxHeroOnlyLight* __ptr64 heroOnlyLights; // 2520
+			unsigned __int8 fogTypesAllowed; // 2528
+			unsigned int unknownCount; // 2588
+			char* __ptr64 unknown; // 2592
+			char** __ptr64 unknownBuffer; // 2600
+		};
+
+		struct ClipMaterial
+		{
+			const char* __ptr64 name;
+			int surfaceFlags;
+			int contents;
+		};
+
+		struct cLeafBrushNodeLeaf_t
+		{
+			unsigned __int16* __ptr64 brushes;
+		};
+
+		struct cLeafBrushNodeChildren_t
+		{
+			float dist;
+			float range;
+			unsigned __int16 childOffset[2];
+		};
+
+		union cLeafBrushNodeData_t
+		{
+			cLeafBrushNodeLeaf_t leaf;
+			cLeafBrushNodeChildren_t children;
+		};
+
+		struct cLeafBrushNode_s
+		{
+			unsigned __int8 axis;
+			__int16 leafBrushCount;
+			int contents;
+			cLeafBrushNodeData_t data;
+		};
+
+		struct ClipInfo
+		{
+			int planeCount;
+			cplane_s* __ptr64 planes;
+			unsigned int numMaterials;
+			ClipMaterial* __ptr64 materials;
+			unsigned int numBrushSides;
+			cbrushside_t* __ptr64 brushsides;
+			unsigned int numBrushEdges;
+			unsigned __int8* __ptr64 brushEdges;
+			unsigned int leafbrushNodesCount;
+			cLeafBrushNode_s* __ptr64 leafbrushNodes;
+			unsigned int numLeafBrushes;
+			unsigned __int16* __ptr64 leafbrushes;
+			unsigned __int16 numBrushes;
+			cbrush_t* __ptr64 brushes;
+			Bounds* __ptr64 brushBounds;
+			int* __ptr64 brushContents;
+		};
+
+		struct cStaticModel_s
+		{
+			XModel* __ptr64 xmodel;
+			float origin[3];
+			float invScaledAxis[3][3];
+			Bounds absBounds;
+		};
+
+		struct cNode_t
+		{
+			cplane_s* __ptr64 plane;
+			__int16 children[2];
+		};
+
+		struct cLeaf_t
+		{
+			unsigned __int16 firstCollAabbIndex;
+			unsigned __int16 collAabbCount;
+			int brushContents;
+			int terrainContents;
+			Bounds bounds;
+			int leafBrushNode;
+		};
+
+		struct CollisionBorder
+		{
+			float distEq[3];
+			float zBase;
+			float zSlope;
+			float start;
+			float length;
+		};
+
+		struct CollisionPartition
+		{
+			unsigned __int8 triCount;
+			unsigned __int8 borderCount;
+			unsigned __int8 firstVertSegment;
+			int firstTri;
+			CollisionBorder* __ptr64 borders;
+		};
+
+		union CollisionAabbTreeIndex
+		{
+			int firstChildIndex;
+			int partitionIndex;
+		};
+
+		struct CollisionAabbTree
+		{
+			float midPoint[3];
+			unsigned __int16 materialIndex;
+			unsigned __int16 childCount;
+			float halfSize[3];
+			CollisionAabbTreeIndex u;
+		};
+
+		struct cmodel_t
+		{
+			Bounds bounds;
+			float radius;
+			ClipInfo* __ptr64 info;
+			cLeaf_t leaf;
+		};
+
+		struct Stage
+		{
+			const char* __ptr64 name;
+			float origin[3];
+			unsigned __int16 triggerIndex;
+			unsigned __int8 sunPrimaryLightIndex;
+		};
+
+		struct SModelAabbNode
+		{
+			Bounds bounds;
+			unsigned __int16 firstChild;
+			unsigned __int16 childCount;
+		};
+
+		enum DynEntityType : __int32
+		{
+			DYNENT_TYPE_INVALID = 0x0,
+			DYNENT_TYPE_CLUTTER = 0x1,
+			DYNENT_TYPE_DESTRUCT = 0x2,
+			DYNENT_TYPE_HINGE = 0x3,
+			DYNENT_TYPE_SCRIPTABLEINST = 0x4,
+			DYNENT_TYPE_SCRIPTABLEPHYSICS = 0x5,
+			DYNENT_TYPE_LINKED = 0x6,
+			DYNENT_TYPE_LINKED_NOSHADOW = 0x7,
+			DYNENT_TYPE_COUNT = 0x8,
+		};
+
+		struct GfxPlacement
+		{
+			float quat[4];
+			float origin[3];
+		};
+
+		struct DynEntityHingeDef
+		{
+			float axisOrigin[3];
+			float axisDir[3];
+			bool isLimited;
+			float angleMin;
+			float angleMax;
+			float momentOfInertia;
+			float friction;
+		};
+
+		struct DynEntityLinkToDef
+		{
+			int anchorIndex;
+			float originOffset[3];
+			float angleOffset[3];
+		};
+
+		struct DynEntityDef
+		{
+			DynEntityType type;
+			GfxPlacement pose;
+			XModel* __ptr64 baseModel; //const XModel* __ptr64 baseModel;
+			unsigned __int16 brushModel;
+			unsigned __int16 physicsBrushModel;
+			unsigned __int16 scriptableIndex;
+			unsigned __int16 health;
+			FxEffectDef* __ptr64 destroyFx; //const FxEffectDef* __ptr64 destroyFx;
+			PhysPreset* __ptr64 physPreset;
+			DynEntityHingeDef* __ptr64 hinge;
+			DynEntityLinkToDef* __ptr64 linkTo;
+			PhysMass mass;
+			int contents;
+		};
+
+		struct DynEntityPose
+		{
+			GfxPlacement pose;
+			float radius;
+		};
+
+		struct Hinge
+		{
+			float angle;
+			float quat[4];
+			float angularVel;
+			float torqueAccum;
+			bool active;
+			float autoDisableTimeLeft;
+			DynEntityHingeDef* __ptr64 def; //const DynEntityHingeDef* __ptr64 def;
+			PhysPreset* __ptr64 physPreset; //const PhysPreset* __ptr64 physPreset;
+			float centerOfMassRelToAxisOriginAtAngleZero[3];
+		};
+
+		struct DynEntityClient
+		{
+			__int64 physObjId;
+			unsigned __int16 flags;
+			unsigned __int16 lightingHandle;
+			unsigned __int16 health;
+			Hinge* __ptr64 hinge;
+			XModel* __ptr64 activeModel; //const XModel* __ptr64 activeModel;
+			int contents;
+		};
+
+		struct DynEntityColl
+		{
+			unsigned __int16 sector;
+			unsigned __int16 nextEntInSector;
+			float linkMins[2];
+			float linkMaxs[2];
+		};
+
+		enum ScriptableEventType : __int32
+		{
+			SCRIPTABLE_EVENT_MODEL = 0x0,
+			SCRIPTABLE_EVENT_FX = 0x1,
+			SCRIPTABLE_EVENT_SOUND = 0x2,
+			SCRIPTABLE_EVENT_ANIMATION = 0x3,
+			SCRIPTABLE_EVENT_EXPLODE = 0x4,
+			SCRIPTABLE_EVENT_HEALTHDRAIN = 0x5,
+			SCRIPTABLE_EVENT_PHYSICSLAUNCH = 0x6,
+			SCRIPTABLE_EVENT_LIGHTSETTINGS = 0x7,
+			SCRIPTABLE_EVENT_SUNLIGHTSETTINGS = 0x8,
+			SCRIPTABLE_EVENT_SHAKE = 0x9,
+			SCRIPTABLE_EVENT_STATECHANGE = 0xA,
+			SCRIPTABLE_EVENT_COUNT = 0xB,
+		};
+
+		struct ScriptableEventStateChangeDef
+		{
+			unsigned __int8 targetIndex;
+			unsigned __int8 delayStreamIndex;
+			unsigned __int16 delayMin;
+			unsigned __int16 delayMax;
+		};
+
+		struct ScriptableEventModelDef
+		{
+			XModel* __ptr64 model;
+		};
+
+		struct ScriptableEventFxDef
+		{
+			FxEffectDef* __ptr64 handle; //const FxEffectDef* __ptr64 handle;
+			scr_string_t tagName;
+			unsigned __int16 loopTime;
+			unsigned __int8 loopTimeStreamIndex;
+			bool tagUseAngles;
+		};
+
+		struct ScriptableEventSoundDef
+		{
+			snd_alias_list_t* __ptr64 alias;
+			bool looping;
+		};
+
+		struct ScriptableEventAnimationDef
+		{
+			const char* __ptr64 animName;
+			bool override;
+			bool stateful;
+			unsigned __int8 animEntryIndex;
+			unsigned __int8 animPlaybackStreamIndex;
+			unsigned __int16 timeOffsetMin;
+			unsigned __int16 timeOffsetMax;
+			unsigned __int16 playbackRateMin;
+			unsigned __int16 playbackRateMax;
+			unsigned __int16 blendTime;
+		};
+
+		struct ScriptableEventExplodeDef
+		{
+			unsigned __int16 forceMin;
+			unsigned __int16 forceMax;
+			unsigned __int16 radius;
+			unsigned __int16 damageMin;
+			unsigned __int16 damageMax;
+			bool aiAvoid;
+		};
+
+		struct ScriptableEventHealthDef
+		{
+			unsigned __int16 amount;
+			unsigned __int16 interval;
+			unsigned __int16 badPlaceRadius;
+			unsigned __int8 streamIndex;
+		};
+
+		struct ScriptableEventPhysicsDef
+		{
+			XModel* __ptr64 model;
+			unsigned __int8 launchDirX;
+			unsigned __int8 launchDirY;
+			unsigned __int8 launchDirZ;
+			unsigned __int16 explForceScale;
+			unsigned __int16 bulletForceScale;
+		};
+
+		struct ScriptableEventLightSettingsDef
+		{
+			unsigned __int8 color[4];
+			unsigned __int8 lightIndexConstIndex;
+			unsigned __int8 transStateStreamIndex;
+			unsigned __int8 useColor;
+			unsigned __int8 useStateTransitionTime;
+			unsigned __int16 intensityScaleMin;
+			unsigned __int16 intensityScaleMax;
+			unsigned __int16 radiusScaleMin;
+			unsigned __int16 radiusScaleMax;
+			const char* __ptr64 noteworthy;
+			unsigned __int16 transitionTimeMin;
+			unsigned __int16 transitionTimeMax;
+		};
+
+		struct ScriptableEventSunlightSettingsDef
+		{
+			unsigned __int8 color[4];
+			unsigned __int8 transStateStreamIndex;
+			unsigned __int8 flags;
+			unsigned __int16 intensityScaleMin;
+			unsigned __int16 intensityScaleMax;
+			unsigned __int16 pitchMin;
+			unsigned __int16 pitchMax;
+			unsigned __int16 headingMin;
+			unsigned __int16 headingMax;
+			unsigned __int16 transitionTimeMin;
+			unsigned __int16 transitionTimeMax;
+		};
+
+		struct ScriptableEventShakeDef
+		{
+			const char* __ptr64 rumbleName;
+			unsigned __int16 duration;
+			unsigned __int16 durationFadeUp;
+			unsigned __int16 durationFadeDown;
+			unsigned __int16 radius;
+			unsigned __int16 exponent;
+			unsigned __int16 scaleEarthquake;
+			unsigned __int8 scalePitch;
+			unsigned __int8 scaleYaw;
+			unsigned __int8 scaleRoll;
+			unsigned __int8 frequencyPitch;
+			unsigned __int8 frequencyYaw;
+			unsigned __int8 frequencyRoll;
+			unsigned __int8 flags;
+		};
+
+		union ScriptableEventDataUnion
+		{
+			ScriptableEventStateChangeDef stateChange;
+			ScriptableEventModelDef setModel;
+			ScriptableEventFxDef playFx;
+			ScriptableEventSoundDef playSound;
+			ScriptableEventAnimationDef playAnim;
+			ScriptableEventExplodeDef doExplosion;
+			ScriptableEventHealthDef healthDrain;
+			ScriptableEventPhysicsDef physicsLaunch;
+			ScriptableEventLightSettingsDef lightSettings;
+			ScriptableEventSunlightSettingsDef sunlightSettings;
+			ScriptableEventShakeDef shake;
+		};
+
+		struct ScriptableEventDef
+		{
+			ScriptableEventType type;
+			ScriptableEventDataUnion data;
+		};
+
+		struct ScriptableStateDef
+		{
+			scr_string_t name;
+			scr_string_t tagName;
+			ScriptableEventDef* __ptr64 onEnterEvents;
+			unsigned __int8 onEnterEventCount;
+			unsigned __int8 damageFlags;
+			unsigned __int8 damageParentTransferRate;
+			unsigned __int8 damageParentReceiveRate;
+			unsigned __int16 maxHealth;
+		};
+
+		struct ScriptablePartDef
+		{
+			ScriptableStateDef* __ptr64 states;
+			scr_string_t name;
+			unsigned __int8 stateCount;
+			unsigned __int8 flags;
+			unsigned __int8 eventStreamTimeRemainIndex;
+			unsigned __int8 eventStreamNextChangeTimeIndex;
+		};
+
+		enum ScriptableNotetrackType : __int32
+		{
+			SCRIPTABLE_NT_FX = 0x0,
+			SCRIPTABLE_NT_SOUND = 0x1,
+			SCRIPTABLE_NT_COUNT = 0x2,
+		};
+
+		struct ScriptableNotetrackFxDef
+		{
+			FxEffectDef* __ptr64 handle; //const FxEffectDef* __ptr64 handle;
+			scr_string_t tagName;
+			bool useAngles;
+		};
+
+		struct ScriptableNotetrackSoundDef
+		{
+			snd_alias_list_t* __ptr64 alias;
+		};
+
+		union ScriptableNotetrackDataUnion
+		{
+			ScriptableNotetrackFxDef playFx;
+			ScriptableNotetrackSoundDef playSound;
+		};
+
+		struct ScriptableNotetrackDef
+		{
+			scr_string_t name;
+			ScriptableNotetrackType type;
+			ScriptableNotetrackDataUnion data;
+		};
+
+		enum ScriptableType : __int32
+		{
+			SCRIPTABLE_TYPE_GENERAL = 0x0,
+			SCRIPTABLE_TYPE_CHARACTER = 0x1,
+			SCRIPTABLE_TYPE_COUNT = 0x2,
+		};
+
+		struct ScriptableDef
+		{
+			const char* __ptr64 name;
+			XModel* __ptr64 baseModel;
+			const char* __ptr64 baseCollisionBrush;
+			const char* __ptr64 destroyedCollisionBrush;
+			ScriptablePartDef* __ptr64 parts;
+			ScriptableNotetrackDef* __ptr64 notetracks;
+			ScriptableType type;
+			unsigned __int8 flags;
+			unsigned __int8 partCount;
+			unsigned __int8 serverInstancePartCount;
+			unsigned __int8 serverControlledPartCount;
+			unsigned __int8 notetrackCount;
+			unsigned __int8 eventStreamSize;
+			unsigned __int8 eventConstantsSize;
+		};
+
+		struct ScriptableInstancePartState
+		{
+			unsigned __int16 curHealth;
+			unsigned __int8 lastExecutedStateIndex;
+			unsigned __int8 stateIndex;
+		};
+
+		struct ScriptableInstance
+		{
+			ScriptableDef* __ptr64 def;
+			unsigned __int8* __ptr64 eventConstantsBuf;
+			float origin[3];
+			float angles[3];
+			scr_string_t targetname;
+			unsigned __int16 preBrushModel;
+			unsigned __int16 postBrushModel;
+			unsigned __int8 flags;
+			XModel* __ptr64 currentModel;
+			ScriptableInstancePartState* __ptr64 partStates;
+			unsigned __int8* __ptr64 eventStreamBuf;
+			unsigned int currentPartBits[8];
+			unsigned int damageOwnerEntHandle;
+			unsigned __int16 updateNextInstance;
+			unsigned __int16 linkedObject;
+		};
+
+		struct ScriptableAnimationEntry
+		{
+			const char* __ptr64 animName;
+			unsigned __int64 runtimeBuf;
+		};
+
+		struct ScriptableMapEnts
+		{
+			unsigned int instanceStateSize;
+			unsigned int instanceCount;
+			unsigned int reservedInstanceCount;
+			ScriptableInstance* __ptr64 instances;
+			unsigned int animEntryCount;
+			ScriptableAnimationEntry* __ptr64 animEntries;
+			unsigned int replicatedInstanceCount;
+		};
+
+		struct clipMap_t // alignas(128)
+		{
+			const char* __ptr64 name;
+			int isInUse;
+			ClipInfo info;
+			ClipInfo* __ptr64 pInfo;
+			unsigned int numStaticModels;
+			cStaticModel_s* __ptr64 staticModelList;
+			unsigned int numNodes;
+			cNode_t* __ptr64 nodes;
+			unsigned int numLeafs;
+			cLeaf_t* __ptr64 leafs;
+			unsigned int vertCount;
+			VecInternal<3>* __ptr64 verts; //float(* __ptr64 verts)[3];
+			int triCount;
+			unsigned __int16* __ptr64 triIndices;
+			unsigned __int8* __ptr64 triEdgeIsWalkable;
+			int borderCount;
+			CollisionBorder* __ptr64 borders;
+			int partitionCount;
+			CollisionPartition* __ptr64 partitions;
+			int aabbTreeCount;
+			CollisionAabbTree* __ptr64 aabbTrees;
+			unsigned int numSubModels;
+			cmodel_t* __ptr64 cmodels;
+			MapEnts* __ptr64 mapEnts;
+			Stage* __ptr64 stages;
+			unsigned __int8 stageCount;
+			MapTriggers stageTrigger;
+			unsigned __int16 smodelNodeCount;
+			SModelAabbNode* __ptr64 smodelNodes;
+			unsigned __int16 dynEntCount[2];
+			DynEntityDef* __ptr64 dynEntDefList[2];
+			DynEntityPose* __ptr64 dynEntPoseList[2];
+			DynEntityClient* __ptr64 dynEntClientList[2];
+			DynEntityColl* __ptr64 dynEntCollList[2];
+			unsigned int dynEntAnchorCount;
+			scr_string_t* __ptr64 dynEntAnchorNames;
+			ScriptableMapEnts scriptableMapEnts;
+			unsigned int checksum;
+			char __pad[108]; // alignment padding
 		};
 
 		struct Font_s
@@ -1917,25 +3230,37 @@ namespace ZoneTool
 			float colors[5][4];
 		};
 
+		struct AddonMapEnts
+		{
+			const char* __ptr64 name;
+			char* __ptr64 entityString;
+			int numEntityChars;
+			MapTriggers trigger;
+			ClipInfo* __ptr64 info;
+			unsigned int numSubModels;
+			cmodel_t* __ptr64 cmodels;
+			GfxBrushModel* __ptr64 models;
+		};
+
 		struct WeaponDef
 		{
 			const char* __ptr64 szOverlayName;
-			XModel* __ptr64* __ptr64 gunXModel;
+			XModel** __ptr64 gunXModel;
 			XModel* __ptr64 handXModel;
 			XModel* __ptr64 camoWorldModel;
 			XModel* __ptr64 camoViewModel;
 			Material* __ptr64 camoWorldModelMaterialOverride;
 			Material* __ptr64 camoViewModelMaterialOverride;
-			Material* __ptr64* __ptr64 camoMaterialTarget;
-			XAnimParts* __ptr64* __ptr64 szXAnimsRightHanded;
-			XAnimParts* __ptr64* __ptr64 szXAnimsLeftHanded;
+			Material** __ptr64 camoMaterialTarget;
+			XAnimParts** __ptr64 szXAnimsRightHanded;
+			XAnimParts** __ptr64 szXAnimsLeftHanded;
 			const char* __ptr64 szModeName;
 			scr_string_t* __ptr64 notetrackSoundMapKeys;
 			scr_string_t* __ptr64 notetrackSoundMapValues;
 			scr_string_t* __ptr64 notetrackRumbleMapKeys;
 			scr_string_t* __ptr64 notetrackRumbleMapValues;
 			scr_string_t* __ptr64 notetrackFXMapKeys;
-			FxEffectDef* __ptr64* __ptr64 notetrackFXMapValues; // const FxEffectDef* __ptr64* __ptr64
+			FxEffectDef** __ptr64 notetrackFXMapValues; // const FxEffectDef**
 			scr_string_t* __ptr64 notetrackFXMapTagValues;
 			int playerAnimType;
 			weapType_t weapType;
@@ -1998,8 +3323,8 @@ namespace ZoneTool
 			snd_alias_list_t* __ptr64 putawaySoundPlayer;
 			snd_alias_list_t* __ptr64 scanSound;
 			snd_alias_list_t* __ptr64 changeVariableZoomSound;
-			snd_alias_list_t* __ptr64* __ptr64 bounceSound;
-			snd_alias_list_t* __ptr64* __ptr64 rollingSound;
+			snd_alias_list_t** __ptr64 bounceSound;
+			snd_alias_list_t** __ptr64 rollingSound;
 			const FxEffectDef* __ptr64 viewShellEjectEffect;
 			const FxEffectDef* __ptr64 worldShellEjectEffect;
 			const FxEffectDef* __ptr64 viewLastShotEjectEffect;
@@ -2031,7 +3356,7 @@ namespace ZoneTool
 			float fStandRotMinSpeed;
 			float fDuckedRotMinSpeed;
 			float fProneRotMinSpeed;
-			XModel* __ptr64* __ptr64 worldModel;
+			XModel** __ptr64 worldModel;
 			XModel* __ptr64 worldClipModel;
 			XModel* __ptr64 rocketModel;
 			XModel* __ptr64 knifeModel;
@@ -2632,9 +3957,9 @@ namespace ZoneTool
 			AttachmentType type;
 			weapType_t weaponType;
 			weapClass_t weapClass;
-			XModel* __ptr64* __ptr64 worldModels;
-			XModel* __ptr64* __ptr64 viewModels;
-			XModel* __ptr64* __ptr64 reticleViewModels;
+			XModel** __ptr64 worldModels;
+			XModel** __ptr64 viewModels;
+			XModel** __ptr64 reticleViewModels;
 			AttAmmoGeneral* __ptr64 ammogeneral;
 			AttSight* __ptr64 sight;
 			AttReload* __ptr64 reload;
@@ -2727,10 +4052,10 @@ namespace ZoneTool
 			WeaponDef* __ptr64 weapDef;
 			const char* __ptr64 szDisplayName;
 			scr_string_t* __ptr64 hideTags;
-			WeaponAttachment* __ptr64* __ptr64 scopes;
-			WeaponAttachment* __ptr64* __ptr64 underBarrels;
-			WeaponAttachment* __ptr64* __ptr64 others;
-			XAnimParts* __ptr64* __ptr64 szXAnims; // XAnimParts* __ptr64 const* __ptr64
+			WeaponAttachment** __ptr64 scopes;
+			WeaponAttachment** __ptr64 underBarrels;
+			WeaponAttachment** __ptr64 others;
+			XAnimParts** __ptr64 szXAnims; // XAnimParts* __ptr64 const*
 			unsigned int numAnimOverrides;
 			AnimOverrideEntry* __ptr64 animOverrides;
 			unsigned int numSoundOverrides;
@@ -2779,6 +4104,14 @@ namespace ZoneTool
 			int compressedLen;
 			int len;
 			const char* __ptr64 buffer;
+		};
+
+		struct LuaFile
+		{
+			const char* __ptr64 name;
+			int len;
+			unsigned char strippingType;
+			const unsigned char* __ptr64 buffer;
 		};
 
 		struct ScriptFile
@@ -2840,6 +4173,7 @@ namespace ZoneTool
 			int structIndex;
 			int indexedArrayIndex;
 			int enumedArrayIndex;
+			int index;
 		};
 
 		struct StructuredDataType
@@ -2959,7 +4293,7 @@ namespace ZoneTool
 			NetConstStringType stringType;
 			NetConstStringSource sourceType;
 			unsigned int entryCount;
-			const char* __ptr64* __ptr64 stringList;
+			const char** __ptr64 stringList;
 		};
 
 		union XAssetHeader
@@ -2983,14 +4317,14 @@ namespace ZoneTool
 			SndCurve* __ptr64 lpfCurve;
 			SndCurve* __ptr64 reverbCurve;
 			LoadedSound* __ptr64 loadSnd;
-			//clipMap_t* __ptr64 clipMap;
-			//ComWorld* __ptr64 comWorld;
-			//GlassWorld* __ptr64 glassWorld;
+			clipMap_t* __ptr64 clipMap;
+			ComWorld* __ptr64 comWorld;
+			GlassWorld* __ptr64 glassWorld;
 			//PathData* __ptr64 pathData;
 			//VehicleTrack* __ptr64 vehicleTrack;
 			MapEnts* __ptr64 mapEnts;
-			//FxWorld* __ptr64 fxWorld;
-			//GfxWorld* __ptr64 gfxWorld;
+			FxWorld* __ptr64 fxWorld;
+			GfxWorld* __ptr64 gfxWorld;
 			GfxLightDef* __ptr64 lightDef;
 			Font_s* __ptr64 font;
 			//MenuList* __ptr64 menuList;
@@ -3010,11 +4344,11 @@ namespace ZoneTool
 			StructuredDataDefSet* __ptr64 structuredDataDefSet;
 			TracerDef* __ptr64 tracerDef;
 			//VehicleDef* __ptr64 vehDef;
-			//AddonMapEnts* __ptr64 addonMapEnts;
+			AddonMapEnts* __ptr64 addonMapEnts;
 			NetConstStrings* __ptr64 netConstStrings;
 			//ReverbPreset* __ptr64 reverbPreset;
-			//LuaFile* __ptr64 luaFile;
-			//ScriptableDef* __ptr64 scriptable;
+			LuaFile* __ptr64 luaFile;
+			ScriptableDef* __ptr64 scriptable;
 			//Colorization* __ptr64 colorization;
 			//ColorizationSet* __ptr64 colorizationSet;
 			//ToneMapping* __ptr64 toneMapping;
@@ -3044,7 +4378,7 @@ namespace ZoneTool
 		struct ScriptStringList
 		{
 			int count;
-			const char* __ptr64* __ptr64 strings;
+			const char** __ptr64 strings;
 		};
 
 		union GfxZoneTableEntry

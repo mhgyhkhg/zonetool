@@ -11,27 +11,20 @@
 #include <ZoneUtils.hpp>
 #include "Functions.hpp"
 #include "Structs.hpp"
+#include "Patches/FFCompression.hpp"
+#include "Patches/AssetHandler.hpp"
 
 #include "IW6/Structs.hpp"
 
-#include "Assets/XAnimParts.hpp"
-#include "Assets/XModel.hpp"
-#include "Assets/Material.hpp"
-
-// oh nee toch niet
-
 namespace ZoneTool
 {
-	namespace IW3
+	namespace IW5
 	{
-		struct XAsset
-		{
-			XAssetType type;
-			XAssetHeader ptr;
-		};
-
 		class Linker : public ILinker
 		{
+		private:
+			static void MessageLoop();
+
 		public:
 			Linker();
 			~Linker();
@@ -51,12 +44,6 @@ namespace ZoneTool
 
 			void dump_zone(const std::string& name) override;
 			void verify_zone(const std::string& name) override;
-
-			static void* Dedicated_RegisterDvarBool(const char* name, bool defaultValue, unsigned int flags,
-			                                        const char* description);
-			static void* DB_AddXAsset(XAsset* asset, int unk);
-			static const char* GetAssetName(XAsset* asset);
-			static void HandleAsset(XAsset* asset);
 		};
 	}
 }
