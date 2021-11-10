@@ -81,10 +81,6 @@ namespace ZoneTool
 		                                      ZoneMemory* mem)
 		{
 			const auto path = "techsets\\" + name + ".techset";
-			if (!FileSystem::FileExists(path))
-			{
-				return nullptr;
-			}
 
 			AssetReader reader(mem);
 			if (!reader.open(path))

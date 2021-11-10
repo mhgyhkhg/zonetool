@@ -18,6 +18,8 @@ namespace ZoneTool
 		static Function<bool(std::int32_t, const char*)> DB_IsXAssetDefault = 0x4CA800;
 		static Function<void(XZoneInfo*, std::uint32_t, std::uint32_t)> DB_LoadXAssets = 0x44F740;
 
+		const char* GetAssetName(std::int32_t type, void* ptr);
+
 		static const char* SL_ConvertToString(std::uint16_t index)
 		{
 			return reinterpret_cast<const char*>(*reinterpret_cast<char**>(0x01C122A4) + 12 * index + 4);

@@ -20,11 +20,6 @@ namespace ZoneTool
 			{
 				path = "techsets\\" + name + ".vertexshader";
 
-				if (!FileSystem::FileExists(path))
-				{
-					return nullptr;
-				}
-
 				AssetReader read(mem);
 				if (!read.open(path))
 				{
@@ -115,11 +110,6 @@ namespace ZoneTool
 
 		void IVertexShader::dump(VertexShader* asset)
 		{
-			if (FileSystem::FileExists("techsets\\"s + asset->name + ".vertexshader"s))
-			{
-				return;
-			}
-
 			AssetDumper write;
 			if (!write.open("techsets\\"s + asset->name + ".vertexshader"s))
 			{

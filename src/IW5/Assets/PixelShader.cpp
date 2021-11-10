@@ -108,11 +108,6 @@ namespace ZoneTool
 
 		void IPixelShader::dump(PixelShader* asset)
 		{
-			if (FileSystem::FileExists("techsets\\"s + asset->name + ".pixelshader"s))
-			{
-				return;
-			}
-
 			AssetDumper write;
 			if (!write.open("techsets\\"s + asset->name + ".pixelshader"s))
 			{

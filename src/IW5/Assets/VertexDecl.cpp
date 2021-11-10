@@ -81,11 +81,6 @@ namespace ZoneTool
 
 		void IVertexDecl::dump(VertexDecl* asset)
 		{
-			if (FileSystem::FileExists("techsets\\"s + asset->name + ".vertexdecl"s))
-			{
-				return;
-			}
-
 			AssetDumper write;
 			if (!write.open("techsets\\"s + asset->name + ".vertexdecl"s))
 			{

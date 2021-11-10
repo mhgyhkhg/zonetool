@@ -230,7 +230,7 @@ namespace ZoneTool
 				memcpy(current_iw5, &asset->head[i], 36);
 				current_iw5->volModIndex = 0x12;
 				memcpy(&current_iw5->pitchMin, &current_iw4->pitchMin, 24);
-				current_iw5->masterPriority = 2;
+				current_iw5->masterPriority = '2';
 				current_iw5->masterPercentage = current_iw4->___u15.masterPercentage;
 				current_iw5->slavePercentage = current_iw4->___u15.slavePercentage;
 				memcpy(&current_iw5->probability, &current_iw4->probability, 36);

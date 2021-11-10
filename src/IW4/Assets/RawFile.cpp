@@ -19,6 +19,8 @@ namespace ZoneTool
 		{
 			if (FileSystem::FileExists(name))
 			{
+				ZONETOOL_INFO("Parsing rawfile \"%s\"...", name.data());
+
 				auto* rawfile = mem->Alloc<RawFile>();
 				rawfile->name = mem->StrDup(name);
 
