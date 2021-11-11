@@ -136,6 +136,14 @@ namespace ZoneTool
 			VMProtectBeginUltra("IW5::DB_LogLoadedAsset");
 #endif
 
+			static std::shared_ptr<ZoneMemory> memory;
+			static std::vector<std::pair<XAssetType, std::string>> referencedAssets;
+
+			if (!memory)
+			{
+				memory = std::make_shared<ZoneMemory>(1024 * 1024 * 128);		// 128mb
+			}
+
 			fastfile = static_cast<std::string>(reinterpret_cast<const char*>(*reinterpret_cast<DWORD*>(0x1294A00)
 				+ 4));
 
@@ -199,11 +207,15 @@ namespace ZoneTool
 				if (type == __type__) \
 				{ \
 					auto asset = reinterpret_cast<__struct__*>(ptr); \
-					__interface__::dump(asset); \
+					__interface__::dump(asset, memory.get()); \
 				}
 					try
 					{
-						
+						DUMPCASE(com_map, IComWorld, ComWorld);
+						DUMPCASE(gfx_map, IGfxWorld, GfxWorld);
+						DUMPCASE(glass_map, IGlassWorld, GlassWorld);
+						DUMPCASE(col_map_mp, IClipMap, clipMap_t);
+
 					}
 					catch (std::exception& ex)
 					{

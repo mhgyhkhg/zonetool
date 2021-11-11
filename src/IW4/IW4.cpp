@@ -755,6 +755,18 @@ char**>(0x00799278)[type]);
 			}
 		}
 
+		std::shared_ptr<IZone> Linker::alloc_zone(const std::string& zone)
+		{
+			ZONETOOL_ERROR("AllocZone called but IW4 is not intended to compile zones!");
+			return nullptr;
+		}
+
+		std::shared_ptr<ZoneBuffer> Linker::alloc_buffer()
+		{
+			ZONETOOL_ERROR("AllocBuffer called but IW4 is not intended to compile zones!");
+			return nullptr;
+		}
+
 		void Linker::load_zone(const std::string& name)
 		{
 			ZONETOOL_INFO("Loading zone \"%s\"...", name.data());

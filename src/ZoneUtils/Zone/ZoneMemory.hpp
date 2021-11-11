@@ -66,7 +66,7 @@ namespace ZoneTool
 
 			// get string length
 			auto len = strlen(name) + 1;
-			auto pointer = this->ManualAlloc<char>(len);
+			char* pointer = this->ManualAlloc<char>(len);
 			memcpy(pointer, name, len);
 
 			// return pointer
@@ -97,6 +97,22 @@ namespace ZoneTool
 		T* ManualAlloc(std::size_t size, std::size_t count = 1)
 		{
 			std::lock_guard<std::recursive_mutex> g(this->mutex_);
+
+			if (count <= 0)
+			{
+				return nullptr;
+			}
+
+			if (mem_pos_ + (size * count) > memory_size_)
+			{
+				char buffer[256];
+				_snprintf_s(buffer, sizeof buffer,
+					"ZoneTool just went out of memory, and has to be closed (%llu/%llu).",
+					mem_pos_ + (size * count), memory_size_);
+
+				MessageBoxA(nullptr, buffer, "ZoneTool: Out of Memory", NULL);
+				std::exit(0);
+			}
 
 			// alloc pointer and zero it out
 			auto pointer = reinterpret_cast<char*>(memory_pool_) + mem_pos_;

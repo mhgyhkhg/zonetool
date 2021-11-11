@@ -576,7 +576,7 @@ namespace ZoneTool
 			MaterialConstantBufferDef* __ptr64 constantBufferTable; // 912
 			unsigned char constantBufferCount; // 920
 			char __pad4[7]; // 921-928
-			const char** __ptr64 xStringArray; // 928
+			const char* __ptr64 * __ptr64 xStringArray; // 928
 		};
 
 		union XAnimDynamicFrames
@@ -1013,7 +1013,7 @@ namespace ZoneTool
 			unsigned char* __ptr64 partClassification; // 80
 			DObjAnimMat* __ptr64 baseMat; // 88
 			ReactiveMotionModelPart* __ptr64 reactiveMotionParts; // 96
-			Material** __ptr64 materialHandles; // 104
+			Material* __ptr64 * __ptr64 materialHandles; // 104
 			XModelLodInfo lodInfo[6]; // 112
 			char maxLoadedLod; // 496
 			char numLods; // 497
@@ -1721,7 +1721,7 @@ namespace ZoneTool
 		struct GfxWorldDraw
 		{
 			unsigned int reflectionProbeCount;
-			GfxImage** __ptr64 reflectionProbes;
+			GfxImage* __ptr64* __ptr64 reflectionProbes;
 			GfxReflectionProbe* __ptr64 reflectionProbeOrigins;
 			GfxTexture* __ptr64 reflectionProbeTextures;
 			unsigned int reflectionProbeReferenceCount;
@@ -2038,8 +2038,8 @@ namespace ZoneTool
 			unsigned int sunShadowOptCount; // 240
 			unsigned int sunSurfVisDataCount; // 244
 			unsigned int* __ptr64 surfaceCastsSunShadowOpt; // 248
-			char** __ptr64 constantBuffersLit; // 256
-			char** __ptr64 constantBuffersAmbient; // 264
+			char* __ptr64 * __ptr64 constantBuffersLit; // 256
+			char* __ptr64 * __ptr64 constantBuffersAmbient; // 264
 			volatile int usageCount; // 272
 		};
 
@@ -2116,7 +2116,7 @@ namespace ZoneTool
 			unsigned __int8 fogTypesAllowed; // 2528
 			unsigned int unknownCount; // 2588
 			char* __ptr64 unknown; // 2592
-			char** __ptr64 unknownBuffer; // 2600
+			char* __ptr64 * __ptr64 unknownBuffer; // 2600
 		};
 
 		struct ClipMaterial
@@ -2161,7 +2161,7 @@ namespace ZoneTool
 			unsigned int numBrushSides;
 			cbrushside_t* __ptr64 brushsides;
 			unsigned int numBrushEdges;
-			unsigned __int8* __ptr64 brushEdges;
+			cbrushedge_t* __ptr64 brushEdges;
 			unsigned int leafbrushNodesCount;
 			cLeafBrushNode_s* __ptr64 leafbrushNodes;
 			unsigned int numLeafBrushes;
@@ -3245,22 +3245,22 @@ namespace ZoneTool
 		struct WeaponDef
 		{
 			const char* __ptr64 szOverlayName;
-			XModel** __ptr64 gunXModel;
+			XModel* __ptr64 * __ptr64 gunXModel;
 			XModel* __ptr64 handXModel;
 			XModel* __ptr64 camoWorldModel;
 			XModel* __ptr64 camoViewModel;
 			Material* __ptr64 camoWorldModelMaterialOverride;
 			Material* __ptr64 camoViewModelMaterialOverride;
-			Material** __ptr64 camoMaterialTarget;
-			XAnimParts** __ptr64 szXAnimsRightHanded;
-			XAnimParts** __ptr64 szXAnimsLeftHanded;
+			Material* __ptr64 * __ptr64 camoMaterialTarget;
+			XAnimParts* __ptr64 * __ptr64 szXAnimsRightHanded;
+			XAnimParts* __ptr64 * __ptr64 szXAnimsLeftHanded;
 			const char* __ptr64 szModeName;
 			scr_string_t* __ptr64 notetrackSoundMapKeys;
 			scr_string_t* __ptr64 notetrackSoundMapValues;
 			scr_string_t* __ptr64 notetrackRumbleMapKeys;
 			scr_string_t* __ptr64 notetrackRumbleMapValues;
 			scr_string_t* __ptr64 notetrackFXMapKeys;
-			FxEffectDef** __ptr64 notetrackFXMapValues; // const FxEffectDef**
+			FxEffectDef* __ptr64 * __ptr64 notetrackFXMapValues; // const FxEffectDef**
 			scr_string_t* __ptr64 notetrackFXMapTagValues;
 			int playerAnimType;
 			weapType_t weapType;
@@ -3323,8 +3323,8 @@ namespace ZoneTool
 			snd_alias_list_t* __ptr64 putawaySoundPlayer;
 			snd_alias_list_t* __ptr64 scanSound;
 			snd_alias_list_t* __ptr64 changeVariableZoomSound;
-			snd_alias_list_t** __ptr64 bounceSound;
-			snd_alias_list_t** __ptr64 rollingSound;
+			snd_alias_list_t* __ptr64 * __ptr64 bounceSound;
+			snd_alias_list_t* __ptr64 * __ptr64 rollingSound;
 			const FxEffectDef* __ptr64 viewShellEjectEffect;
 			const FxEffectDef* __ptr64 worldShellEjectEffect;
 			const FxEffectDef* __ptr64 viewLastShotEjectEffect;
@@ -3356,7 +3356,7 @@ namespace ZoneTool
 			float fStandRotMinSpeed;
 			float fDuckedRotMinSpeed;
 			float fProneRotMinSpeed;
-			XModel** __ptr64 worldModel;
+			XModel* __ptr64 * __ptr64 worldModel;
 			XModel* __ptr64 worldClipModel;
 			XModel* __ptr64 rocketModel;
 			XModel* __ptr64 knifeModel;
@@ -3957,9 +3957,9 @@ namespace ZoneTool
 			AttachmentType type;
 			weapType_t weaponType;
 			weapClass_t weapClass;
-			XModel** __ptr64 worldModels;
-			XModel** __ptr64 viewModels;
-			XModel** __ptr64 reticleViewModels;
+			XModel* __ptr64 * __ptr64 worldModels;
+			XModel* __ptr64 * __ptr64 viewModels;
+			XModel* __ptr64 * __ptr64 reticleViewModels;
 			AttAmmoGeneral* __ptr64 ammogeneral;
 			AttSight* __ptr64 sight;
 			AttReload* __ptr64 reload;
@@ -4052,10 +4052,10 @@ namespace ZoneTool
 			WeaponDef* __ptr64 weapDef;
 			const char* __ptr64 szDisplayName;
 			scr_string_t* __ptr64 hideTags;
-			WeaponAttachment** __ptr64 scopes;
-			WeaponAttachment** __ptr64 underBarrels;
-			WeaponAttachment** __ptr64 others;
-			XAnimParts** __ptr64 szXAnims; // XAnimParts* __ptr64 const*
+			WeaponAttachment* __ptr64 * __ptr64 scopes;
+			WeaponAttachment* __ptr64 * __ptr64 underBarrels;
+			WeaponAttachment* __ptr64 * __ptr64 others;
+			XAnimParts* __ptr64 * __ptr64 szXAnims; // XAnimParts* __ptr64 const*
 			unsigned int numAnimOverrides;
 			AnimOverrideEntry* __ptr64 animOverrides;
 			unsigned int numSoundOverrides;
@@ -4293,7 +4293,7 @@ namespace ZoneTool
 			NetConstStringType stringType;
 			NetConstStringSource sourceType;
 			unsigned int entryCount;
-			const char** __ptr64 stringList;
+			const char* __ptr64 * __ptr64 stringList;
 		};
 
 		union XAssetHeader
@@ -4378,7 +4378,7 @@ namespace ZoneTool
 		struct ScriptStringList
 		{
 			int count;
-			const char** __ptr64 strings;
+			const char* __ptr64 * __ptr64 strings;
 		};
 
 		union GfxZoneTableEntry

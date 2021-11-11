@@ -11,6 +11,8 @@
 
 // include zonetool linkers
 #include <IW3/IW3.hpp>
+#include <IW4/IW4.hpp>
+#include <IW5/IW5.hpp>
 
 #pragma comment(lib, "Dbghelp")
 
@@ -63,202 +65,10 @@ namespace ZoneTool
 			execute_command(args);
 		}
 	}
-
-	void add_assets_using_iterator(const std::string& fastfile, const std::string& type, const std::string& folder,
-	                            const std::string& extension, bool skip_reference, IZone* zone)
-	{
-		if (std::filesystem::is_directory("zonetool\\" + fastfile + "\\" + folder))
-		{
-			for (auto& file : std::filesystem::recursive_directory_iterator(
-				     "zonetool\\" + fastfile + "\\" + folder))
-			{
-				if (is_regular_file(file))
-				{
-					auto filename = file.path().filename().string();
-
-					if (skip_reference && filename[0] == ',')
-					{
-						// skip this file
-						continue;
-					}
-
-					// check if the filename contains the correct extension
-					if (filename.length() > extension.length() &&
-						filename.substr(filename.length() - extension.length()) == extension)
-					{
-						// remove the extension
-						filename = filename.substr(0, filename.length() - extension.length());
-
-						// add asset to disk
-						zone->add_asset_of_type(type, filename);
-					}
-				}
-			}
-		}
-	}
-
-	void parse_csv_file(ILinker* linker, IZone* zone, const std::string& fastfile, const std::string& csv_file)
-	{
-		auto path = "zone_source\\" + csv_file + ".csv";
-		auto* parser = CsvParser_new(path.data(), ",", false);
-
-		if (!parser)
-		{
-			ZONETOOL_ERROR("Could not find csv file \"%s\" to build zone!", csv_file.data());
-			return;
-		}
-
-		auto is_referencing = false;
-		auto* row = CsvParser_getRow(parser);
-		while (row != nullptr)
-		{
-			// parse options
-			if ((strlen(row->fields_[0]) >= 1 && row->fields_[0][0] == '#') || (strlen(row->fields_[0]) >= 2 && row->
-				fields_[0][0] == '/' && row->fields_[0][1] == '/'))
-			{
-				// comment line, go to next line.
-				goto nextRow;
-			}
-			if (!strlen(row->fields_[0]))
-			{
-				// empty line, go to next line.
-				goto nextRow;
-			}
-			if (row->fields_[0] == "require"s)
-			{
-				linker->load_zone(row->fields_[1]);
-			}
-			else if (row->fields_[0] == "include"s)
-			{
-				parse_csv_file(linker, zone, fastfile, row->fields_[1]);
-			}
-			// this allows us to reference assets instead of rewriting them
-			else if (row->fields_[0] == "reference"s)
-			{
-				if (row->numOfFields_ >= 2)
-				{
-					is_referencing = row->fields_[1] == "true"s;
-				}
-			}
-			// add assets that are required for maps
-			else if (row->fields_[0] == "map"s)
-			{
-				zone->add_asset_of_type("techset", "wc_l_hsm_r0c0n0s0");
-			}
-			// this will use a directory iterator to automatically add assets
-			else if (row->fields_[0] == "iterate"s)
-			{
-				try
-				{
-					add_assets_using_iterator(fastfile, "fx", "fx", ".fxe", true, zone);
-					add_assets_using_iterator(fastfile, "xanimparts", "XAnim", ".xae2", true, zone);
-					add_assets_using_iterator(fastfile, "xmodel", "XModel", ".xme6", true, zone);
-				}
-				catch (std::exception& ex)
-				{
-					ZONETOOL_FATAL("A fatal exception occured while building zone \"%s\", exception was: %s\n", fastfile.data(), ex.what());
-				}
-			}
-			// this will force external assets to be used
-			else if (row->fields_[0] == "forceExternalAssets"s)
-			{
-				ZONETOOL_WARNING("forceExternalAssets has been turned on!");
-				FileSystem::ForceExternalAssets(true);
-			}
-			// if entry is not an option, it should be an asset.
-			else
-			{
-				if (row->fields_[0] == "localize"s && row->numOfFields_ >= 3)
-				{
-					ZONETOOL_INFO("Adding localized string to zone...");
-
-					struct LocalizeStruct
-					{
-						const char* value;
-						const char* name;
-					};
-
-					auto loc = new LocalizeStruct;
-					loc->name = _strdup(row->fields_[1]);
-					loc->value = _strdup(row->fields_[2]);
-
-					auto type = zone->get_type_by_name(row->fields_[0]);
-					if (type == -1)
-					{
-						ZONETOOL_ERROR("Could not translate typename %s to an integer!", row->fields_[0]);
-					}
-
-					try
-					{
-						zone->add_asset_of_type_by_pointer(type, loc);
-					}
-					catch (std::exception& ex)
-					{
-						ZONETOOL_FATAL("A fatal exception occured while building zone \"%s\", exception was: %s\n", fastfile.data(), ex.what());
-					}
-				}
-				else
-				{
-					if (row->numOfFields_ >= 2)
-					{
-						if (linker->is_valid_asset_type(row->fields_[0]))
-						{
-							try
-							{
-								zone->add_asset_of_type(
-									row->fields_[0],
-									((is_referencing) ? ","s : ""s) + row->fields_[1]
-								);
-							}
-							catch (std::exception& ex)
-							{
-								ZONETOOL_FATAL("A fatal exception occured while building zone \"%s\", exception was: %s\n", fastfile.data(), ex.what());
-							}
-						}
-					}
-				}
-			}
-
-		nextRow:
-			// destroy row and alloc next one.
-			CsvParser_destroy_row(row);
-			row = CsvParser_getRow(parser);
-		}
-
-		// free csv parser
-		CsvParser_destroy(parser);
-	}
 	
 	void build_zone(ILinker* linker, const std::string& fastfile)
 	{
-		// make sure FS is correct.
-		FileSystem::SetFastFile(fastfile);
-
-		ZONETOOL_INFO("Building fastfile \"%s\" for game \"%s\"", fastfile.data(), linker->version());
-
-		auto zone = linker->alloc_zone(fastfile);
-		if (zone == nullptr)
-		{
-			ZONETOOL_ERROR("An error occured while building fastfile \"%s\": Are you out of memory?", fastfile.data());
-			return;
-		}
-
-		// set default zone target to PC
-		zone->set_target(zone_target::pc);
 		
-		parse_csv_file(linker, zone.get(), fastfile, fastfile);
-
-		// allocate zone buffer
-		auto buffer = linker->alloc_buffer();
-
-		// add branding asset
-		zone->add_asset_of_type("rawfile", fastfile);
-
-		// compile zone
-		zone->build(buffer.get());
-
-		// unload fastfiles
-		// linker->UnloadZones();
 	}
 
 	ILinker* current_linker;
@@ -504,6 +314,8 @@ namespace ZoneTool
 
 		// Register linkers
 		register_linker<IW3::Linker>();
+		register_linker<IW4::Linker>();
+		register_linker<IW5::Linker>();
 
 		// check if a custom linker is present in the current game directory
 		if (is_custom_linker_present())
