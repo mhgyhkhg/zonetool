@@ -310,7 +310,7 @@ namespace ZoneTool
 			const auto iw6_asset = mem->Alloc<IW6::clipMap_t>();
 
 			iw6_asset->name = asset->name;
-			iw6_asset->isInUse = 0;
+			iw6_asset->isInUse = asset->isInUse;
 			GenerateIW6ClipInfo(&iw6_asset->info, &asset->info,mem);
 			iw6_asset->pInfo = &iw6_asset->info;
 			iw6_asset->numStaticModels = asset->numStaticModels;

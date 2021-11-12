@@ -49,7 +49,7 @@ namespace ZoneTool
 	{
 	protected:
 		std::vector<dumpListEntry> list;
-		FILE* __ptr64 fp = nullptr;
+		FILE* fp = nullptr;
 
 		template <typename T>
 		void write_internal(const T& value)
@@ -168,7 +168,7 @@ namespace ZoneTool
 		}
 
 		template <typename T>
-		void dump_asset(T* __ptr64 asset)
+		void dump_asset(T* asset)
 		{
 			if (fp)
 			{
@@ -205,7 +205,7 @@ namespace ZoneTool
 			}
 		}
 
-		template <typename T> void dump_array(T* __ptr64 data, int array_size)
+		template <typename T> void dump_array(T* data, int array_size)
 		{
 			if (fp)
 			{
@@ -245,12 +245,12 @@ namespace ZoneTool
 			}
 		}
 
-		template <typename T> void dump_single(T* __ptr64 asset)
+		template <typename T> void dump_single(T* asset)
 		{
 			return this->dump_array<T>(asset, 1);
 		}
 
-		template <typename T> void dump_raw(T* __ptr64 data, int size)
+		template <typename T> void dump_raw(T* data, int size)
 		{
 			if (fp)
 			{

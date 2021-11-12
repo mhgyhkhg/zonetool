@@ -36,7 +36,7 @@ namespace ZoneTool
 			const auto iw6_asset = mem->Alloc<IW6::ComWorld>();
 
 			iw6_asset->name = asset->name;
-			iw6_asset->isInUse = 0;
+			iw6_asset->isInUse = asset->isInUse;
 			iw6_asset->primaryLightCount = asset->primaryLightCount;
 			iw6_asset->primaryLights = mem->Alloc<IW6::ComPrimaryLight>(iw6_asset->primaryLightCount);
 			for (unsigned int i = 0; i < iw6_asset->primaryLightCount; i++)
@@ -67,7 +67,7 @@ namespace ZoneTool
 			for (unsigned int i = 1; i < iw6_asset->primaryLightEnvCount; i++)
 			{
 				iw6_asset->primaryLightEnvs[i].numIndices = 1;
-				iw6_asset->primaryLightEnvs[i].primaryLightIndices[0] = i;
+				iw6_asset->primaryLightEnvs[i].primaryLightIndices[0] = i + 1;
 			}
 
 			return iw6_asset;
