@@ -37,7 +37,25 @@ namespace ZoneTool
 				auto* current_iw5 = &iw5_asset->head[i];
 
 				memcpy(current_iw4, current_iw5, 36);
-				memcpy(&current_iw4->pitchMin, &current_iw5->pitchMin, 24);
+				memcpy(&current_iw4->pitchMin, &current_iw5->pitchMin, 20);
+
+				IW5::SoundAliasFlags iw5_flags;
+				iw5_flags.intValue = current_iw5->flags;
+
+				IW5::SoundAliasFlags iw4_flags;
+				iw4_flags.intValue = 0;
+
+				iw4_flags.looping = iw5_flags.looping;
+				iw4_flags.isMaster = iw5_flags.isMaster;
+				iw4_flags.isSlave = iw5_flags.isSlave;
+				iw4_flags.fullDryLevel = iw5_flags.fullDryLevel;
+				iw4_flags.noWetLevel = iw5_flags.noWetLevel;
+				iw4_flags.unknown1 = iw5_flags.unknown1;
+				iw4_flags.unknown2 = iw5_flags.unknown2;
+				iw4_flags.type = iw5_flags.type;
+				iw4_flags.channel = iw5_flags.channel;
+
+				current_iw4->flags = iw4_flags.intValue;
 
 				if (current_iw5->masterPercentage == 0.0f || current_iw5->slavePercentage > current_iw5->masterPercentage)
 				{
@@ -229,7 +247,27 @@ namespace ZoneTool
 				
 				memcpy(current_iw5, &asset->head[i], 36);
 				current_iw5->volModIndex = 0x12;
-				memcpy(&current_iw5->pitchMin, &current_iw4->pitchMin, 24);
+				memcpy(&current_iw5->pitchMin, &current_iw4->pitchMin, 20);
+
+				IW4::SoundAliasFlags iw4_flags;
+				iw4_flags.intValue = current_iw4->flags;
+
+				IW5::SoundAliasFlags iw5_flags;
+				iw5_flags.intValue = 0;
+
+				iw5_flags.looping = iw4_flags.looping;
+				iw5_flags.isMaster = iw4_flags.isMaster;
+				iw5_flags.isSlave = iw4_flags.isSlave;
+				iw5_flags.fullDryLevel = iw4_flags.fullDryLevel;
+				iw5_flags.noWetLevel = iw4_flags.noWetLevel;
+				iw5_flags.unknown1 = iw4_flags.unknown1;
+				iw5_flags.unknown2 = iw4_flags.unknown2;
+				iw5_flags.type = iw4_flags.type;
+				iw5_flags.unknown3 = 0;
+				iw5_flags.channel = iw4_flags.channel;
+
+				current_iw5->flags = iw5_flags.intValue;
+
 				current_iw5->masterPriority = '2';
 				current_iw5->masterPercentage = current_iw4->___u15.masterPercentage;
 				current_iw5->slavePercentage = current_iw4->___u15.slavePercentage;

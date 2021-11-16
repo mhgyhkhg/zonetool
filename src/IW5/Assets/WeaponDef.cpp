@@ -1172,6 +1172,16 @@ namespace ZoneTool
 			WEAPON_SUBASSET(viewFlashEffect, fx, FxEffectDef);
 			WEAPON_SUBASSET(worldFlashEffect, fx, FxEffectDef);
 
+#define WEAPON_SOUND_CUSTOM(__field__) \
+		if (data->__field__) \
+		{ \
+			auto ptr = -1; \
+			buf->align(3); \
+			buf->write(&ptr); \
+			buf->write_str(data->__field__->name); \
+			ZoneBuffer::clear_pointer(&dest->__field__); \
+		}
+
 			for (auto i = 0u; i < 48; i++)
 			{
 				if (!data->sounds[i]) continue;
@@ -1191,12 +1201,7 @@ namespace ZoneTool
 
 				for (auto i = 0u; i < 31; i++)
 				{
-					if (destSounds[i])
-					{
-						destSounds[i] = reinterpret_cast<snd_alias_list_t*>(
-							zone->get_asset_pointer(sound, destSounds[i]->name)
-						);
-					}
+					WEAPON_SOUND_CUSTOM(bounceSound[i]);
 				}
 
 				ZoneBuffer::clear_pointer(&dest->bounceSound);
@@ -1209,12 +1214,7 @@ namespace ZoneTool
 
 				for (auto i = 0u; i < 31; i++)
 				{
-					if (destSounds[i])
-					{
-						destSounds[i] = reinterpret_cast<snd_alias_list_t*>(
-							zone->get_asset_pointer(sound, destSounds[i]->name)
-						);
-					}
+					WEAPON_SOUND_CUSTOM(rollingSound[i]);
 				}
 
 				ZoneBuffer::clear_pointer(&dest->rollingSound);
@@ -1283,8 +1283,8 @@ namespace ZoneTool
 			WEAPON_SUBASSET(projExplosionEffect, fx, FxEffectDef);
 			WEAPON_SUBASSET(projDudEffect, fx, FxEffectDef);
 
-			WEAPON_SUBASSET(projExplosionSound, sound, snd_alias_list_t);
-			WEAPON_SUBASSET(projDudSound, sound, snd_alias_list_t);
+			WEAPON_SOUND_CUSTOM(projExplosionSound);
+			WEAPON_SOUND_CUSTOM(projDudSound);
 
 			if (data->parallelBounce)
 			{
@@ -1304,7 +1304,7 @@ namespace ZoneTool
 			WEAPON_SUBASSET(projBeaconEffect, fx, FxEffectDef);
 			WEAPON_SUBASSET(projIgnitionEffect, fx, FxEffectDef);
 
-			WEAPON_SUBASSET(projIgnitionSound, sound, snd_alias_list_t);
+			WEAPON_SOUND_CUSTOM(projIgnitionSound);
 
 			if (data->accuracyGraphName[0])
 			{
@@ -1364,7 +1364,7 @@ namespace ZoneTool
 
 			WEAPON_SUBASSET(tracerType, tracer, TracerDef);
 
-			WEAPON_SUBASSET(turretOverheatSound, sound, snd_alias_list_t);
+			WEAPON_SOUND_CUSTOM(turretOverheatSound);
 			WEAPON_SUBASSET(turretOverheatEffect, fx, FxEffectDef);
 
 			if (data->turretBarrelSpinRumble)
@@ -1372,16 +1372,16 @@ namespace ZoneTool
 				dest->turretBarrelSpinRumble = buf->write_str(data->turretBarrelSpinRumble);
 			}
 
-			WEAPON_SUBASSET(turretBarrelSpinMaxSnd, sound, snd_alias_list_t);
+			WEAPON_SOUND_CUSTOM(turretBarrelSpinMaxSnd);
 
 			for (int i = 0; i < 4; i++)
 			{
-				WEAPON_SUBASSET(turretBarrelSpinUpSnd[i], sound, snd_alias_list_t);
-				WEAPON_SUBASSET(turretBarrelSpinDownSnd[i], sound, snd_alias_list_t);
+				WEAPON_SOUND_CUSTOM(turretBarrelSpinUpSnd[i]);
+				WEAPON_SOUND_CUSTOM(turretBarrelSpinDownSnd[i]);
 			}
 
-			WEAPON_SUBASSET(missileConeSoundAlias, sound, snd_alias_list_t);
-			WEAPON_SUBASSET(missileConeSoundAliasAtBase, sound, snd_alias_list_t);
+			WEAPON_SOUND_CUSTOM(missileConeSoundAlias);
+			WEAPON_SOUND_CUSTOM(missileConeSoundAliasAtBase);
 		}
 		
 		void IWeaponDef::write(IZone* zone, ZoneBuffer* buf)

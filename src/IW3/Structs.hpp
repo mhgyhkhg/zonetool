@@ -1849,6 +1849,21 @@ namespace ZoneTool
 			bool exists;
 			SoundData sound;
 		};
+		union SoundAliasFlags
+		{
+			struct
+			{
+				unsigned int looping : 1;
+				unsigned int isMaster : 1;
+				unsigned int isSlave : 1;
+				unsigned int fullDryLevel : 1;
+				unsigned int noWetLevel : 1;
+				unsigned int unknown1 : 1;
+				unsigned int type : 2;
+				unsigned int channel : 6;
+			};
+			unsigned int intValue;
+		};
 #pragma pack(push, 4)
 		struct SndCurve
 		{
