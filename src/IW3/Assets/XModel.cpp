@@ -7,120 +7,11 @@
 // License: GNU GPL v3.0
 // ========================================================
 #include "stdafx.hpp"
+#include "IW6/Assets/XModel.hpp"
+#include "IW6/Assets/XSurface.hpp"
 
 namespace ZoneTool
 {
-	namespace IW6
-	{
-		void dump_xmodel(XModel* asset, const std::function<const char* (std::uint16_t)>& SL_ConvertToString)
-		{
-			assert(sizeof(IW6::XModel) == 600);
-
-			AssetDumper dump;
-			dump.open("XModel\\"s + asset->name + ".xme6");
-			
-			dump.dump_single(asset);
-			
-			// name
-			dump.dump_string(asset->name);
-
-			// tags
-			dump.dump_array(asset->boneNames, asset->numBones);
-			for (int i = 0; i < asset->numBones; i++)
-			{
-				dump.dump_string(SL_ConvertToString(asset->boneNames[i]));
-			}
-			dump.dump_array(asset->parentList, asset->numBones - asset->numRootBones);
-			dump.dump_array(asset->tagAngles, asset->numBones - asset->numRootBones);
-			dump.dump_array(asset->tagPositions, asset->numBones - asset->numRootBones);
-			dump.dump_array(asset->partClassification, asset->numBones);
-			dump.dump_array(asset->baseMat, asset->numBones);
-			dump.dump_array(asset->reactiveMotionParts, asset->numReactiveMotionParts);
-			dump.dump_array(asset->collSurfs, asset->numCollSurfs);
-			dump.dump_array(asset->boneInfo, asset->numBones);
-			dump.dump_array(asset->__unk, asset->numsurfs);
-			
-			// surfaces
-			dump.dump_array(asset->materialHandles, asset->numsurfs);
-			for (int i = 0; i < asset->numsurfs; i++)
-			{
-				dump.dump_asset(asset->materialHandles[i]);
-			}
-
-			// lods
-			for (int i = 0; i < 6; i++)
-			{
-				dump.dump_asset(asset->lodInfo[i].modelSurfs);
-			}
-
-			// subassets
-			dump.dump_asset(asset->physPreset);
-			dump.dump_asset(asset->physCollmap);
-
-			dump.close();
-		}
-
-		void dump_xsurface(XModelSurfs* asset)
-		{
-			assert(sizeof(XModelSurfs) == 56);
-			assert(sizeof(XSurface) == 232);
-
-			AssetDumper dump;
-			dump.open("XSurface\\"s + asset->name + ".xse");
-
-			dump.dump_single(asset);
-			dump.dump_string(asset->name);
-
-			dump.dump_array(asset->surfs, asset->numsurfs);
-
-			for (auto i = 0; i < asset->numsurfs; i++)
-			{
-				if ((asset->surfs[i].flags & 8) != 0)
-				{
-					dump.dump_array(asset->surfs[i].verts0.packedMotionVerts0, asset->surfs[i].vertCount);
-				}
-				else
-				{
-					dump.dump_array(asset->surfs[i].verts0.packedVerts0, asset->surfs[i].vertCount);
-				}
-
-				dump.dump_array(asset->surfs[i].triIndices, asset->surfs[i].triCount);
-
-				dump.dump_array(asset->surfs[i].rigidVertLists, asset->surfs[i].rigidVertListCount);
-				for (auto vert = 0; vert < asset->surfs[i].rigidVertListCount; vert++)
-				{
-					if (asset->surfs[i].rigidVertLists)
-					{
-						if (asset->surfs[i].rigidVertLists[vert].collisionTree)
-						{
-							dump.dump_single(asset->surfs[i].rigidVertLists[vert].collisionTree);
-
-							if (asset->surfs[i].rigidVertLists[vert].collisionTree->leafs)
-							{
-								dump.dump_array(asset->surfs[i].rigidVertLists[vert].collisionTree->leafs,
-									asset->surfs[i].rigidVertLists[vert].collisionTree->leafCount);
-							}
-							if (asset->surfs[i].rigidVertLists[vert].collisionTree->nodes)
-							{
-								dump.dump_array(asset->surfs[i].rigidVertLists[vert].collisionTree->nodes,
-									asset->surfs[i].rigidVertLists[vert].collisionTree->nodeCount);
-							}
-						}
-					}
-				}
-
-				dump.dump_array(asset->surfs[i].blendVerts, (asset->surfs[i].blendVertCounts[0]
-					+ 7 * asset->surfs[i].blendVertCounts[3]
-					+ 11 * asset->surfs[i].blendVertCounts[5]
-					+ 13 * asset->surfs[i].blendVertCounts[6]
-					+ 3 * (asset->surfs[i].blendVertCounts[1] + 3 * asset->surfs[i].blendVertCounts[4])
-					+ 5 * (asset->surfs[i].blendVertCounts[2] + 3 * asset->surfs[i].blendVertCounts[7])));
-			}
-
-			dump.close();
-		}
-	}
-
 	namespace IW3
 	{
 		IW6::XSurface* GenerateIW6Surface(XSurface* asset, ZoneMemory* mem)
@@ -378,16 +269,18 @@ namespace ZoneTool
 
 		void IXModel::dump(XModel* asset, ZoneMemory* mem)
 		{
+			assert(sizeof(IW6::XModel) == 600);
+			
 			// generate iw6 model
 			auto iw6_model = GenerateIW6Model(asset, mem);
 
 			// dump iw6 model
-			IW6::dump_xmodel(iw6_model, SL_ConvertToString);
+			IW6::IXModel::dump(iw6_model, SL_ConvertToString);
 
 			// dump all xsurfaces
 			for (int i = 0; i < iw6_model->numLods; i++)
 			{
-				IW6::dump_xsurface(iw6_model->lodInfo[i].modelSurfs);
+				IW6::IXSurface::dump(iw6_model->lodInfo[i].modelSurfs);
 			}
 		}
 	}

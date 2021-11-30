@@ -1,41 +1,8 @@
 #include "stdafx.hpp"
+#include "IW6/Assets/GlassWorld.hpp"
 
 namespace ZoneTool
 {
-	namespace IW6
-	{
-		void dump(GlassWorld* asset)
-		{
-			const auto path = asset->name + ".glassmap"s;
-
-			AssetDumper write;
-			if (!write.open(path))
-			{
-				return;
-			}
-
-			write.dump_single(asset);
-			write.dump_string(asset->name);
-
-			write.dump_single(asset->g_glassData);
-
-			if (asset->g_glassData)
-			{
-				write.dump_array(asset->g_glassData->glassPieces, asset->g_glassData->pieceCount);
-				write.dump_array(asset->g_glassData->glassNames, asset->g_glassData->glassNameCount);
-
-				for (unsigned int i = 0; i < asset->g_glassData->glassNameCount; i++)
-				{
-					write.dump_string(asset->g_glassData->glassNames[i].nameStr);
-					write.dump_array(asset->g_glassData->glassNames[i].pieceIndices,
-						asset->g_glassData->glassNames[i].pieceCount);
-				}
-			}
-
-			write.close();
-		}
-	}
-
 	namespace IW5
 	{
 		IW6::GlassWorld* GenerateIW6GlassWorld(GlassWorld* asset, ZoneMemory* mem)
@@ -79,7 +46,7 @@ namespace ZoneTool
 			auto iw6_asset = GenerateIW6GlassWorld(asset, mem);
 
 			// dump iw6 glassworld
-			IW6::dump(iw6_asset);
+			IW6::IGlassWorld::dump(iw6_asset);
 		}
 	}
 }

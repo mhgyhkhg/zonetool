@@ -34,6 +34,7 @@ function ZoneTool:project()
         IW3:link()
         IW4:link()
         IW5:link()
+        IW6:link()
         ZoneUtils:link()
         SteamApi:link()
         

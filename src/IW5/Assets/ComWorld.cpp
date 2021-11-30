@@ -1,33 +1,8 @@
 #include "stdafx.hpp"
+#include "IW6/Assets/ComWorld.hpp"
 
 namespace ZoneTool
 {
-	namespace IW6
-	{
-		void dump(ComWorld* asset)
-		{
-			const auto path = asset->name + ".comworld"s;
-
-			AssetDumper write;
-			if (!write.open(path))
-			{
-				return;
-			}
-
-			write.dump_single(asset);
-			write.dump_string(asset->name);
-
-			write.dump_array(asset->primaryLights, asset->primaryLightCount);
-			for (unsigned int i = 0; i < asset->primaryLightCount; i++)
-			{
-				write.dump_string(asset->primaryLights[i].defName);
-			}
-			write.dump_array(asset->primaryLightEnvs, asset->primaryLightEnvCount);
-
-			write.close();
-		}
-	}
-
 	namespace IW5
 	{
 		IW6::ComWorld* GenerateIW6ComWorld(ComWorld* asset, ZoneMemory* mem)
@@ -81,7 +56,7 @@ namespace ZoneTool
 			auto iw6_asset = GenerateIW6ComWorld(asset, mem);
 
 			// dump iw6 comworld
-			IW6::dump(iw6_asset);
+			IW6::IComWorld::dump(iw6_asset);
 		}
 	}
 }
