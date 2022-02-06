@@ -89,13 +89,16 @@ namespace ZoneTool
 
 		void Linker::load_zone(const std::string& name)
 		{
-			auto* g_zoneInfo = reinterpret_cast<XZoneInfoInternal*>(0x133E2C0);
-			auto g_zoneCount = *reinterpret_cast<unsigned int*>(0x13A8B44);
-			for (unsigned int i = 0; i < g_zoneCount; i++)
+			if (!is_dumping)
 			{
-				if (!strcmp(g_zoneInfo[i].name, name.data()))
+				auto* g_zoneInfo = reinterpret_cast<XZoneInfoInternal*>(0x133E2C0);
+				auto g_zoneCount = *reinterpret_cast<unsigned int*>(0x13A8B44);
+				for (unsigned int i = 0; i < g_zoneCount; i++)
 				{
-					return;
+					if (!strcmp(g_zoneInfo[i].name, name.data()))
+					{
+						return;
+					}
 				}
 			}
 
