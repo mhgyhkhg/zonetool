@@ -209,12 +209,11 @@ namespace ZoneTool
 						for (int i = 0; i < waterData->M * waterData->N; i++)
 						{
 							nlohmann::json complexdata;
-							nlohmann::json curWTerm;
 
 							complexdata["real"] = waterData->H0[i].real;
 							complexdata["imag"] = waterData->H0[i].imag;
 
-							curWTerm[i] = waterData->wTerm[i];
+							wTerm[i] = waterData->wTerm[i];
 
 							waterComplexData[i] = complexdata;
 						}
