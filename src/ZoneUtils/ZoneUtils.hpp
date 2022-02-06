@@ -64,6 +64,13 @@ namespace ZoneTool
 		std::int32_t unloadFlags;
 	};
 
+	struct XZoneInfoInternal
+	{
+		char name[64];
+		int flags;
+		int isBaseMap;
+	};
+
 	struct ScriptStringList
 	{
 		int count;

@@ -85,6 +85,16 @@ namespace ZoneTool
 			return reinterpret_cast<RawFile*>(ptr)->name;
 		}
 
+		Function<bool(std::int32_t, void(__cdecl*)(XAssetHeader, void*), const void*, bool)> DB_EnumXAssets_Internal = 0x44E3C0;
+		void DB_EnumXAssets(const std::int32_t type, const std::function<void(XAssetHeader)>& callback, const bool includeOverride)
+		{
+			DB_EnumXAssets_Internal(type, static_cast<void(*)(XAssetHeader, void*)>([](XAssetHeader header, void* data)
+			{
+				const auto& cb = *static_cast<const std::function<void(XAssetHeader)>*>(data);
+				cb(header);
+			}), &callback, includeOverride);
+		}
+
 		static std::vector<std::pair<std::int32_t, std::string>> CommonAssets;
 
 		void* DB_FindXAssetHeader_Unsafe(const XAssetType type, const std::string& name)
@@ -109,7 +119,7 @@ namespace ZoneTool
 
 		void AssetHandler::StopDump()
 		{
-			ZONETOOL_INFO("Zone \"%s\" dumped.", &fastfile[0]);
+			ZONETOOL_INFO("Zone \"%s\" dumped.", FileSystem::GetFastFile().data());
 
 			referencedAssets.clear();
 			FileSystem::FileClose(csvFile);
@@ -135,12 +145,12 @@ namespace ZoneTool
 
 			if (dump)
 			{
-				FileSystem::SetFastFile(fastfile);
+				//if (fastfile != FileSystem::GetFastFile()) return;
 
 				// open csv file for dumping 
 				if (!csvFile)
 				{
-					csvFile = FileSystem::FileOpen(fastfile + ".csv", "wb");
+					csvFile = FileSystem::FileOpen(FileSystem::GetFastFile() + ".csv", "wb");
 				}
 
 				// dump assets to disk
@@ -151,7 +161,7 @@ namespace ZoneTool
 				}
 
 				// check if we're done loading the fastfile
-				if (type == rawfile && GetAssetName(type, ptr) == fastfile)
+				if (type == rawfile && GetAssetName(type, ptr) == FileSystem::GetFastFile())
 				{
 					for (auto& asset : referencedAssets)
 					{
@@ -169,7 +179,7 @@ namespace ZoneTool
 							continue;
 						}
 
-						ZONETOOL_INFO("Dumping additional asset \"%s\" because it is referenced by %s.", asset_name, fastfile.data());
+						ZONETOOL_INFO("Dumping additional asset \"%s\" because it is referenced by %s.", asset_name, FileSystem::GetFastFile().data());
 
 						DB_LogLoadedAsset(ref_asset, asset.first);
 					}
@@ -216,6 +226,9 @@ namespace ZoneTool
 						DUMPCASE(phys_collmap, IPhysCollmap, PhysCollmap);
 						DUMPCASE(loaded_sound, ILoadedSound, LoadedSound);
 						DUMPCASE(structureddatadef, IStructuredDataDef, StructuredDataDefSet);
+
+						DUMPCASE(menufile, IMenuList, MenuList);
+						DUMPCASE(menu, IMenuDef, menuDef_t); // doesn't do anything
 
 						DUMPCASE(techset, ITechset, MaterialTechniqueSet);
 						DUMPCASE(pixelshader, IPixelShader, PixelShader);

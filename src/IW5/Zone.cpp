@@ -122,6 +122,7 @@ namespace ZoneTool
 				DECLARE_ASSET(weapon, IWeaponDef);
 				DECLARE_ASSET(structureddatadef, IStructuredDataDef);
 				DECLARE_ASSET(menu, IMenuDef);
+				DECLARE_ASSET(menufile, IMenuList);
 				DECLARE_ASSET(scriptfile, IScriptFile);
 				DECLARE_ASSET(lightdef, ILightDef);
 				DECLARE_ASSET(font, IFontDef);

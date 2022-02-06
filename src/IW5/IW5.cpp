@@ -89,6 +89,16 @@ namespace ZoneTool
 
 		void Linker::load_zone(const std::string& name)
 		{
+			auto* g_zoneInfo = reinterpret_cast<XZoneInfoInternal*>(0x133E2C0);
+			auto g_zoneCount = *reinterpret_cast<unsigned int*>(0x13A8B44);
+			for (unsigned int i = 0; i < g_zoneCount; i++)
+			{
+				if (!strcmp(g_zoneInfo[i].name, name.data()))
+				{
+					return;
+				}
+			}
+
 			ZONETOOL_INFO("Loading zone \"%s\"...", name.data());
 
 			XZoneInfo zone = {name.data(), 20, 0};
@@ -101,10 +111,10 @@ namespace ZoneTool
 
 		void Linker::unload_zones()
 		{
-			ZONETOOL_INFO("Unloading zones...");
+			//ZONETOOL_INFO("Unloading zones...");
 
-			static XZoneInfo zone = {0, 0, 70};
-			DB_LoadXAssets(&zone, 1, 1);
+			//static XZoneInfo zone = {0, 0, 70};
+			//DB_LoadXAssets(&zone, 1, 1);
 		}
 
 		bool Linker::is_valid_asset_type(const std::string& type)
@@ -143,6 +153,12 @@ namespace ZoneTool
 
         void Linker::dump_zone(const std::string& name)
 		{
+			// wait for database to be ready
+			while (!WaitForSingleObject(*reinterpret_cast<HANDLE*>(0x1C11BD8), 0) == 0)
+			{
+				Sleep(1);
+			}
+
 			is_dumping_complete = false;
 			is_dumping = true;
 
@@ -151,7 +167,8 @@ namespace ZoneTool
 			load_zone(name);
 			while (!is_dumping_complete)
 			{
-				if (!*reinterpret_cast<bool*>(0x1294A00))
+				// g_loadingZone
+				if (!*reinterpret_cast<bool*>(0x133CBF6))
 				{
 					AssetHandler::StopDump();
 				}

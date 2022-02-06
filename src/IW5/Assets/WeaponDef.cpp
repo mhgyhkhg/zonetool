@@ -485,6 +485,10 @@ namespace ZoneTool
 				{
 					weapon->gunXModel[i] = DB_FindXAssetHeader(xmodel, gunmodel.data(), 1).xmodel;
 				}
+				else
+				{
+					weapon->gunXModel[i] = nullptr;
+				}
 			}
 			for (int i = 0; i < 16; i++)
 			{
@@ -493,6 +497,10 @@ namespace ZoneTool
 				if (!gunmodel.empty())
 				{
 					weapon->worldModel[i] = DB_FindXAssetHeader(xmodel, gunmodel.data(), 1).xmodel;
+				}
+				else
+				{
+					weapon->worldModel[i] = nullptr;
 				}
 			}
 
@@ -529,6 +537,10 @@ namespace ZoneTool
 				if (!sound.empty())
 				{
 					weapon->sounds[i] = DB_FindXAssetHeader(XAssetType::sound, sound.data(), 1).sound;
+				}
+				else
+				{
+					weapon->sounds[i] = nullptr;
 				}
 			}
 
@@ -626,6 +638,10 @@ namespace ZoneTool
 					weapon->scopes[i] = DB_FindXAssetHeader(XAssetType::attachment, attachment.data(), 1).
 						attachment;
 				}
+				else
+				{
+					weapon->scopes[i] = nullptr;
+				}
 			}
 			weapon->underBarrels = mem->Alloc<AttachmentDef*>(3);
 			for (int i = 0; i < 3; i++)
@@ -636,6 +652,10 @@ namespace ZoneTool
 				{
 					weapon->underBarrels[i] = DB_FindXAssetHeader(XAssetType::attachment, attachment.data(), 1).
 						attachment;
+				}
+				else
+				{
+					weapon->underBarrels[i] = nullptr;
 				}
 			}
 			weapon->others = mem->Alloc<AttachmentDef*>(4);

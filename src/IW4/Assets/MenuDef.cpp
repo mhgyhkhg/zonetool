@@ -404,6 +404,7 @@ namespace ZoneTool
 			emit_int("textalign", item->textAlignMode);
 			emit_float("textalignx", item->textAlignX);
 			emit_float("textaligny", item->textAlignY);
+			emit_int("textstyle", item->textStyle);
 			emit_float("textscale", item->textScale);
 			emit_color("glowColor", item->glowColor);
 			emit_bool("decodeEffect", item->decayActive);
