@@ -353,7 +353,7 @@ namespace ZoneTool
 				iw6_asset->dpvs.surfaces[i].tris.baseIndex = asset->dpvs.surfaces[i].tris.baseIndex;
 				iw6_asset->dpvs.surfaces[i].material = reinterpret_cast<IW6::Material * __ptr64>(asset->dpvs.surfaces[i].material);
 				iw6_asset->dpvs.surfaces[i].laf.fields.lightmapIndex = asset->dpvs.surfaces[i].lightmapIndex;
-				iw6_asset->dpvs.surfaces[i].laf.fields.reflectionProbeIndex = 0;
+				iw6_asset->dpvs.surfaces[i].laf.fields.reflectionProbeIndex = asset->dpvs.surfaces[i].reflectionProbeIndex;
 				iw6_asset->dpvs.surfaces[i].laf.fields.primaryLightEnvIndex = asset->dpvs.surfaces[i].primaryLightIndex;
 				iw6_asset->dpvs.surfaces[i].laf.fields.flags = 0; // not sure if correct
 			}
@@ -402,7 +402,7 @@ namespace ZoneTool
 				iw6_asset->dpvs.surfaceMaterials[i].fields.prepass = asset->dpvs.surfaceMaterials[i].fields.prepass;
 				iw6_asset->dpvs.surfaceMaterials[i].fields.useHeroLighting = asset->dpvs.surfaceMaterials[i].fields.useHeroLighting;
 				//iw6_asset->dpvs.surfaceMaterials[i].fields.sceneLightEnvIndex = asset->dpvs.surfaceMaterials[i].fields.sceneLightIndex;
-				iw6_asset->dpvs.surfaceMaterials[i].fields.viewModelRender = 0; // asset->dpvs.surfaceMaterials[i].fields.viewModelRender;
+				iw6_asset->dpvs.surfaceMaterials[i].fields.viewModelRender = asset->dpvs.surfaceMaterials[i].fields.viewModelRender;
 				iw6_asset->dpvs.surfaceMaterials[i].fields.surfType = asset->dpvs.surfaceMaterials[i].fields.surfType;
 				iw6_asset->dpvs.surfaceMaterials[i].fields.primarySortKey = asset->dpvs.surfaceMaterials[i].fields.primarySortKey;
 				iw6_asset->dpvs.surfaceMaterials[i].fields.unused = asset->dpvs.surfaceMaterials[i].fields.unused;

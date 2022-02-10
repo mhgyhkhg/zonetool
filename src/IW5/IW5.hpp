@@ -21,6 +21,10 @@
 #include "Assets/GlassWorld.hpp"
 #include "Assets/ClipMap.hpp"
 
+#include "Assets/XAnimParts.hpp"
+#include "Assets/XModel.hpp"
+#include "Assets/XSurface.hpp"
+
 namespace ZoneTool
 {
 	namespace IW5

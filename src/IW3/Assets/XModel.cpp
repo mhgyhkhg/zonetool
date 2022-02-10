@@ -47,7 +47,7 @@ namespace ZoneTool
 				+ 13 * xsurface->blendVertCounts[6]
 				+ 3 * (xsurface->blendVertCounts[1] + 3 * xsurface->blendVertCounts[4])
 				+ 5 * (xsurface->blendVertCounts[2] + 3 * xsurface->blendVertCounts[7]));
-			xsurface->blendVerts = mem->Alloc<unsigned short>();
+			xsurface->blendVerts = mem->Alloc<unsigned short>(count);
 			for (auto i = 0; i < count; i++)
 			{
 				xsurface->blendVerts[i] = asset->vertInfo.vertsBlend[i];

@@ -216,6 +216,9 @@ namespace ZoneTool
 						DUMPCASE(glass_map, IGlassWorld, GlassWorld);
 						DUMPCASE(col_map_mp, IClipMap, clipMap_t);
 
+						DUMPCASE(xmodel, IXModel, XModel);
+						DUMPCASE(xmodelsurfs, IXSurface, ModelSurface);
+
 					}
 					catch (std::exception& ex)
 					{
