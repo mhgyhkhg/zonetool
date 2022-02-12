@@ -187,8 +187,9 @@ namespace ZoneTool
 			iw4_clipmap->mapEnts->stageNames[0].stageName = mem->StrDup("stage 0");
 			iw4_clipmap->mapEnts->stageNames[0].triggerIndex = 0x400;
 			iw4_clipmap->mapEnts->stageNames[0].sunPrimaryLightIndex = 0x1;
-
-			iw4_clipmap->dynEntCount[0] = asset->dynEntCount[0];
+			
+			// this is wrong
+			/*iw4_clipmap->dynEntCount[0] = asset->dynEntCount[0];
 			iw4_clipmap->dynEntCount[1] = asset->dynEntCount[1];
 
 			iw4_clipmap->dynEntDefList[0] = (IW4::DynEntityDef*)asset->dynEntDefList[0];
@@ -201,7 +202,7 @@ namespace ZoneTool
 			iw4_clipmap->dynEntClientList[1] = (IW4::DynEntityClient*)asset->dynEntClientList[1];
 
 			iw4_clipmap->dynEntCollList[0] = (IW4::DynEntityColl*)asset->dynEntCollList[0];
-			iw4_clipmap->dynEntCollList[1] = (IW4::DynEntityColl*)asset->dynEntCollList[1];
+			iw4_clipmap->dynEntCollList[1] = (IW4::DynEntityColl*)asset->dynEntCollList[1];*/
 			
 			iw4_clipmap->checksum = asset->checksum;
 

@@ -257,6 +257,7 @@ namespace ZoneTool
 					value.clear();
 				}
 			}
+			FileSystem::FileClose(fp);
 			return true;
 		}
 		return false;
