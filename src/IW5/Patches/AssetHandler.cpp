@@ -450,7 +450,21 @@ namespace ZoneTool
 			}
 		}
 
-		/*__declspec(naked) void hkRestoreSoundData()
+		void Alloc_MssSound()
+		{
+			MssSound* sound = *reinterpret_cast<MssSound**>(0x01294E30);
+
+			// Z_MallocInternal
+			char* data_ptr = reinterpret_cast<char* (*)(int)>(0x0052B460)(
+				sound->info.data_len);
+
+			char* temp_ptr = sound->data;
+
+			sound->data = data_ptr;
+			memcpy(sound->data, temp_ptr, sound->info.data_len);
+		}
+
+		__declspec(naked) void MssSound_ReadXFile_stub()
 		{
 			static std::uintptr_t origFunc = 0x00436F20;
 			__asm
@@ -458,10 +472,14 @@ namespace ZoneTool
 				// call original function first
 				call origFunc;
 
-				// mov data into the loadedSound struct
+				pushad;
+				call Alloc_MssSound;
+				popad;
 
+				push 0x00438556;
+				retn;
 			}
-		}*/
+		}
 
 		AssetHandler::AssetHandler()
 		{
@@ -555,7 +573,7 @@ namespace ZoneTool
 			Memory(0x00438556).nop(12);
 
 			// Prevent sound data from getting lost
-			// Memory(0x00438551).Jump(hkRestoreSoundData);
+			Memory(0x00438551).jump(MssSound_ReadXFile_stub);
 
 #ifdef USE_VMPROTECT
 			VMProtectEnd();
