@@ -12,6 +12,8 @@
 #include "Functions.hpp"
 #include "Structs.hpp"
 
+#define IW3_TECHSET_FOLDER
+
 #include "Assets/XModel.hpp"
 #include "Assets/Material.hpp"
 #include "Assets/XAnimParts.hpp"
@@ -25,6 +27,7 @@
 #include "Assets/ClipMap.hpp"
 #include "Assets/MapEnts.hpp"
 #include "Assets/ComWorld.hpp"
+#include "Assets/RawFile.hpp"
 
 // oh nee toch niet
 

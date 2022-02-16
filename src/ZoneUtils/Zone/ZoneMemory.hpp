@@ -99,6 +99,22 @@ namespace ZoneTool
 		{
 			std::lock_guard<std::recursive_mutex> g(this->mutex_);
 
+			if (count <= 0)
+			{
+				return nullptr;
+			}
+
+			if (mem_pos_ + (size * count) > memory_size_)
+			{
+				char buffer[256];
+				_snprintf_s(buffer, sizeof buffer,
+					"ZoneTool just went out of memory, and has to be closed (%llu/%llu).",
+					mem_pos_ + (size * count), memory_size_);
+
+				MessageBoxA(nullptr, buffer, "ZoneTool: Out of Memory", NULL);
+				std::exit(-1);
+			}
+
 			// alloc pointer and zero it out
 			auto pointer = reinterpret_cast<char*>(memory_pool_) + mem_pos_;
 			memset(pointer, 0, size * count);

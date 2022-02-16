@@ -220,6 +220,7 @@ namespace ZoneTool
 						}
 						if (!strncmp(&data[i], "ENDMARKER", 9))
 						{
+							FileSystem::FileClose(fp);
 							return true;
 						}
 					}
@@ -227,6 +228,7 @@ namespace ZoneTool
 				if (failed)
 				{
 					ZONETOOL_WARNING("\"%s\" parse failed at line: %zu index: %zu", file.data(), line, i);
+					FileSystem::FileClose(fp);
 					return false;
 				}
 				if (!name.empty() && !value.empty())

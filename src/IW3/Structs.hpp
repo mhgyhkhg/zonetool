@@ -1463,6 +1463,28 @@ namespace ZoneTool
 			int contents;
 		};
 
+		struct DynEntityPose
+		{
+			GfxPlacement pose;
+			float radius;
+		};
+
+		struct DynEntityClient
+		{
+			int physObjId;
+			unsigned __int16 flags;
+			unsigned __int16 lightingHandle;
+			int health;
+		};
+
+		struct DynEntityColl
+		{
+			unsigned __int16 sector;
+			unsigned __int16 nextEntInSector;
+			float linkMins[2];
+			float linkMaxs[2];
+		};
+
 		struct clipMap_t
 		{
 			const char* name;
@@ -1511,12 +1533,9 @@ namespace ZoneTool
 			cmodel_t box_model;
 			unsigned __int16 dynEntCount[2];
 			DynEntityDef* dynEntDefList[2];
-			/*DynEntityPose*/
-			void* dynEntPoseList[2];
-			/*DynEntityClient*/
-			void* dynEntClientList[2];
-			/*DynEntityColl*/
-			void* dynEntCollList[2];
+			DynEntityPose* dynEntPoseList[2];
+			DynEntityClient* dynEntClientList[2];
+			DynEntityColl* dynEntCollList[2];
 			unsigned int checksum;
 		};
 
@@ -1924,6 +1943,7 @@ namespace ZoneTool
 			ComWorld* com_map;
 			// 			GameWorldSp *gameWorldSp;
 			GameWorldMp* gameWorldMp;
+			GameWorldMp* game_map_mp;
 			MapEnts* mapEnts;
 			MapEnts* map_ents;
 			GfxWorld* gfxWorld;
