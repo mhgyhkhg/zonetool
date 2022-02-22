@@ -14,3 +14,6 @@
 	path = dep/zstd
 	url = https://github.com/facebook/zstd.git
 	branch = master
+[submodule "dep/DirectXTex"]
+	path = dep/DirectXTex
+	url = https://github.com/microsoft/DirectXTex

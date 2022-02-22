@@ -35,4 +35,6 @@ function IW5:project()
 
         zstd:include()
         zlib:include()
+
+        directxtex:link()
 end

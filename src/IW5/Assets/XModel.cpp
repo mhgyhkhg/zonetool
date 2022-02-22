@@ -88,7 +88,8 @@ namespace ZoneTool
 			iw6_asset->collSurfs = mem->Alloc<IW6::XModelCollSurf_s>(asset->numColSurfs);
 			for (auto i = 0; i < asset->numColSurfs; i++)
 			{
-				iw6_asset->collSurfs[i].bounds.compute(asset->colSurf[i].mins, asset->colSurf[i].maxs);
+				//iw6_asset->collSurfs[i].bounds.compute(asset->colSurf[i].mins, asset->colSurf[i].maxs);
+				memcpy(&iw6_asset->collSurfs[i].bounds, &asset->colSurf[i].mins, sizeof(float[2][3]));
 
 				iw6_asset->collSurfs[i].boneIdx = asset->colSurf[i].boneIdx;
 				iw6_asset->collSurfs[i].contents = asset->colSurf[i].contents;
@@ -100,7 +101,8 @@ namespace ZoneTool
 			iw6_asset->boneInfo = mem->Alloc<IW6::XBoneInfo>(asset->numBones);
 			for (int i = 0; i < asset->numBones; i++)
 			{
-				iw6_asset->boneInfo[i].bounds.compute(asset->boneInfo[i].bounds[0], asset->boneInfo[i].bounds[1]);
+				//iw6_asset->boneInfo[i].bounds.compute(asset->boneInfo[i].bounds[0], asset->boneInfo[i].bounds[1]);
+				memcpy(&iw6_asset->boneInfo[i].bounds, &asset->boneInfo[i].bounds, sizeof(float[2][3]));
 				iw6_asset->boneInfo[i].radiusSquared = asset->boneInfo[i].radiusSquared;
 			}
 

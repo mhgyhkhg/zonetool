@@ -85,6 +85,7 @@ workspace "zonetool"
 	-- Dependencies
 	-- ========================
 
+	include "dep/directxtex.lua"
 	include "dep/libtomcrypt.lua"
 	include "dep/libtommath.lua"
 	include "dep/steam_api.lua"
@@ -94,6 +95,7 @@ workspace "zonetool"
 	-- All projects here should be in the thirdparty folder
 	group "thirdparty"
 
+	directxtex:project()
 	libtommath:project()
 	libtomcrypt:project()
 	zlib:project()

@@ -895,9 +895,9 @@ namespace ZoneTool
 		// Material stuff
 		struct GfxImageLoadDef // actually a IDirect3DTexture* but this is easier
 		{
-			char mipLevels;
-			char flags;
-			short dimensions[3];
+			unsigned char levelCount;
+			unsigned char pad[3];
+			int flags;
 			int format; // usually the compression Magic
 			int dataSize; // set to zero to load from IWD
 			char* texture; // texture
@@ -913,8 +913,8 @@ namespace ZoneTool
 			int cardMemory;
 			int dataLen1;
 			int dataLen2;
-			short height;
 			short width;
+			short height;
 			short depth;
 			bool loaded;
 			char pad;
@@ -1057,17 +1057,19 @@ namespace ZoneTool
 		union GfxColor
 		{
 			unsigned int packed;
-			char array[4];
+			unsigned char array[4];
 		};
 
 		union PackedTexCoords
 		{
 			unsigned int packed;
+			unsigned char array[4];
 		};
 
 		union PackedUnitVec
 		{
 			unsigned int packed;
+			unsigned char array[4];
 		};
 
 		struct GfxPackedVertex
@@ -2827,7 +2829,10 @@ namespace ZoneTool
 			float offset[3];
 		};
 
-		typedef char GfxTexture[0x04];
+		struct GfxTexture
+		{
+			GfxImageLoadDef* loadDef;
+		};
 
 		struct GfxLightmapArray
 		{

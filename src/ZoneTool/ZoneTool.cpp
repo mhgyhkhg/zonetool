@@ -126,7 +126,7 @@ namespace ZoneTool
 		if (!IsDebuggerPresent())
 		{
 			// Catch exceptions
-			AddVectoredExceptionHandler(TRUE, exception_handler);
+			//AddVectoredExceptionHandler(TRUE, exception_handler);
 		}
 		
 		// Allocate console

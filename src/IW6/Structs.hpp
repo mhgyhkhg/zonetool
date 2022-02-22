@@ -396,12 +396,11 @@ namespace ZoneTool
 			unsigned char platform[2];
 		};
 
-		struct GfxMip
+		struct GfxImageStreamData
 		{
-			unsigned short width;
-			unsigned short height;
-
-			unsigned char padding[4];
+			unsigned __int16 width;
+			unsigned __int16 height;
+			unsigned int pixelSize;
 		};
 
 		enum MapType : std::uint8_t
@@ -432,15 +431,11 @@ namespace ZoneTool
 			unsigned short height; // 46
 			unsigned short depth; // 48
 			unsigned short numElements; // 50
-			unsigned char unknown; // 52
+			unsigned char unknown; // 52 // arraysize?
 			unsigned char streamed; // 53
 			char __pad3[2]; // 54
 			unsigned char* __ptr64 pixelData; // 56
-			unsigned short lowestStreamedWidth; // 64
-			unsigned short lowestStreamedHeight; // 66
-			GfxMip miplevels[3]; // 68
-			unsigned short miplevels4Width; // 92
-			unsigned short miplevels4Height; // 94
+			GfxImageStreamData streams[4]; // 64
 			const char* __ptr64 name; // 96
 		};
 

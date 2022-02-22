@@ -25,12 +25,18 @@ namespace ZoneTool
 				info->materials[i].contents = dinfo->materials[i].contentFlags;
 			}
 
+			std::unordered_map<cbrushside_t*, IW6::cbrushside_t*> mapped_brush_sides;
+
 			info->numBrushSides = dinfo->numCBrushSides;
 			info->brushsides = mem->Alloc<IW6::cbrushside_t>(info->numBrushSides);
 			for (unsigned int i = 0; i < info->numBrushSides; i++)
 			{
+				mapped_brush_sides[&dinfo->cBrushSides[i]] = &info->brushsides[i];
+
 				info->brushsides[i].plane = reinterpret_cast<IW6::cplane_s* __ptr64>(dinfo->cBrushSides[i].plane);
 				info->brushsides[i].materialNum = dinfo->cBrushSides[i].materialNum;
+				//info->brushsides[i].firstAdjacentSideOffset = 0;
+				//info->brushsides[i].edgeCount = 0;
 			}
 
 			info->numBrushEdges = dinfo->numCBrushEdges;
@@ -65,29 +71,32 @@ namespace ZoneTool
 				info->brushes[i].numsides = dinfo->brushes[i].numsides;
 				info->brushes[i].glassPieceIndex = dinfo->brushes[i].glassPieceIndex;
 
-				info->brushes[i].sides = reinterpret_cast<IW6::cbrushside_t* __ptr64>(dinfo->brushes[i].sides);
+				if (dinfo->brushes[i].sides)
+					info->brushes[i].sides = mapped_brush_sides.find(dinfo->brushes[i].sides)->second;
+
+				//info->brushes[i].sides = reinterpret_cast<IW6::cbrushside_t* __ptr64>(dinfo->brushes[i].sides);
 				info->brushes[i].baseAdjacentSide = reinterpret_cast<IW6::cbrushedge_t* __ptr64>(dinfo->brushes[i].edge);
 
 				info->brushes[i].axialMaterialNum[0][0] = dinfo->brushes[i].axialMaterialNum[0][0];
 				info->brushes[i].axialMaterialNum[0][1] = dinfo->brushes[i].axialMaterialNum[0][1];
 				info->brushes[i].axialMaterialNum[0][2] = dinfo->brushes[i].axialMaterialNum[0][2];
-				info->brushes[i].axialMaterialNum[1][0] = dinfo->brushes[i].axialMaterialNum[0][0];
-				info->brushes[i].axialMaterialNum[1][1] = dinfo->brushes[i].axialMaterialNum[0][1];
-				info->brushes[i].axialMaterialNum[1][2] = dinfo->brushes[i].axialMaterialNum[0][2];
+				info->brushes[i].axialMaterialNum[1][0] = dinfo->brushes[i].axialMaterialNum[1][0];
+				info->brushes[i].axialMaterialNum[1][1] = dinfo->brushes[i].axialMaterialNum[1][1];
+				info->brushes[i].axialMaterialNum[1][2] = dinfo->brushes[i].axialMaterialNum[1][2];
 
 				info->brushes[i].firstAdjacentSideOffsets[0][0] = dinfo->brushes[i].firstAdjacentSideOffsets[0][0];
 				info->brushes[i].firstAdjacentSideOffsets[0][1] = dinfo->brushes[i].firstAdjacentSideOffsets[0][1];
 				info->brushes[i].firstAdjacentSideOffsets[0][2] = dinfo->brushes[i].firstAdjacentSideOffsets[0][2];
-				info->brushes[i].firstAdjacentSideOffsets[1][0] = dinfo->brushes[i].firstAdjacentSideOffsets[0][0];
-				info->brushes[i].firstAdjacentSideOffsets[1][1] = dinfo->brushes[i].firstAdjacentSideOffsets[0][1];
-				info->brushes[i].firstAdjacentSideOffsets[1][2] = dinfo->brushes[i].firstAdjacentSideOffsets[0][2];
+				info->brushes[i].firstAdjacentSideOffsets[1][0] = dinfo->brushes[i].firstAdjacentSideOffsets[1][0];
+				info->brushes[i].firstAdjacentSideOffsets[1][1] = dinfo->brushes[i].firstAdjacentSideOffsets[1][1];
+				info->brushes[i].firstAdjacentSideOffsets[1][2] = dinfo->brushes[i].firstAdjacentSideOffsets[1][2];
 
 				info->brushes[i].edgeCount[0][0] = dinfo->brushes[i].edgeCount[0][0];
 				info->brushes[i].edgeCount[0][1] = dinfo->brushes[i].edgeCount[0][1];
 				info->brushes[i].edgeCount[0][2] = dinfo->brushes[i].edgeCount[0][2];
-				info->brushes[i].edgeCount[1][0] = dinfo->brushes[i].edgeCount[0][0];
-				info->brushes[i].edgeCount[1][1] = dinfo->brushes[i].edgeCount[0][1];
-				info->brushes[i].edgeCount[1][2] = dinfo->brushes[i].edgeCount[0][2];
+				info->brushes[i].edgeCount[1][0] = dinfo->brushes[i].edgeCount[1][0];
+				info->brushes[i].edgeCount[1][1] = dinfo->brushes[i].edgeCount[1][1];
+				info->brushes[i].edgeCount[1][2] = dinfo->brushes[i].edgeCount[1][2];
 			}
 
 			info->brushBounds = reinterpret_cast<IW6::Bounds* __ptr64>(dinfo->brushBounds);
@@ -101,7 +110,7 @@ namespace ZoneTool
 
 			iw6_asset->name = asset->name;
 			iw6_asset->isInUse = asset->isInUse;
-			GenerateIW6ClipInfo(&iw6_asset->info, &asset->info,mem);
+			GenerateIW6ClipInfo(&iw6_asset->info, &asset->info, mem);
 			iw6_asset->pInfo = &iw6_asset->info;
 			iw6_asset->numStaticModels = asset->numStaticModels;
 			iw6_asset->staticModelList = mem->Alloc<IW6::cStaticModel_s>(iw6_asset->numStaticModels);
@@ -146,6 +155,10 @@ namespace ZoneTool
 				memcpy(&iw6_asset->cmodels[i].bounds, &asset->cModels[i].bounds, sizeof(IW5::Bounds) + sizeof(float));
 				GenerateIW6ClipInfo(iw6_asset->cmodels[i].info, asset->cModels[i].info, mem);
 				memcpy(&iw6_asset->cmodels[i].leaf, &asset->cModels[i].leaf, sizeof(IW5::cLeaf_t));
+				//if (!iw6_asset->cmodels[i].info)
+				{
+					iw6_asset->cmodels[i].info = iw6_asset->pInfo;
+				}
 			}
 			iw6_asset->mapEnts = mem->Alloc<IW6::MapEnts>();
 			iw6_asset->mapEnts->name = asset->mapEnts->name; // NEED TO DO MAPENTs LATER

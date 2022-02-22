@@ -43,21 +43,26 @@ namespace ZoneTool
 
 			iw6_asset->dpvsPlanes.nodes = reinterpret_cast<unsigned __int16* __ptr64>(asset->dpvsPlanes.nodes);
 
-			iw6_asset->dpvsPlanes.sceneEntCellBits = reinterpret_cast<unsigned int* __ptr64>(asset->dpvsPlanes.sceneEntCellBits);
+			iw6_asset->dpvsPlanes.sceneEntCellBits = mem->Alloc<unsigned int>(asset->dpvsPlanes.cellCount << 9);
+			for (int i = 0; i < asset->dpvsPlanes.cellCount << 9; i++)
+			{
+				iw6_asset->dpvsPlanes.sceneEntCellBits[i] = asset->dpvsPlanes.sceneEntCellBits[i];
+			}
 
 			iw6_asset->aabbTreeCounts = reinterpret_cast<IW6::GfxCellTreeCount * __ptr64>(asset->aabbTreeCounts);
 			iw6_asset->aabbTrees = mem->Alloc<IW6::GfxCellTree>(iw6_asset->dpvsPlanes.cellCount);
 			for (int i = 0; i < iw6_asset->dpvsPlanes.cellCount; i++)
 			{
-				iw6_asset->aabbTrees[i].aabbTree = mem->Alloc<IW6::GfxAabbTree>(asset->aabbTreeCounts[i].aabbTreeCount);
-				for (int j = 0; j < asset->aabbTreeCounts[i].aabbTreeCount; j++)
+				iw6_asset->aabbTrees[i].aabbTree = mem->Alloc<IW6::GfxAabbTree>(iw6_asset->aabbTreeCounts[i].aabbTreeCount);
+				for (int j = 0; j < iw6_asset->aabbTreeCounts[i].aabbTreeCount; j++)
 				{
-					iw6_asset->aabbTrees[i].aabbTree[j].bounds.compute(asset->aabbTree[i].aabbtree[j].mins, asset->aabbTree[i].aabbtree[j].maxs);
+					//iw6_asset->aabbTrees[i].aabbTree[j].bounds.compute(asset->aabbTree[i].aabbtree[j].mins, asset->aabbTree[i].aabbtree[j].maxs);
+					memcpy(&iw6_asset->aabbTrees[i].aabbTree[j].bounds, &asset->aabbTree[i].aabbtree[j].mins, sizeof(float[2][3]));
 					iw6_asset->aabbTrees[i].aabbTree[j].childCount = asset->aabbTree[i].aabbtree[j].childCount;
 					iw6_asset->aabbTrees[i].aabbTree[j].surfaceCount = asset->aabbTree[i].aabbtree[j].surfaceCount;
 					iw6_asset->aabbTrees[i].aabbTree[j].startSurfIndex = asset->aabbTree[i].aabbtree[j].startSurfIndex;
 					iw6_asset->aabbTrees[i].aabbTree[j].smodelIndexCount = asset->aabbTree[i].aabbtree[j].smodelIndexCount;
-					iw6_asset->aabbTrees[i].aabbTree[j].smodelIndexes = asset->aabbTree[i].aabbtree[j].smodelIndexes;
+					iw6_asset->aabbTrees[i].aabbTree[j].smodelIndexes = reinterpret_cast<unsigned short* __ptr64>(asset->aabbTree[i].aabbtree[j].smodelIndexes);
 					iw6_asset->aabbTrees[i].aabbTree[j].childrenOffset = asset->aabbTree[i].aabbtree[j].childrenOffset;
 				}
 			}
@@ -65,7 +70,8 @@ namespace ZoneTool
 			iw6_asset->cells = mem->Alloc<IW6::GfxCell>(iw6_asset->dpvsPlanes.cellCount);
 			for (int i = 0; i < iw6_asset->dpvsPlanes.cellCount; i++)
 			{
-				iw6_asset->cells[i].bounds.compute(asset->cells[i].mins, asset->cells[i].maxs);
+				//iw6_asset->cells[i].bounds.compute(asset->cells[i].mins, asset->cells[i].maxs);
+				memcpy(&iw6_asset->cells[i].bounds, &asset->cells[i].mins, sizeof(float[2][3]));
 				iw6_asset->cells[i].portalCount = asset->cells[i].portalCount;
 
 				auto add_portal = [](IW6::GfxPortal* iw6_portal, IW5::GfxPortal* iw5_portal)
@@ -107,7 +113,7 @@ namespace ZoneTool
 				memcpy(&iw6_asset->draw.reflectionProbeOrigins[i].origin, &asset->worldDraw.reflectionProbes[i].offset, sizeof(float[3]));
 				iw6_asset->draw.reflectionProbeOrigins[i].probeVolumeCount = 0;
 				iw6_asset->draw.reflectionProbeOrigins[i].probeVolumes = nullptr;
-				//memset(&iw6_asset->draw.reflectionProbeTextures[i], 0, sizeof(IW6::GfxTexture)); // not sure how to handle this
+				memcpy(&iw6_asset->draw.reflectionProbeTextures[i], &asset->worldDraw.reflectionProbeTextures[i].loadDef, 20);
 			}
 			iw6_asset->draw.reflectionProbeReferenceCount = asset->worldDraw.reflectionProbeReferenceCount;
 			iw6_asset->draw.reflectionProbeReferenceOrigins = reinterpret_cast<IW6::GfxReflectionProbeReferenceOrigin * __ptr64>(
@@ -122,12 +128,12 @@ namespace ZoneTool
 			for (int i = 0; i < iw6_asset->draw.lightmapCount; i++)
 			{
 				iw6_asset->draw.lightmaps[i].primary = mem->Alloc<IW6::GfxImage>();
-				iw6_asset->draw.lightmaps[i].primary->name = asset->worldDraw.lightmaps[i].secondary->name;
+				iw6_asset->draw.lightmaps[i].primary->name = asset->worldDraw.lightmaps[i].primary->name;
 				iw6_asset->draw.lightmaps[i].secondary = mem->Alloc<IW6::GfxImage>();
 				iw6_asset->draw.lightmaps[i].secondary->name = asset->worldDraw.lightmaps[i].secondary->name;
 
-				//memset(&iw6_asset->draw.lightmapPrimaryTextures[i].levelCount, 0, sizeof(IW6::GfxTexture)); // not sure how to handle this
-				//memset(&iw6_asset->draw.lightmapSecondaryTextures[i].levelCount, 0, sizeof(IW6::GfxTexture)); // not sure how to handle this
+				memcpy(&iw6_asset->draw.lightmapPrimaryTextures[i], &asset->worldDraw.lightmapPrimaryTextures[i].loadDef, 20);
+				memcpy(&iw6_asset->draw.lightmapSecondaryTextures[i], &asset->worldDraw.lightmapSecondaryTextures[i].loadDef, 20);
 			}
 			iw6_asset->draw.lightmapOverridePrimary = nullptr; // skipped
 			iw6_asset->draw.lightmapOverrideSecondary = nullptr; // skipped
@@ -183,16 +189,19 @@ namespace ZoneTool
 			iw6_asset->models = mem->Alloc<IW6::GfxBrushModel>(iw6_asset->modelCount);
 			for (int i = 0; i < iw6_asset->modelCount; i++)
 			{
-				iw6_asset->models[i].writable.bounds.compute(asset->models[i].writable.mins, asset->models[i].writable.maxs);
-				// lost data: asset->models[i].writable.mip1radiusSq
-				memcpy(&iw6_asset->models[i].bounds, &asset->models[i].bounds, sizeof(float[2][3]));
-				auto* half_size = iw6_asset->models[i].bounds.halfSize;
-				iw6_asset->models[i].radius = std::sqrt(std::pow(half_size[0], 2) + std::pow(half_size[1], 2) + std::pow(half_size[2], 2));
+				//iw6_asset->models[i].writable.bounds.compute(asset->models[i].writable.mins, asset->models[i].writable.maxs);
+				memcpy(&iw6_asset->models[i].writable.bounds, &asset->models[i].writable.mins, sizeof(float[2][3]));
+				//# // lost data: asset->models[i].writable.mip1radiusSq
+				//# memcpy(&iw6_asset->models[i].bounds, &asset->models[i].bounds, sizeof(float[2][3]));
+				//# auto* half_size = iw6_asset->models[i].bounds.halfSize;
+				//# iw6_asset->models[i].radius = std::sqrt(std::pow(half_size[0], 2) + std::pow(half_size[1], 2) + std::pow(half_size[2], 2));
+				iw6_asset->models[i].radius = asset->models[i].writable.mip1radiusSq;
 				iw6_asset->models[i].surfaceCount = asset->models[i].surfaceCount;
 				iw6_asset->models[i].startSurfIndex = asset->models[i].startSurfIndex;
 			}
 
-			iw6_asset->bounds.compute(asset->mins, asset->maxs);
+			//iw6_asset->bounds.compute(asset->mins, asset->maxs);
+			memcpy(&iw6_asset->bounds, &asset->mins, sizeof(float[2][3]));
 
 			iw6_asset->checksum = asset->checksum;
 
@@ -213,17 +222,15 @@ namespace ZoneTool
 			iw6_asset->outdoorImage = mem->Alloc<IW6::GfxImage>();
 			iw6_asset->outdoorImage->name = asset->outdoorImage->name;
 
-			iw6_asset->cellCasterBits = mem->Alloc<unsigned int>(asset->dpvsPlanes.cellCount * ((asset->dpvsPlanes.cellCount + 31) >> 5));
+			iw6_asset->cellCasterBits = mem->Alloc<unsigned int>(iw6_asset->dpvsPlanes.cellCount * ((iw6_asset->dpvsPlanes.cellCount + 31) >> 5));
 			for (int i = 0; i < asset->dpvsPlanes.cellCount * ((asset->dpvsPlanes.cellCount + 31) >> 5); i++)
 			{
 				iw6_asset->cellCasterBits[i] = asset->cellCasterBits[0][i];
 			}
-			//iw6_asset->cellCasterBits = reinterpret_cast<unsigned int* __ptr64>(asset->cellCasterBits[0]);
-
 			iw6_asset->cellHasSunLitSurfsBits = mem->Alloc<unsigned int>((iw6_asset->dpvsPlanes.cellCount + 31) >> 5);
 
-			iw6_asset->sceneDynModel = mem->Alloc<IW6::GfxSceneDynModel>(iw6_asset->dpvsDyn.dynEntClientCount[0]);
-			for (unsigned int i = 0; i < iw6_asset->dpvsDyn.dynEntClientCount[0]; i++)
+			iw6_asset->sceneDynModel = mem->Alloc<IW6::GfxSceneDynModel>(asset->dpvsDyn.dynEntClientCount[0]);
+			for (unsigned int i = 0; i < asset->dpvsDyn.dynEntClientCount[0]; i++)
 			{
 				iw6_asset->sceneDynModel[i].info.hasGfxEntIndex = 0;
 				iw6_asset->sceneDynModel[i].info.lod = asset->sceneDynModel[i].info.lod;
@@ -233,18 +240,42 @@ namespace ZoneTool
 
 			iw6_asset->sceneDynBrush = reinterpret_cast<IW6::GfxSceneDynBrush * __ptr64>(asset->sceneDynBrush);
 
-			iw6_asset->primaryLightEntityShadowVis = reinterpret_cast<unsigned int* __ptr64>(asset->primaryLightEntityShadowVis);
+			//iw6_asset->primaryLightEntityShadowVis = reinterpret_cast<unsigned int* __ptr64>(asset->primaryLightEntityShadowVis);
+			iw6_asset->primaryLightEntityShadowVis = mem->Alloc<unsigned int>(((iw6_asset->primaryLightCount - iw6_asset->lastSunPrimaryLightIndex - 1) << 13));
+			for (unsigned int i = 0; i < ((iw6_asset->primaryLightCount - iw6_asset->lastSunPrimaryLightIndex - 1) << 13); i++)
+			{
+				iw6_asset->primaryLightEntityShadowVis[i] = asset->primaryLightEntityShadowVis[i];
+			}
+
 			iw6_asset->primaryLightDynEntShadowVis[0] = reinterpret_cast<unsigned int* __ptr64>(asset->primaryLightDynEntShadowVis[0]);
 			iw6_asset->primaryLightDynEntShadowVis[1] = reinterpret_cast<unsigned int* __ptr64>(asset->primaryLightDynEntShadowVis[1]);
-			iw6_asset->nonSunPrimaryLightForModelDynEnt = reinterpret_cast<unsigned __int16* __ptr64>(asset->primaryLightForModelDynEnt);
+
+			//iw6_asset->nonSunPrimaryLightForModelDynEnt = reinterpret_cast<unsigned __int16* __ptr64>(asset->primaryLightForModelDynEnt);
+			iw6_asset->nonSunPrimaryLightForModelDynEnt = mem->Alloc<unsigned short>(asset->dpvsDyn.dynEntClientCount[0]);
+			for (unsigned int i = 0; i < asset->dpvsDyn.dynEntClientCount[0]; i++)
+			{
+				iw6_asset->nonSunPrimaryLightForModelDynEnt[i] = asset->primaryLightForModelDynEnt[i];
+			}
 
 			if (asset->shadowGeom)
 			{
-				iw6_asset->shadowGeom = mem->Alloc<IW6::GfxShadowGeometry>();
-				iw6_asset->shadowGeom->surfaceCount = asset->shadowGeom->surfaceCount;
-				iw6_asset->shadowGeom->smodelCount = asset->shadowGeom->smodelCount;
-				iw6_asset->shadowGeom->sortedSurfIndex = reinterpret_cast<unsigned int* __ptr64>(asset->shadowGeom->sortedSurfIndex);
-				iw6_asset->shadowGeom->smodelIndex = reinterpret_cast<unsigned __int16* __ptr64>(asset->shadowGeom->smodelIndex);
+				iw6_asset->shadowGeom = mem->Alloc<IW6::GfxShadowGeometry>(iw6_asset->primaryLightCount);
+				for (unsigned int i = 0; i < iw6_asset->primaryLightCount; i++)
+				{
+					iw6_asset->shadowGeom[i].surfaceCount = asset->shadowGeom[i].surfaceCount;
+					iw6_asset->shadowGeom[i].smodelCount = asset->shadowGeom[i].smodelCount;
+
+					iw6_asset->shadowGeom[i].sortedSurfIndex = mem->Alloc<unsigned int>(iw6_asset->shadowGeom[i].surfaceCount);
+					for (unsigned int j = 0; j < iw6_asset->shadowGeom[i].surfaceCount; j++)
+					{
+						iw6_asset->shadowGeom[i].sortedSurfIndex[j] = asset->shadowGeom[i].sortedSurfIndex[j];
+					}
+					iw6_asset->shadowGeom[i].smodelIndex = mem->Alloc<unsigned short>(iw6_asset->shadowGeom[i].smodelCount);
+					for (unsigned int j = 0; j < iw6_asset->shadowGeom[i].smodelCount; j++)
+					{
+						iw6_asset->shadowGeom[i].smodelIndex[j] = asset->shadowGeom[i].smodelIndex[j];
+					}
+				}
 			}
 			iw6_asset->shadowGeomOptimized = nullptr;
 
@@ -263,7 +294,7 @@ namespace ZoneTool
 			}
 
 			iw6_asset->dpvs.smodelCount = asset->dpvs.smodelCount;
-			iw6_asset->dpvs.staticSurfaceCount = asset->dpvs.staticSurfaceCount;
+			iw6_asset->dpvs.staticSurfaceCount = asset->dpvs.staticSurfaceCount * 4;
 			iw6_asset->dpvs.litOpaqueSurfsBegin = asset->dpvs.litOpaqueSurfsBegin;
 			iw6_asset->dpvs.litOpaqueSurfsEnd = asset->dpvs.litOpaqueSurfsEnd;
 			iw6_asset->dpvs.litDecalSurfsBegin = asset->dpvs.litOpaqueSurfsEnd; // skip ( doesn't exists )
@@ -338,7 +369,8 @@ namespace ZoneTool
 			iw6_asset->dpvs.smodelInsts = mem->Alloc<IW6::GfxStaticModelInst>(iw6_asset->dpvs.smodelCount);
 			for (unsigned int i = 0; i < iw6_asset->dpvs.smodelCount; i++)
 			{
-				iw6_asset->dpvs.smodelInsts[i].bounds.compute(asset->dpvs.smodelInsts[i].mins, asset->dpvs.smodelInsts[i].maxs);
+				//iw6_asset->dpvs.smodelInsts[i].bounds.compute(asset->dpvs.smodelInsts[i].mins, asset->dpvs.smodelInsts[i].maxs);
+				memcpy(&iw6_asset->dpvs.smodelInsts[i].bounds, &asset->dpvs.smodelInsts[i].mins, sizeof(float[2][3]));
 				memcpy(&iw6_asset->dpvs.smodelInsts[i].lightingOrigin, &asset->dpvs.smodelInsts[i].lightingOrigin, sizeof(float[3]));
 			}
 
@@ -355,14 +387,14 @@ namespace ZoneTool
 				iw6_asset->dpvs.surfaces[i].laf.fields.lightmapIndex = asset->dpvs.surfaces[i].lightmapIndex;
 				iw6_asset->dpvs.surfaces[i].laf.fields.reflectionProbeIndex = asset->dpvs.surfaces[i].reflectionProbeIndex;
 				iw6_asset->dpvs.surfaces[i].laf.fields.primaryLightEnvIndex = asset->dpvs.surfaces[i].primaryLightIndex;
-				iw6_asset->dpvs.surfaces[i].laf.fields.flags = 0; // not sure if correct
+				iw6_asset->dpvs.surfaces[i].laf.fields.flags = 1; // not sure if correct
 			}
 
 			iw6_asset->dpvs.surfacesBounds = mem->Alloc<IW6::GfxSurfaceBounds>(iw6_asset->surfaceCount);
 			for (unsigned int i = 0; i < iw6_asset->surfaceCount; i++)
 			{
 				memcpy(&iw6_asset->dpvs.surfacesBounds[i].bounds, &asset->dpvs.surfacesBounds[i].bounds, sizeof(IW5::Bounds));
-				iw6_asset->dpvs.surfacesBounds[i].flags = 91; // idk
+				iw6_asset->dpvs.surfacesBounds[i].flags = 93; // idk
 			}
 
 			iw6_asset->dpvs.smodelDrawInsts = mem->Alloc<IW6::GfxStaticModelDrawInst>(iw6_asset->dpvs.smodelCount);
@@ -384,7 +416,7 @@ namespace ZoneTool
 				iw6_asset->dpvs.smodelDrawInsts[i].cullDist = asset->dpvs.smodelDrawInsts[i].cullDist;
 				iw6_asset->dpvs.smodelDrawInsts[i].flags = asset->dpvs.smodelDrawInsts[i].flags;
 				iw6_asset->dpvs.smodelDrawInsts[i].staticModelId = 0;
-				//iw6_asset->dpvs.smodelDrawInsts[i].primaryLightEnvIndex = asset->dpvs.smodelDrawInsts[i].primaryLightIndex;
+				iw6_asset->dpvs.smodelDrawInsts[i].primaryLightEnvIndex = asset->dpvs.smodelDrawInsts[i].primaryLightIndex;
 				iw6_asset->dpvs.smodelDrawInsts[i].reflectionProbeIndex = asset->dpvs.smodelDrawInsts[i].reflectionProbeIndex;
 				iw6_asset->dpvs.smodelDrawInsts[i].firstMtlSkinIndex = 0;
 				iw6_asset->dpvs.smodelDrawInsts[i].sunShadowFlags = 0;
@@ -401,7 +433,7 @@ namespace ZoneTool
 				iw6_asset->dpvs.surfaceMaterials[i].fields.tessellation = 0;
 				iw6_asset->dpvs.surfaceMaterials[i].fields.prepass = asset->dpvs.surfaceMaterials[i].fields.prepass;
 				iw6_asset->dpvs.surfaceMaterials[i].fields.useHeroLighting = asset->dpvs.surfaceMaterials[i].fields.useHeroLighting;
-				//iw6_asset->dpvs.surfaceMaterials[i].fields.sceneLightEnvIndex = asset->dpvs.surfaceMaterials[i].fields.sceneLightIndex;
+				iw6_asset->dpvs.surfaceMaterials[i].fields.sceneLightEnvIndex = asset->dpvs.surfaceMaterials[i].fields.sceneLightIndex;
 				iw6_asset->dpvs.surfaceMaterials[i].fields.viewModelRender = asset->dpvs.surfaceMaterials[i].fields.viewModelRender;
 				iw6_asset->dpvs.surfaceMaterials[i].fields.surfType = asset->dpvs.surfaceMaterials[i].fields.surfType;
 				iw6_asset->dpvs.surfaceMaterials[i].fields.primarySortKey = asset->dpvs.surfaceMaterials[i].fields.primarySortKey;
@@ -412,8 +444,8 @@ namespace ZoneTool
 			iw6_asset->dpvs.sunShadowOptCount = 0;
 			iw6_asset->dpvs.sunSurfVisDataCount = 0;
 			iw6_asset->dpvs.surfaceCastsSunShadowOpt = nullptr;
-			iw6_asset->dpvs.constantBuffersLit = nullptr;
-			iw6_asset->dpvs.constantBuffersAmbient = nullptr;
+			iw6_asset->dpvs.constantBuffersLit = mem->Alloc<char * __ptr64>(iw6_asset->dpvs.smodelCount); //nullptr;
+			iw6_asset->dpvs.constantBuffersAmbient = mem->Alloc<char* __ptr64>(iw6_asset->dpvs.smodelCount); //nullptr;
 			iw6_asset->dpvs.usageCount = asset->dpvs.usageCount;
 
 			memcpy(&iw6_asset->dpvsDyn.dynEntClientWordCount, &asset->dpvsDyn.dynEntClientWordCount, sizeof(float[2]) * 2);

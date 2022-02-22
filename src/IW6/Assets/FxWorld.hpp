@@ -4,10 +4,10 @@ namespace ZoneTool
 {
 	namespace IW6
 	{
-		class IComWorld
+		class IFxWorld
 		{
 		public:
-			static void dump(ComWorld* asset);
+			static void dump(FxWorld* asset);
 		};
 	}
 }

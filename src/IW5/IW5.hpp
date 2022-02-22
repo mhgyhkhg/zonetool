@@ -16,10 +16,12 @@
 
 #include "IW6/Structs.hpp"
 
+#include "Assets/ClipMap.hpp"
 #include "Assets/ComWorld.hpp"
+#include "Assets/FxWorld.hpp"
+#include "Assets/GfxImage.hpp"
 #include "Assets/GfxWorld.hpp"
 #include "Assets/GlassWorld.hpp"
-#include "Assets/ClipMap.hpp"
 
 #include "Assets/XAnimParts.hpp"
 #include "Assets/XModel.hpp"

@@ -36,6 +36,12 @@ namespace ZoneTool
 				memset(&iw6_asset->primaryLights[i].cucScaleVector, 0, sizeof(float[2]));
 				memset(&iw6_asset->primaryLights[i].cucTransVector, 0, sizeof(float[2]));
 				iw6_asset->primaryLights[i].defName = asset->primaryLights[i].defName;
+
+				if (iw6_asset->primaryLights[i].type == 2)
+				{
+					iw6_asset->primaryLights[i].cucScaleVector[0] = 1.0f;
+					iw6_asset->primaryLights[i].cucScaleVector[1] = 1.0f;
+				}
 			}
 			iw6_asset->primaryLightEnvCount = iw6_asset->primaryLightCount;
 			iw6_asset->primaryLightEnvs = mem->Alloc<IW6::ComPrimaryLightEnv>(iw6_asset->primaryLightEnvCount);
