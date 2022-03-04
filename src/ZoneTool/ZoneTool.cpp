@@ -477,7 +477,7 @@ namespace ZoneTool
 		if (info->ExceptionRecord->ExceptionCode == STATUS_INTEGER_OVERFLOW ||
 			info->ExceptionRecord->ExceptionCode == STATUS_FLOAT_OVERFLOW ||
 			info->ExceptionRecord->ExceptionCode == 0x406D1388 || 
-			info->ExceptionRecord->ExceptionCode == STATUS_BREAKPOINT)
+			info->ExceptionRecord->ExceptionCode == STATUS_BREAKPOINT ||
 			info->ExceptionRecord->ExceptionCode == 0x40010006)
 		{
 			return EXCEPTION_CONTINUE_EXECUTION;
