@@ -425,8 +425,8 @@ namespace ZoneTool
 			unsigned char flags; // 31
 			Picmip picmip; // 32
 			char __pad2[2]; // 34
-			int dataLen1; // 36
-			int dataLen2; // 40
+			unsigned int dataLen1; // 36
+			unsigned int dataLen2; // 40
 			unsigned short width; // 44
 			unsigned short height; // 46
 			unsigned short depth; // 48
@@ -845,6 +845,16 @@ namespace ZoneTool
 			unsigned short v3;
 		};
 
+		enum SurfaceFlags : std::int32_t
+		{
+			SURF_FLAG_VERTCOL_GREY = 0x1,
+			SURF_FLAG_VERTCOL_NONE = 0x2,
+			SURF_FLAG_SKINNED = 0x4,
+			SURF_FLAG_REACTIVE_MOTION = 0x8,
+			SURF_FLAG_LIGHTMAP_COORDS = 0x10,
+			SURF_FLAG_TENSION = 0x20,
+		};
+
 		struct XSurface
 		{
 			unsigned short flags; // 0
@@ -1020,9 +1030,8 @@ namespace ZoneTool
 			XBoneInfo* __ptr64 boneInfo; // 520
 			float radius; // 528
 			Bounds bounds; // 532
-			int memUsage; // 556
-			unsigned short* __ptr64 __unk; // 560
-			char __unk2[8]; // 568
+			unsigned short* __ptr64 invHighMipRadius; // 560
+			int memUsage; // 568
 			PhysPreset* __ptr64 physPreset; // 576
 			PhysCollmap* __ptr64 physCollmap; // 584
 			float quantization; // 592

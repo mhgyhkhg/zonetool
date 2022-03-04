@@ -16,7 +16,7 @@ namespace ZoneTool
 			iw6_asset->numsurfs = asset->numSurfaces;
 			iw6_asset->numReactiveMotionParts = 0;
 			iw6_asset->lodRampType = asset->lodRampType;
-			iw6_asset->scale = asset->scale;
+			iw6_asset->scale = 0.0f; //asset->scale;
 			memcpy(&iw6_asset->noScalePartBits, &asset->noScalePartBits, sizeof(asset->noScalePartBits));
 
 			iw6_asset->boneNames = mem->Alloc<IW6::scr_string_t>(asset->numBones);
@@ -63,7 +63,7 @@ namespace ZoneTool
 				iw6_asset->lodInfo[i].dist = asset->lods[i].dist += 200.0f; // LOD distance is increased so that the models look nicer in iw6
 				iw6_asset->lodInfo[i].numsurfs = asset->lods[i].numSurfacesInLod;
 				iw6_asset->lodInfo[i].surfIndex = asset->lods[i].surfIndex;
-				memcpy(&iw6_asset->lodInfo[i].partBits, &asset->lods[i].partBits, sizeof(int[4]));
+				memcpy(&iw6_asset->lodInfo[i].partBits, &asset->lods[i].partBits, sizeof(asset->lods[i].partBits));
 
 				// allocate xsurficies
 				iw6_asset->lodInfo[i].modelSurfs = mem->Alloc<IW6::XModelSurfs>(asset->lods[i].numSurfacesInLod);
@@ -88,7 +88,6 @@ namespace ZoneTool
 			iw6_asset->collSurfs = mem->Alloc<IW6::XModelCollSurf_s>(asset->numColSurfs);
 			for (auto i = 0; i < asset->numColSurfs; i++)
 			{
-				//iw6_asset->collSurfs[i].bounds.compute(asset->colSurf[i].mins, asset->colSurf[i].maxs);
 				memcpy(&iw6_asset->collSurfs[i].bounds, &asset->colSurf[i].mins, sizeof(float[2][3]));
 
 				iw6_asset->collSurfs[i].boneIdx = asset->colSurf[i].boneIdx;
@@ -101,14 +100,13 @@ namespace ZoneTool
 			iw6_asset->boneInfo = mem->Alloc<IW6::XBoneInfo>(asset->numBones);
 			for (int i = 0; i < asset->numBones; i++)
 			{
-				//iw6_asset->boneInfo[i].bounds.compute(asset->boneInfo[i].bounds[0], asset->boneInfo[i].bounds[1]);
 				memcpy(&iw6_asset->boneInfo[i].bounds, &asset->boneInfo[i].bounds, sizeof(float[2][3]));
 				iw6_asset->boneInfo[i].radiusSquared = asset->boneInfo[i].radiusSquared;
 			}
 
 			iw6_asset->radius = asset->radius;
 			memcpy(&iw6_asset->bounds, &asset->bounds, sizeof(asset->bounds));
-			iw6_asset->memUsage = asset->memUsage;
+			iw6_asset->memUsage = 0; //asset->memUsage;
 
 			if (asset->physPreset)
 			{
@@ -123,10 +121,10 @@ namespace ZoneTool
 			}
 
 			// idk
-			iw6_asset->__unk = mem->Alloc<unsigned short>(asset->numSurfaces);
-			memset(iw6_asset->__unk, 0, sizeof(unsigned short) * asset->numSurfaces);
+			iw6_asset->invHighMipRadius = mem->Alloc<unsigned short>(asset->numSurfaces);
+			memset(iw6_asset->invHighMipRadius, 0, sizeof(unsigned short) * asset->numSurfaces);
 
-			iw6_asset->quantization = asset->unk; //1.0f;
+			iw6_asset->quantization = 0.0f; //1.0f;
 
 			return iw6_asset;
 		}

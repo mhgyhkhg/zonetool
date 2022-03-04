@@ -52,6 +52,12 @@ namespace ZoneTool
 				memcpy(&iw6_asset->glassSys.piecePlaces[i], &asset->glassSys.piecePlaces[i], sizeof(IW5::FxGlassPiecePlace));
 			}
 
+			iw6_asset->glassSys.pieceStates = mem->Alloc<IW6::FxGlassPieceState>(iw6_asset->glassSys.pieceLimit);
+			for (unsigned int i = 0; i < iw6_asset->glassSys.pieceLimit; i++)
+			{
+				memcpy(&iw6_asset->glassSys.pieceStates[i], &asset->glassSys.pieceStates[i], sizeof(IW5::FxGlassPieceState));
+			}
+
 			iw6_asset->glassSys.pieceDynamics = mem->Alloc<IW6::FxGlassPieceDynamics>(iw6_asset->glassSys.pieceLimit);
 			for (unsigned int i = 0; i < iw6_asset->glassSys.pieceLimit; i++)
 			{
@@ -110,11 +116,11 @@ namespace ZoneTool
 				iw6_asset->glassSys.initPieceStates[i].texCoordOrigin[0] = asset->glassSys.initPieceStates[i].texCoordOrigin[0];
 				iw6_asset->glassSys.initPieceStates[i].texCoordOrigin[1] = asset->glassSys.initPieceStates[i].texCoordOrigin[1];
 				iw6_asset->glassSys.initPieceStates[i].supportMask = asset->glassSys.initPieceStates[i].supportMask;
-				iw6_asset->glassSys.initPieceStates[i].areaX2 = 0;
+				iw6_asset->glassSys.initPieceStates[i].areaX2 = asset->glassSys.initPieceStates[i].areaX2;
 				iw6_asset->glassSys.initPieceStates[i].lightingIndex = asset->glassSys.initPieceStates[i].lightingIndex;
 				iw6_asset->glassSys.initPieceStates[i].defIndex = asset->glassSys.initPieceStates[i].defIndex;
 				iw6_asset->glassSys.initPieceStates[i].vertCount = asset->glassSys.initPieceStates[i].vertCount;
-				iw6_asset->glassSys.initPieceStates[i].fanDataCount = asset->glassSys.initPieceStates[i].fanDataCount;
+				iw6_asset->glassSys.initPieceStates[i].fanDataCount = 0;
 			}
 
 			iw6_asset->glassSys.initGeoData = mem->Alloc<IW6::FxGlassGeometryData>(iw6_asset->glassSys.initGeoDataCount);

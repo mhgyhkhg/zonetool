@@ -153,7 +153,7 @@ namespace ZoneTool
 			for (unsigned int i = 0; i < iw6_asset->numSubModels; i++)
 			{
 				memcpy(&iw6_asset->cmodels[i].bounds, &asset->cModels[i].bounds, sizeof(IW5::Bounds) + sizeof(float));
-				GenerateIW6ClipInfo(iw6_asset->cmodels[i].info, asset->cModels[i].info, mem);
+				//GenerateIW6ClipInfo(iw6_asset->cmodels[i].info, asset->cModels[i].info, mem);
 				memcpy(&iw6_asset->cmodels[i].leaf, &asset->cModels[i].leaf, sizeof(IW5::cLeaf_t));
 				//if (!iw6_asset->cmodels[i].info)
 				{

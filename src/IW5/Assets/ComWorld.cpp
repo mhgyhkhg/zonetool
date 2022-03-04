@@ -47,8 +47,11 @@ namespace ZoneTool
 			iw6_asset->primaryLightEnvs = mem->Alloc<IW6::ComPrimaryLightEnv>(iw6_asset->primaryLightEnvCount);
 			for (unsigned int i = 1; i < iw6_asset->primaryLightEnvCount; i++)
 			{
-				iw6_asset->primaryLightEnvs[i].numIndices = 1;
-				iw6_asset->primaryLightEnvs[i].primaryLightIndices[0] = i + 1;
+				iw6_asset->primaryLightEnvs[i].numIndices = 4;
+				iw6_asset->primaryLightEnvs[i].primaryLightIndices[0] = i;
+				iw6_asset->primaryLightEnvs[i].primaryLightIndices[1] = i;
+				iw6_asset->primaryLightEnvs[i].primaryLightIndices[2] = i;
+				iw6_asset->primaryLightEnvs[i].primaryLightIndices[3] = i;
 			}
 
 			return iw6_asset;

@@ -88,8 +88,8 @@ namespace ZoneTool
 			iw6_asset->sematic = asset->semantic;
 			iw6_asset->category = asset->category;
 			iw6_asset->flags = asset->flags;
-			iw6_asset->dataLen1 = asset->dataLen1;
-			iw6_asset->dataLen2 = asset->dataLen2;
+			iw6_asset->dataLen1 = asset->texture->dataSize;
+			iw6_asset->dataLen2 = asset->texture->dataSize;
 			iw6_asset->width = asset->width;
 			iw6_asset->height = asset->height;
 			iw6_asset->depth = asset->depth;
@@ -185,13 +185,13 @@ namespace ZoneTool
 			// NOT CORRECT!
 
 			// generate iw6 gfximage
-			//auto iw6_asset = GenerateIW6GfxImage(asset, mem);
+			auto iw6_asset = GenerateIW6GfxImage(asset, mem);
 
 			// dump image as dds
 			//DumpIW5GfxImageDDS(asset);
 
 			// dump iw6 glassworld
-			//IW6::IGfxImage::dump(iw6_asset);
+			IW6::IGfxImage::dump(iw6_asset);
 		}
 	}
 }

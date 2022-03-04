@@ -261,8 +261,8 @@ namespace ZoneTool
 			xmodel->quantization = 1.0f;
 
 			// idk
-			xmodel->__unk = mem->Alloc<unsigned short>(asset->numsurfs);
-			memset(xmodel->__unk, 0, sizeof(unsigned short) * asset->numsurfs);
+			xmodel->invHighMipRadius = mem->Alloc<unsigned short>(asset->numsurfs);
+			memset(xmodel->invHighMipRadius, 0, sizeof(unsigned short) * asset->numsurfs);
 
 			return xmodel;
 		}

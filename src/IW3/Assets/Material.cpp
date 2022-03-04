@@ -12,20 +12,22 @@
 using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
 
-std::uint64_t depthStencilStateBits[11] =
+namespace
 {
-	9938018369538,
-	246300270658114,
-	246300270690882,
-	4418985394178,
-	2211374301763,
-	9938018369539,
-	246300270658115,
-	246300270690883,
-	281474443903811,
-	281474443903811,
-	281474440757250
-}; // idk
+	std::uint64_t depthStencilStateBits[11] =
+	{
+		9938018369538,
+		246300270658114,
+		246300270690882,
+		4418985394178,
+		2211374301763,
+		9938018369539,
+		246300270658115,
+		246300270690883,
+		281474443903811,
+		281474443903811,
+		281474440757250
+	}; // idk
 
 #define MATERIAL_DUMP_STRING(entry) \
 	matdata[#entry] = std::string(asset->entry);
@@ -64,12 +66,12 @@ std::uint64_t depthStencilStateBits[11] =
 		{ \
 			cent##entry["depthStencilStateBits"][j] = depthStencilStateBits[j]; \
 		} \
-		cent##entry["blendState"][0] = 0; \
-		cent##entry["blendState"][1] = 0; \
+		cent##entry["blendState"] = 0; \
 		cent##entry["rasterizerState"] = 0; \
 		carr##entry[i] = cent##entry; \
 	} \
 	matdata[#entry] = carr##entry;
+}
 
 namespace ZoneTool
 {

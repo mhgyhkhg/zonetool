@@ -217,10 +217,12 @@ namespace ZoneTool
 						DUMPCASE(image, IGfxImage, GfxImage);
 						DUMPCASE(gfx_map, IGfxWorld, GfxWorld);
 						DUMPCASE(glass_map, IGlassWorld, GlassWorld);
+						DUMPCASE(map_ents, IMapEnts, MapEnts);
 
+						DUMPCASE(material, IMaterial, Material);
 						DUMPCASE(xmodel, IXModel, XModel);
 						DUMPCASE(xmodelsurfs, IXSurface, ModelSurface);
-
+						DUMPCASE(xanim, IXAnimParts, XAnimParts);
 					}
 					catch (std::exception& ex)
 					{

@@ -17,6 +17,7 @@
 #include "Assets/GfxImage.hpp"
 #include "Assets/GfxWorld.hpp"
 #include "Assets/GlassWorld.hpp"
+#include "Assets/MapEnts.hpp"
 #include "Assets/Material.hpp"
 #include "Assets/XAnimParts.hpp"
 #include "Assets/XModel.hpp"

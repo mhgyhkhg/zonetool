@@ -87,6 +87,11 @@ namespace ZoneTool
 		void GenerateIW6XSurface(IW6::XSurface* iw6_asset, XSurface* asset, ZoneMemory* mem)
 		{
 			iw6_asset->flags = 0;
+			iw6_asset->flags |= ((asset->deformed & IW5::SURF_FLAG_VERTCOL_GREY) != 0) ? IW6::SURF_FLAG_VERTCOL_GREY : 0;
+			iw6_asset->flags |= ((asset->deformed & IW5::SURF_FLAG_VERTCOL_NONE) != 0) ? IW6::SURF_FLAG_VERTCOL_NONE : 0;
+			//iw6_asset->flags |= ((asset->deformed & IW5::SURF_FLAG_QUANTIZED) != 0) ? IW6::SURF_FLAG_QUANTIZED : 0;
+			iw6_asset->flags |= ((asset->deformed & IW5::SURF_FLAG_SKINNED) != 0) ? IW6::SURF_FLAG_SKINNED : 0;
+
 			iw6_asset->vertCount = asset->vertCount;
 			iw6_asset->triCount = asset->triCount;
 			iw6_asset->rigidVertListCount = asset->vertListCount;
@@ -113,8 +118,8 @@ namespace ZoneTool
 				iw6_asset->verts0.packedVerts0[i].texCoord.packed = PackedShit::Vec2PackTexCoords(texCoord_unpacked).packed;
 
 				// re-calculate these...
-				//iw6_asset->verts0.packedVerts0[i].normal.packed = 0;
-				//iw6_asset->verts0.packedVerts0[i].tangent.packed = 0;
+				iw6_asset->verts0.packedVerts0[i].normal.packed = 0;
+				iw6_asset->verts0.packedVerts0[i].tangent.packed = 0;
 			}
 
 			// rigidVertLists

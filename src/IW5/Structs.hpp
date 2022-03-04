@@ -1149,6 +1149,14 @@ namespace ZoneTool
 			XSurfaceCTEntry* entry;
 		};
 
+		enum SurfaceFlags : std::int32_t
+		{
+			SURF_FLAG_VERTCOL_GREY = 0x8,
+			SURF_FLAG_VERTCOL_NONE = 0x10,
+			SURF_FLAG_QUANTIZED = 0x20,
+			SURF_FLAG_SKINNED = 0x40,
+		};
+
 #pragma pack(push, 4)
 		struct XSurface
 		{
@@ -2758,16 +2766,17 @@ namespace ZoneTool
 
 		struct GfxAabbTree
 		{
-			float mins[3]; // 12
-			float maxs[3]; // 12
-			int unkn;
-			unsigned __int16 childCount; // 2
-			unsigned __int16 surfaceCount; // 2
-			unsigned __int16 startSurfIndex; // 2
-			unsigned __int16 smodelIndexCount; // 2
-			unsigned __int16* smodelIndexes; // 4
-			int childrenOffset; // 4
-		}; // Size: 0x2C
+			float mins[3];
+			float maxs[3];
+			unsigned __int16 childCount;
+			unsigned __int16 surfaceCount;
+			unsigned __int16 startSurfIndex;
+			unsigned __int16 surfaceCountNoDecal;
+			unsigned __int16 startSurfIndexNoDecal;
+			unsigned __int16 smodelIndexCount;
+			unsigned __int16* smodelIndexes;
+			int childrenOffset;
+		};
 
 		struct GfxCellTree
 		{
@@ -2775,30 +2784,29 @@ namespace ZoneTool
 			GfxAabbTree* aabbtree;
 		};
 
+		struct GfxPortal;
 		struct GfxPortalWritable
 		{
 			bool isQueued;
 			bool isAncestor;
 			char recursionDepth;
 			char hullPointCount;
-			//float(*hullPoints)[2];
+			float(*hullPoints)[2];
+			GfxPortal* queuedParent;
 		};
 
 		struct DpvsPlane
 		{
 			float coeffs[4];
-			char side[3];
 		};
 
-		struct GfxPortal // Needs to be investigated
+		struct GfxPortal
 		{
-			GfxPortalWritable writable; // 4
-			DpvsPlane plane; // 20
-			int unknown1;
-			float (*vertices)[3];
-			short unknown2;
+			GfxPortalWritable writable;
+			DpvsPlane plane;
+			float(*vertices)[3];
+			unsigned short cellIndex;
 			char vertexCount;
-			//char unknown2[2];
 			float hullAxis[2][3];
 		};
 
@@ -2978,17 +2986,17 @@ namespace ZoneTool
 
 		struct GfxBrushModelWritable
 		{
-			float mins[3];
-			float maxs[3];
-			float mip1radiusSq;
+			Bounds bounds;
 		};
 
 		struct GfxBrushModel
 		{
 			GfxBrushModelWritable writable;
-			float bounds[2][3];
-			std::uint32_t surfaceCount;
-			std::uint32_t startSurfIndex;
+			Bounds bounds;
+			float radius;
+			unsigned short surfaceCount;
+			unsigned short startSurfIndex;
+			unsigned short surfaceCountNoDecal;
 		};
 
 		struct MaterialMemory
@@ -4253,12 +4261,12 @@ namespace ZoneTool
 			float radius;
 			float texCoordOrigin[2];
 			unsigned int supportMask;
-			//float areaX2; // Commented out a random thing so the size fits. Most probably wrong since it was random.
+			float areaX2;
 			unsigned __int16 lightingIndex;
 			char defIndex;
 			char vertCount;
-			char fanDataCount;
-			char pad[1];
+			//char fanDataCount;// Commented out a random thing so the size fits. Most probably wrong since it was random.
+			//char pad[1];
 		};
 
 		struct FxGlassSystem

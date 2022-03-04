@@ -28,7 +28,7 @@ namespace ZoneTool
 			dump.dump_array(asset->reactiveMotionParts, asset->numReactiveMotionParts);
 			dump.dump_array(asset->collSurfs, asset->numCollSurfs);
 			dump.dump_array(asset->boneInfo, asset->numBones);
-			dump.dump_array(asset->__unk, asset->numsurfs);
+			dump.dump_array(asset->invHighMipRadius, asset->numsurfs);
 
 			// surfaces
 			dump.dump_array(asset->materialHandles, asset->numsurfs);
