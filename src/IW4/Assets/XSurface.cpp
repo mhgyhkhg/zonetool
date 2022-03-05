@@ -229,7 +229,7 @@ namespace ZoneTool
 			for (auto i = 0u; i < asset->numsurfs; i++)
 			{
 				dump.dump_int(asset->surfs[i].tileMode);
-				dump.dump_int(asset->surfs[i].deformed ? 64 : 0);
+				dump.dump_int(asset->surfs[i].deformed ? IW5::SurfaceFlags::SURF_FLAG_SKINNED : 0);
 				dump.dump_int(asset->surfs[i].baseTriIndex);
 				dump.dump_int(asset->surfs[i].baseVertIndex);
 

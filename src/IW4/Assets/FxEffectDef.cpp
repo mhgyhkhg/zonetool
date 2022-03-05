@@ -153,7 +153,8 @@ namespace ZoneTool
 				}
 
 				// Visuals
-				load_fx_elem_visuals(def, &def->visuals);
+				if (def->visualCount)
+					load_fx_elem_visuals(def, &def->visuals);
 			}
 		}
 
@@ -249,7 +250,7 @@ namespace ZoneTool
 					write_fx_elem_visuals(zone, buf, def, &vis[i]);
 				}
 			}
-			else
+			else if (def->visualCount)
 			{
 				write_fx_elem_visuals(zone, buf, def, &dest->instance);
 			}

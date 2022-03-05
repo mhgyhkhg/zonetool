@@ -888,7 +888,7 @@ char**>(0x00799278)[type]);
 
 		void Linker::verify_zone(const std::string& name)
 		{
-			should_log = true;
+			//should_log = true;
 			isVerifying = true;
 			currentDumpingZone = name;
 			load_zone(name);

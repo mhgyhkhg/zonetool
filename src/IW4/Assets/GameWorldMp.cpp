@@ -55,7 +55,57 @@ namespace ZoneTool
 
 		void IGameWorldMp::write(IZone* zone, ZoneBuffer* buf)
 		{
+			auto* data = this->asset_;
+			auto* dest = buf->write(data);
 
+			assert(sizeof GameWorldMp, 8);
+			assert(sizeof G_GlassData, 128);
+			assert(sizeof G_GlassPiece, 12);
+			assert(sizeof G_GlassName, 12);
+
+			buf->push_stream(3);
+			START_LOG_STREAM;
+
+			dest->name = buf->write_str(this->name());
+
+			if (data->g_glassData)
+			{
+				buf->align(3);
+
+				auto glassdata = data->g_glassData;
+				auto destdata = buf->write(glassdata);
+
+				if (glassdata->glassPieces)
+				{
+					buf->align(3);
+					buf->write(glassdata->glassPieces, glassdata->pieceCount);
+					ZoneBuffer::clear_pointer(&destdata->glassPieces);
+				}
+				if (glassdata->glassNames)
+				{
+					buf->align(3);
+					auto namedest = buf->write(glassdata->glassNames, glassdata->glassNameCount);
+
+					for (unsigned int i = 0; i < glassdata->glassNameCount; i++)
+					{
+						namedest[i].nameStr = buf->write_str(glassdata->glassNames[i].nameStr);
+
+						if (glassdata->glassNames[i].pieceCount)
+						{
+							buf->align(1);
+							buf->write(glassdata->glassNames[i].pieceIndices, glassdata->glassNames[i].pieceCount);
+							ZoneBuffer::clear_pointer(&glassdata->glassNames[i].pieceIndices);
+						}
+					}
+
+					ZoneBuffer::clear_pointer(&destdata->glassNames);
+				}
+
+				ZoneBuffer::clear_pointer(&dest->g_glassData);
+			}
+
+			END_LOG_STREAM;
+			buf->pop_stream();
 		}
 
 		void IGameWorldMp::dump(GameWorldMp* asset)

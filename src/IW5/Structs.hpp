@@ -1181,6 +1181,14 @@ namespace ZoneTool
 			XSurfaceCTEntry* entry;
 		};
 
+		enum SurfaceFlags : std::int32_t
+		{
+			SURF_FLAG_VERTCOL_GREY = 0x8,
+			SURF_FLAG_VERTCOL_NONE = 0x10,
+			SURF_FLAG_QUANTIZED = 0x20,
+			SURF_FLAG_SKINNED = 0x40,
+		};
+
 #pragma pack(push, 4)
 		struct XSurface
 		{
