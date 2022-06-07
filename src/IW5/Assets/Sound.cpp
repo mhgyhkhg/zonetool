@@ -546,11 +546,11 @@ namespace ZoneTool
 		void ISound::dump(snd_alias_list_t* asset)
 		{
 			// add json shit too
-			//if (true)
-			//{
-			//	json_dump(asset);
-			//	return;
-			//}
+			if (true)
+			{
+				json_dump(asset);
+				return;
+			}
 
 			const auto path = "sounds\\"s + asset->name + ".xss";
 
