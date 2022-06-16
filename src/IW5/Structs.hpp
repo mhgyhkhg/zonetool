@@ -1638,8 +1638,7 @@ namespace ZoneTool
 				unsigned int unknown1 : 1;
 				unsigned int unknown2 : 1;
 				unsigned int type : 2;
-				unsigned int unknown3 : 1; // if set ambient will start at random pos of the sound
-				unsigned int channel : 6;
+				unsigned int channel : 7;
 			};
 			unsigned int intValue;
 		};

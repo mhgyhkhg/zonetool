@@ -380,7 +380,6 @@ namespace ZoneTool
 				iw5_flags.unknown1 = iw4_flags.unknown1;
 				iw5_flags.unknown2 = iw4_flags.unknown2;
 				iw5_flags.type = iw4_flags.type;
-				iw5_flags.unknown3 = 0;
 				iw5_flags.channel = channel_to_iw5(IW4::SoundChannel(iw4_flags.channel));
 
 				current_iw5->flags = iw5_flags.intValue;

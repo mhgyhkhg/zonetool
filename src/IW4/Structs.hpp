@@ -1185,7 +1185,7 @@ namespace ZoneTool
 				unsigned int unknown1 : 1;
 				unsigned int unknown2 : 1;
 				unsigned int type : 2;
-				unsigned int channel : 6;
+				unsigned int channel : 7;
 			};
 			unsigned int intValue;
 		};

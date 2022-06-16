@@ -80,7 +80,7 @@ namespace ZoneTool
 				iw4_flags.isSlave = iw3_flags.isSlave;
 				iw4_flags.fullDryLevel = iw3_flags.fullDryLevel;
 				iw4_flags.noWetLevel = iw3_flags.noWetLevel;
-				iw4_flags.unknown1 = 0;
+				iw4_flags.unknown1 = iw3_flags.unknown1;
 				iw4_flags.unknown2 = 0;
 				iw4_flags.type = iw3_flags.type;
 				iw4_flags.channel = channel_to_iw4(IW3::SoundChannel(iw3_flags.channel));
