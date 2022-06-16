@@ -8,6 +8,8 @@
 // ========================================================
 #pragma once
 
+#include "../IW5/Structs.hpp"
+
 namespace ZoneTool
 {
 	namespace IW4
