@@ -218,6 +218,7 @@ namespace ZoneTool
 						DUMPCASE(xmodelsurfs, IXSurface, ModelSurface);
 						DUMPCASE(fx, IFxEffectDef, FxEffectDef);
 						DUMPCASE(sound, ISound, snd_alias_list_t);
+						DUMPCASE(sndcurve, ISoundCurve, SndCurve);
 						DUMPCASE(stringtable, IStringTable, StringTable);
 						DUMPCASE(rawfile, IRawFile, RawFile);
 						DUMPCASE(scriptfile, IScriptFile, ScriptFile);

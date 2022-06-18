@@ -22,6 +22,11 @@ namespace ZoneTool
 			static void write_head(IZone* zone, ZoneBuffer* buf, snd_alias_t* dest);
 
 		public:
+			static void json_parse_snd_alias(snd_alias_t* asset, nlohmann::json snddata, ZoneMemory* mem);
+			static snd_alias_list_t* json_parse(const std::string& name, ZoneMemory* mem);
+			static void json_dump_snd_alias(nlohmann::json& sound, snd_alias_t* asset);
+			static void json_dump(snd_alias_list_t* asset);
+
 			static snd_alias_list_t* parse(const std::string& name, ZoneMemory* mem);
 
 			void init(const std::string& name, ZoneMemory* mem) override;

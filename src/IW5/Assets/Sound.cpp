@@ -22,7 +22,7 @@ namespace ZoneTool
 
 #define SOUND_STRING(entry) \
 	if (!snddata[#entry].is_null()) { \
-		asset->entry = _strdup(snddata[#entry].get<std::string>().data()); \
+		asset->entry = mem->StrDup(snddata[#entry].get<std::string>().data()); \
 	} else { asset->entry = nullptr; }
 #define SOUND_CHAR(entry) \
 	asset->entry = snddata[#entry].get<char>()
@@ -33,7 +33,7 @@ namespace ZoneTool
 
 	namespace IW5
 	{
-		void json_parse_snd_alias(snd_alias_t* asset, nlohmann::json snddata, ZoneMemory* mem)
+		void ISound::json_parse_snd_alias(snd_alias_t* asset, nlohmann::json snddata, ZoneMemory* mem)
 		{
 			SOUND_STRING(aliasName);
 			SOUND_STRING(subtitle);
@@ -146,11 +146,11 @@ namespace ZoneTool
 			}
 		}
 
-		snd_alias_list_t* json_parse(const std::string& name, ZoneMemory* mem)
+		snd_alias_list_t* ISound::json_parse(const std::string& name, ZoneMemory* mem)
 		{
 			const auto path = "sounds\\"s + name;
 
-			ZONETOOL_INFO("Parsing sound %s...", name.c_str());
+			ZONETOOL_INFO("Parsing sound \"%s\"...", name.c_str());
 
 			auto file = FileSystem::FileOpen(path, "rb");
 			auto size = FileSystem::FileSize(file);
@@ -424,7 +424,7 @@ namespace ZoneTool
 			buf->pop_stream();
 		}
 
-		void json_dump_snd_alias(nlohmann::json& sound, snd_alias_t* asset)
+		void ISound::json_dump_snd_alias(nlohmann::json& sound, snd_alias_t* asset)
 		{
 			// strings
 			SOUND_DUMP_STRING(aliasName);
@@ -514,7 +514,7 @@ namespace ZoneTool
 			}
 		}
 
-		void json_dump(snd_alias_list_t* asset)
+		void ISound::json_dump(snd_alias_list_t* asset)
 		{
 			const auto path = "sounds\\"s + asset->name;
 
