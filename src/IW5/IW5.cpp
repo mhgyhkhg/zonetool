@@ -141,6 +141,7 @@ namespace ZoneTool
 			is_dumping_complete = false;
 			is_dumping = true;
 
+			zonetool::filesystem::set_fastfile(name);
 			FileSystem::SetFastFile(name);
 			AssetHandler::SetDump(true);
 			load_zone(name);

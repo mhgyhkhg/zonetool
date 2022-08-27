@@ -9,6 +9,10 @@
 #pragma once
 
 #include <ZoneUtils.hpp>
+
+#include "Utils/IO/filesystem.hpp"
+#include "Utils/IO/assetmanager.hpp"
+
 #include "Structs.hpp"
 
 #include "Assets/ClipMap.hpp"
@@ -27,6 +31,6 @@ namespace ZoneTool
 {
 	namespace IW6
 	{
-		
+		using namespace zonetool;
 	}
 }

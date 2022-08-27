@@ -10,7 +10,7 @@ namespace ZoneTool
 	{
 		void IMapEnts::dump_splineList(const std::string& name, SplineRecordList* splineList)
 		{
-			AssetDumper dumper;
+			assetmanager::dumper dumper;
 			if (dumper.open(name + ".ents.splineList"s))
 			{
 				dumper.dump_int(splineList->splineCount);
@@ -30,9 +30,10 @@ namespace ZoneTool
 
 		void IMapEnts::dump_spawnList(const std::string& name, SpawnPointRecordList* spawnList, const std::function<const char* (std::uint16_t)>& SL_ConvertToString)
 		{
-			auto fp = FileSystem::FileOpen(name + ".ents.spawnList"s, "wb");
+			auto file = filesystem::file(name + ".ents.spawnList"s);
+			file.open("wb");
 
-			if (!fp)
+			if (!file.get_fp())
 			{
 				return;
 			}
@@ -52,14 +53,14 @@ namespace ZoneTool
 			}
 
 			const auto json = data.dump(4);
-			fwrite(json.data(), json.size(), 1, fp);
+			file.write(json.data(), json.size(), 1);
 
-			FileSystem::FileClose(fp);
+			file.close();
 		}
 
 		void IMapEnts::dump_clientBlendTriggers(const std::string& name, ClientTriggerBlend* clientTriggerBlend)
 		{
-			AssetDumper dumper;
+			assetmanager::dumper dumper;
 			if (dumper.open(name + ".ents.clientBlendTriggers"s))
 			{
 				dumper.dump_int(clientTriggerBlend->numClientTriggerBlendNodes);
@@ -69,7 +70,7 @@ namespace ZoneTool
 
 		void IMapEnts::dump_clientTriggers(const std::string& name, ClientTriggers* clientTrigger)
 		{
-			AssetDumper dumper;
+			assetmanager::dumper dumper;
 			if (dumper.open(name + ".ents.clientTriggers"))
 			{
 				dumper.dump_single(clientTrigger);
@@ -92,7 +93,7 @@ namespace ZoneTool
 
 		void IMapEnts::dump_triggers(const std::string& name, MapTriggers* trigger)
 		{
-			AssetDumper trigger_dumper;
+			assetmanager::dumper trigger_dumper;
 			if (trigger_dumper.open(name + ".ents.triggers"s))
 			{
 				trigger_dumper.dump_int(trigger->count);
@@ -110,11 +111,12 @@ namespace ZoneTool
 
 		void IMapEnts::dump_entityStrings(const std::string& name, char* entityString, int numEntityChars)
 		{
-			auto fp = FileSystem::FileOpen(name + ".ents"s, "wb");
-			if (fp)
+			auto file = filesystem::file(name + ".ents"s);
+			file.open("wb");
+			if (file.get_fp())
 			{
-				fwrite(entityString, numEntityChars ? numEntityChars - 1 : 0, 1, fp);
-				FileSystem::FileClose(fp);
+				file.write(entityString, numEntityChars ? numEntityChars - 1 : 0, 1);
+				file.close();
 			}
 		}
 

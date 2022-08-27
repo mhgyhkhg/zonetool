@@ -4,7 +4,7 @@ namespace ZoneTool
 {
 	namespace IW6
 	{
-		void dump_info(ClipInfo* info, AssetDumper& write)
+		void dump_info(ClipInfo* info, assetmanager::dumper& write)
 		{
 			write.dump_array(info->planes, info->planeCount);
 			write.dump_array(info->materials, info->numMaterials);
@@ -55,7 +55,7 @@ namespace ZoneTool
 		{
 			const auto path = asset->name + ".colmap"s;
 
-			AssetDumper write;
+			assetmanager::dumper write;
 			if (!write.open(path))
 			{
 				return;
@@ -192,7 +192,7 @@ namespace ZoneTool
 			// dump stages
 			if (asset->stages)
 			{
-				AssetDumper stageDumper;
+				assetmanager::dumper stageDumper;
 
 				if (stageDumper.open(asset->name + ".ents.stages"s))
 				{

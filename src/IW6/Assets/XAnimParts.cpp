@@ -6,9 +6,9 @@ namespace ZoneTool
 	{
 		void IXAnimParts::dump(XAnimParts* asset, const std::function<const char* (std::uint16_t)>& SL_ConvertToString)
 		{
-			const auto path = "XAnim\\"s + asset->name + ".xae3";
+			const auto path = "xanim\\"s + asset->name + ".anim";
 
-			AssetDumper dump;
+			assetmanager::dumper dump;
 			if (!dump.open(path))
 			{
 				return;

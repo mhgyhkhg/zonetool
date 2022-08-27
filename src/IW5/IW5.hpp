@@ -14,6 +14,7 @@
 #include "Patches/FFCompression.hpp"
 #include "Patches/AssetHandler.hpp"
 
+#include "IW6/Utils/IO/filesystem.hpp"
 #include "IW6/Structs.hpp"
 
 #include "Assets/ClipMap.hpp"

@@ -6,8 +6,8 @@ namespace ZoneTool
 	{
 		void IXSurface::dump(XModelSurfs* asset)
 		{
-			AssetDumper dump;
-			if (!dump.open("XSurface\\"s + asset->name + ".xse"))
+			assetmanager::dumper dump;
+			if (!dump.open("xsurface\\"s + asset->name + ".surface"))
 			{
 				return;
 			}

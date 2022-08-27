@@ -28,7 +28,7 @@ namespace ZoneTool
 			auto newName = clean_name(asset->name);
 
 			auto path = "images\\"s + newName + ".iw6Image"s;
-			AssetDumper write;
+			assetmanager::dumper write;
 			if (!write.open(path))
 			{
 				return;

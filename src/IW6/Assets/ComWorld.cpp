@@ -8,7 +8,7 @@ namespace ZoneTool
 		{
 			const auto path = asset->name + ".comworld"s;
 
-			AssetDumper write;
+			assetmanager::dumper write;
 			if (!write.open(path))
 			{
 				return;
