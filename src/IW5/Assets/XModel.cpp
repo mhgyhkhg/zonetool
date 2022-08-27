@@ -15,8 +15,8 @@ namespace ZoneTool
 			iw6_asset->numRootBones = asset->numRootBones;
 			iw6_asset->numsurfs = asset->numSurfaces;
 			iw6_asset->numReactiveMotionParts = 0;
-			iw6_asset->lodRampType = asset->lodRampType;
-			iw6_asset->scale = 0.0f; //asset->scale;
+			//iw6_asset->lodRampType = asset->lodRampType;
+			iw6_asset->scale = 1.0f;
 			memcpy(&iw6_asset->noScalePartBits, &asset->noScalePartBits, sizeof(asset->noScalePartBits));
 
 			iw6_asset->boneNames = mem->Alloc<IW6::scr_string_t>(asset->numBones);
@@ -25,20 +25,35 @@ namespace ZoneTool
 				iw6_asset->boneNames[i] = static_cast<IW6::scr_string_t>(asset->boneNames[i]);
 			}
 
-			//iw6_asset->parentList = mem->Alloc<unsigned char>(asset->numBones - asset->numRootBones);
-			//for (auto i = 0; i < asset->numBones - asset->numRootBones; i++)
-			//{
-			//	iw6_asset->parentList[i] = asset->parentList[i];
-			//}
 			iw6_asset->parentList = reinterpret_cast<unsigned char*>(asset->parentList);
 
-			iw6_asset->tagAngles = reinterpret_cast<IW6::XModelAngle*>(asset->tagAngles);
+			//iw6_asset->tagAngles = reinterpret_cast<IW6::XModelAngle*>(asset->tagAngles);
+			iw6_asset->tagAngles = mem->Alloc<IW6::XModelAngle>(asset->numBones - asset->numRootBones);
+			for (unsigned int i = 0; i < asset->numBones - asset->numRootBones; i++)
+			{
+				iw6_asset->tagAngles[i].x = asset->tagAngles[i].x;
+				iw6_asset->tagAngles[i].y = asset->tagAngles[i].y;
+				iw6_asset->tagAngles[i].z = asset->tagAngles[i].z;
+				iw6_asset->tagAngles[i].base = asset->tagAngles[i].base;
+			}
 
-			iw6_asset->tagPositions = reinterpret_cast<IW6::XModelTagPos*>(asset->tagPositions);
+			//iw6_asset->tagPositions = reinterpret_cast<IW6::XModelTagPos*>(asset->tagPositions);
+			iw6_asset->tagPositions = mem->Alloc<IW6::XModelTagPos>(asset->numBones - asset->numRootBones);
+			for (unsigned int i = 0; i < asset->numBones - asset->numRootBones; i++)
+			{
+				iw6_asset->tagPositions[i].x = asset->tagPositions[i].x;
+				iw6_asset->tagPositions[i].y = asset->tagPositions[i].y;
+				iw6_asset->tagPositions[i].z = asset->tagPositions[i].z;
+			}
 
 			iw6_asset->partClassification = reinterpret_cast<unsigned char*>(asset->partClassification);
 
-			iw6_asset->baseMat = reinterpret_cast<IW6::DObjAnimMat*>(asset->animMatrix);
+			//iw6_asset->baseMat = reinterpret_cast<IW6::DObjAnimMat*>(asset->animMatrix);
+			iw6_asset->baseMat = mem->Alloc<IW6::DObjAnimMat>(asset->numBones);
+			for (unsigned int i = 0; i < asset->numBones; i++)
+			{
+				memcpy(&iw6_asset->baseMat[i], &asset->animMatrix[i], sizeof(IW5::DObjAnimMat));
+			}
 
 			iw6_asset->reactiveMotionParts = nullptr;
 
@@ -52,15 +67,15 @@ namespace ZoneTool
 				}
 			}
 
-			for (auto i = 0; i < 6; i++)
-			{
-				iw6_asset->lodInfo[i].dist = 1000000;
-			}
+			//for (auto i = 0; i < 6; i++)
+			//{
+			//	iw6_asset->lodInfo[i].dist = 1000000;
+			//}
 
 			// level of detail data
 			for (int i = 0; i < asset->numLods; i++)
 			{
-				iw6_asset->lodInfo[i].dist = asset->lods[i].dist += 200.0f; // LOD distance is increased so that the models look nicer in iw6
+				iw6_asset->lodInfo[i].dist = asset->lods[i].dist;
 				iw6_asset->lodInfo[i].numsurfs = asset->lods[i].numSurfacesInLod;
 				iw6_asset->lodInfo[i].surfIndex = asset->lods[i].surfIndex;
 				memcpy(&iw6_asset->lodInfo[i].partBits, &asset->lods[i].partBits, sizeof(asset->lods[i].partBits));
@@ -106,7 +121,7 @@ namespace ZoneTool
 
 			iw6_asset->radius = asset->radius;
 			memcpy(&iw6_asset->bounds, &asset->bounds, sizeof(asset->bounds));
-			iw6_asset->memUsage = 0; //asset->memUsage;
+			iw6_asset->memUsage = asset->memUsage;
 
 			if (asset->physPreset)
 			{

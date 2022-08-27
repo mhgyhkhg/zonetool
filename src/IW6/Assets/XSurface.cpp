@@ -6,11 +6,11 @@ namespace ZoneTool
 	{
 		void IXSurface::dump(XModelSurfs* asset)
 		{
-			assert(sizeof(XModelSurfs) == 56);
-			assert(sizeof(XSurface) == 232);
-
 			AssetDumper dump;
-			dump.open("XSurface\\"s + asset->name + ".xse");
+			if (!dump.open("XSurface\\"s + asset->name + ".xse"))
+			{
+				return;
+			}
 
 			dump.dump_single(asset);
 			dump.dump_string(asset->name);
@@ -53,12 +53,27 @@ namespace ZoneTool
 					}
 				}
 
-				dump.dump_array(asset->surfs[i].blendVerts, (asset->surfs[i].blendVertCounts[0]
+				dump.dump_raw(asset->surfs[i].blendVerts, 2 * (asset->surfs[i].blendVertCounts[0]
+					+ 3 * asset->surfs[i].blendVertCounts[1]
+					+ 5 * asset->surfs[i].blendVertCounts[2]
 					+ 7 * asset->surfs[i].blendVertCounts[3]
+					+ 9 * asset->surfs[i].blendVertCounts[4]
 					+ 11 * asset->surfs[i].blendVertCounts[5]
 					+ 13 * asset->surfs[i].blendVertCounts[6]
-					+ 3 * (asset->surfs[i].blendVertCounts[1] + 3 * asset->surfs[i].blendVertCounts[4])
-					+ 5 * (asset->surfs[i].blendVertCounts[2] + 3 * asset->surfs[i].blendVertCounts[7])));
+					+ 15 * asset->surfs[i].blendVertCounts[7]));
+				dump.dump_raw(asset->surfs[i].blendVertsTable, 32 * asset->surfs[i].vertCount);
+
+				dump.dump_raw(asset->surfs[i].lmapUnwrap, 8 * asset->surfs[i].vertCount);
+
+				dump.dump_raw(asset->surfs[i].tensionData, 4 * (asset->surfs[i].blendVertCounts[0]
+					+ asset->surfs[i].blendVertCounts[1]
+					+ asset->surfs[i].blendVertCounts[2]
+					+ asset->surfs[i].blendVertCounts[3]
+					+ asset->surfs[i].blendVertCounts[4]
+					+ asset->surfs[i].blendVertCounts[5]
+					+ asset->surfs[i].blendVertCounts[6]
+					+ asset->surfs[i].blendVertCounts[7]));
+				dump.dump_raw(asset->surfs[i].tensionAccumTable, 32 * asset->surfs[i].vertCount);
 			}
 
 			dump.close();

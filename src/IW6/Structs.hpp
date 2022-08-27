@@ -845,6 +845,14 @@ namespace ZoneTool
 			unsigned short v3;
 		};
 
+		struct BlendVertsUnknown
+		{
+			unsigned short b[15];
+			unsigned short blendVertCountIndex; // 30
+		}; static_assert(sizeof(BlendVertsUnknown) == 32);
+
+		typedef unsigned short XBlendInfo;
+
 		enum SurfaceFlags : std::int32_t
 		{
 			SURF_FLAG_VERTCOL_GREY = 0x1,
@@ -861,7 +869,7 @@ namespace ZoneTool
 			unsigned short vertCount; // 2
 			unsigned short triCount; // 4
 			unsigned char rigidVertListCount; // 6
-			char unknown; // 7
+			unsigned char subdivLevelCount; // 7
 			short blendVertCounts[8]; // 8
 			GfxVertexUnion0 verts0; // 24
 			Face* __ptr64 triIndices; // 32
@@ -869,14 +877,14 @@ namespace ZoneTool
 			void* __ptr64 vb0View; // 48
 			void* __ptr64 indexBuffer; // 56
 			XRigidVertList* __ptr64 rigidVertLists; // 64
-			unsigned short* __ptr64 blendVerts; // 72
-			unsigned short* __ptr64 blendVertsTable; // 80
+			XBlendInfo* __ptr64 blendVerts; // 72
+			BlendVertsUnknown* __ptr64 blendVertsTable; // 80
 			void* __ptr64 blendVertsBuffer; // 88
 			void* __ptr64 blendVertsView; // 96
 			float(* __ptr64 lmapUnwrap)[2]; // 104
 			void* __ptr64 vblmap; // 112
 			void* __ptr64 vblmapView; // 120
-			void* __ptr64 subdivCache_; // 128
+			void* __ptr64 subdiv; // 128
 			float* __ptr64 tensionData; // 136
 			unsigned short* __ptr64 tensionAccumTable; // 144
 			void* __ptr64 tensionAccumTableBuffer; // 152
@@ -1008,8 +1016,8 @@ namespace ZoneTool
 			unsigned char numRootBones; // 9
 			unsigned char numsurfs; // 10
 			unsigned char numReactiveMotionParts; // 11
-			unsigned char lodRampType; // 12
-			float scale; // 16
+			float scale; // 12
+			char __pad0[4];
 			unsigned int noScalePartBits[6]; // 20
 			scr_string_t* __ptr64 boneNames; // 48
 			unsigned char* __ptr64 parentList; // 56
@@ -1035,6 +1043,7 @@ namespace ZoneTool
 			PhysPreset* __ptr64 physPreset; // 576
 			PhysCollmap* __ptr64 physCollmap; // 584
 			float quantization; // 592
+			float unk;
 		};
 
 		enum snd_alias_type_t
@@ -1975,14 +1984,11 @@ namespace ZoneTool
 		{
 			GfxStaticModelVertexLighting* __ptr64 lightingValues;
 			void* __ptr64 lightingValuesVb; //ID3D11Buffer* __ptr64 lightingValuesVb;
+			void* __ptr64 lightingValuesSb; //ID3D11Buffer* __ptr64 lightingValuesSb;
+			unsigned int subdiv_count_maybe;
+			void* __ptr64 subDivCacheBuffer;
+			void* __ptr64 subDivCacheViewBuffer;
 			int flags;
-			char __pad[4];
-			struct unk
-			{
-				char __pad[24];
-			};
-			unk unk;
-			char __pad2[4];
 			unsigned int numLightingValues;
 		};
 

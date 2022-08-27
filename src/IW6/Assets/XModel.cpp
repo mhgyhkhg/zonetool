@@ -7,7 +7,10 @@ namespace ZoneTool
 		void IXModel::dump(XModel* asset, const std::function<const char* (std::uint16_t)>& SL_ConvertToString)
 		{
 			AssetDumper dump;
-			dump.open("XModel\\"s + asset->name + ".xme6");
+			if (!dump.open("XModel\\"s + asset->name + ".xme6"))
+			{
+				return;
+			}
 
 			dump.dump_single(asset);
 

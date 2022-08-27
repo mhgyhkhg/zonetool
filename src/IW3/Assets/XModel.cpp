@@ -106,8 +106,8 @@ namespace ZoneTool
 			xmodel->numBones = asset->numBones;
 			xmodel->numRootBones = asset->numRootBones;
 			xmodel->numsurfs = asset->numsurfs;
-			xmodel->lodRampType = asset->lodRampType;
-			xmodel->scale = 0.0f;
+			//xmodel->lodRampType = asset->lodRampType;
+			xmodel->scale = 1.0f;
 			memset(&xmodel->noScalePartBits, 0, sizeof(xmodel->noScalePartBits));
 
 			if(asset->boneNames)

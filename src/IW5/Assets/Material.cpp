@@ -90,6 +90,7 @@ namespace
 		{"mc_effect_falloff_add_lin_nofog",			"mc_effect_falloff_add_lin_nofog_ndw_bl_blmod"},
 		{"mc_effect_zfeather_falloff_add_lin_nofog", "mc_effect_zfeather_falloff_add_lin_nofog_ndw_bl_blmod"},
 		{"mc_effect_zfeather_falloff_add_lin_nofog_eyeoffset", "mc_effect_zfeather_falloff_add_lin_nofog_eyeoffset_ndw_bl_blmod"},
+		{"mc_effect_zfeather_falloff_screen_nofog_eyeoffset", "mc_effect_zfeather_falloff_screen_lin_nofog_eyeoffset_ndw_bl"},
 
 		{"2d",										"2d"},
 

@@ -7,23 +7,23 @@ namespace ZoneTool
 	{
 		using namespace IW5;
 
-		#define _BYTE  uint8_t
-		#define _WORD  uint16_t
-		#define _DWORD uint32_t
-		#define _QWORD uint64_t
+#define _BYTE  uint8_t
+#define _WORD  uint16_t
+#define _DWORD uint32_t
+#define _QWORD uint64_t
 
-		#define LOBYTE(x)   (*((_BYTE*)&(x)))   // low byte
-		#define LOWORD(x)   (*((_WORD*)&(x)))   // low word
-		#define LODWORD(x)  (*((_DWORD*)&(x)))  // low dword
-		#define HIBYTE(x)   (*((_BYTE*)&(x)+1))
-		#define HIWORD(x)   (*((_WORD*)&(x)+1))
-		#define HIDWORD(x)  (*((_DWORD*)&(x)+1))
-		#define BYTEn(x, n)   (*((_BYTE*)&(x)+n))
-		#define WORDn(x, n)   (*((_WORD*)&(x)+n))
-		#define BYTE1(x)   BYTEn(x,  1)         // byte 1 (counting from 0)
-		#define BYTE2(x)   BYTEn(x,  2)
+#define LOBYTE(x)   (*((_BYTE*)&(x)))   // low byte
+#define LOWORD(x)   (*((_WORD*)&(x)))   // low word
+#define LODWORD(x)  (*((_DWORD*)&(x)))  // low dword
+#define HIBYTE(x)   (*((_BYTE*)&(x)+1))
+#define HIWORD(x)   (*((_WORD*)&(x)+1))
+#define HIDWORD(x)  (*((_DWORD*)&(x)+1))
+#define BYTEn(x, n)   (*((_BYTE*)&(x)+n))
+#define WORDn(x, n)   (*((_WORD*)&(x)+n))
+#define BYTE1(x)   BYTEn(x,  1)         // byte 1 (counting from 0)
+#define BYTE2(x)   BYTEn(x,  2)
 
-		PackedTexCoords Vec2PackTexCoords(float* in)
+		PackedTexCoords Vec2PackTexCoords(float* in) // ghosts func
 		{
 			int v2; // eax
 			int v3; // esi
@@ -61,7 +61,7 @@ namespace ZoneTool
 			return result;
 		}
 
-		void Vec2UnpackTexCoords(const PackedTexCoords in, float* out)
+		void Vec2UnpackTexCoords(const PackedTexCoords in, float* out) // iw5 func
 		{
 			unsigned int val;
 
@@ -80,10 +80,150 @@ namespace ZoneTool
 
 			out[1] = *reinterpret_cast<float*>(&val);
 		}
+
+		PackedUnitVec __fastcall Vec3PackUnitVec(float* unitVec) // h1 func
+		{
+			unsigned int v5; // ebx
+			int v6; // ebx
+
+			v5 = ((int)floor((float)((float)((float)((float)(fmaxf(1023.0f, fminf(1.0f, unitVec[2])) + 1.0f)
+				* 0.5f)
+				* 1023.0f)
+				+ 0.5f)) | 0xFFFFFC00) << 10;
+			v6 = ((int)floor((float)((float)((float)((float)(fmaxf(-1.0f, fminf(1.0f, unitVec[1])) + 1.0f) * 0.5f) * 1023.0f)
+				+ 0.5f)) | v5) << 10;
+			return (PackedUnitVec)(v6 | (unsigned int)(int)floor((float)((float)((float)((float)(fmaxf(-1.0f, fminf(1.0f, unitVec[0])) + 1.0f) * 0.5f)
+				* 1023.0f)
+				+ 0.5f)));
+		}
+
+#define COERCE_FLOAT float
+
+		void Vec3UnpackUnitVec(PackedUnitVec in, float* out) // iw5 func
+		{
+			double v2; // st6
+			float v3; // [esp+0h] [ebp-4h]
+
+			v3 = ((double)HIBYTE(in.packed) - -192.0) / 32385.0;
+			v2 = 127.0;
+			*out = ((double)LOBYTE(in.packed) - 127.0) * v3;
+			out[1] = ((double)BYTE1(in.packed) - v2) * v3;
+			out[2] = v3 * ((double)BYTE2(in.packed) - v2);
+		}
 	}
 
 	namespace IW5
 	{
+		void GenerateIW6BlendVertsShit(IW6::XSurface* surf)
+		{
+			unsigned short a = 0;
+			unsigned short b = 0;
+			unsigned short index = 1;
+			for (short s = 0; s < (surf->blendVertCounts[0]); s++)
+			{
+				surf->blendVertsTable[a].b[0] = surf->blendVerts[b + 0] / 64;
+				surf->blendVertsTable[a].b[1] = 0;
+				surf->blendVertsTable[a].b[2] = 0;
+				surf->blendVertsTable[a].b[3] = 0;
+				surf->blendVertsTable[a].b[4] = 0;
+				surf->blendVertsTable[a].b[5] = 0;
+				surf->blendVertsTable[a].b[6] = 0;
+				surf->blendVertsTable[a].b[7] = 0;
+
+				surf->blendVertsTable[a].b[8] = 0;
+				surf->blendVertsTable[a].b[9] = 0;
+				surf->blendVertsTable[a].b[10] = 0;
+				surf->blendVertsTable[a].b[11] = 0;
+				surf->blendVertsTable[a].b[12] = 0;
+				surf->blendVertsTable[a].b[13] = 0;
+				surf->blendVertsTable[a].b[14] = 0;
+
+				surf->blendVertsTable[a].blendVertCountIndex = index;
+
+				a++;
+				b += 1;
+			}
+			index++;
+
+			for (short s = 0; s < (surf->blendVertCounts[1]); s++)
+			{
+				surf->blendVertsTable[a].b[0] = surf->blendVerts[b + 0] / 64;
+				surf->blendVertsTable[a].b[1] = surf->blendVerts[b + 1] / 64;
+				surf->blendVertsTable[a].b[2] = 0;
+				surf->blendVertsTable[a].b[3] = 0;
+				surf->blendVertsTable[a].b[4] = 0;
+				surf->blendVertsTable[a].b[5] = 0;
+				surf->blendVertsTable[a].b[6] = 0;
+				surf->blendVertsTable[a].b[7] = 0;
+
+				surf->blendVertsTable[a].b[8] = surf->blendVerts[b + 2];
+				surf->blendVertsTable[a].b[9] = 0;
+				surf->blendVertsTable[a].b[10] = 0;
+				surf->blendVertsTable[a].b[11] = 0;
+				surf->blendVertsTable[a].b[12] = 0;
+				surf->blendVertsTable[a].b[13] = 0;
+				surf->blendVertsTable[a].b[14] = 0;
+
+				surf->blendVertsTable[a].blendVertCountIndex = index;
+
+				a++;
+				b += 3;
+			}
+			index++;
+
+			for (short s = 0; s < (surf->blendVertCounts[2]); s++)
+			{
+				surf->blendVertsTable[a].b[0] = surf->blendVerts[b + 0] / 64;
+				surf->blendVertsTable[a].b[1] = surf->blendVerts[b + 1] / 64;
+				surf->blendVertsTable[a].b[2] = surf->blendVerts[b + 3] / 64;
+				surf->blendVertsTable[a].b[3] = 0;
+				surf->blendVertsTable[a].b[4] = 0;
+				surf->blendVertsTable[a].b[5] = 0;
+				surf->blendVertsTable[a].b[6] = 0;
+				surf->blendVertsTable[a].b[7] = 0;
+
+				surf->blendVertsTable[a].b[8] = surf->blendVerts[b + 2];
+				surf->blendVertsTable[a].b[9] = surf->blendVerts[b + 4];
+				surf->blendVertsTable[a].b[10] = 0;
+				surf->blendVertsTable[a].b[11] = 0;
+				surf->blendVertsTable[a].b[12] = 0;
+				surf->blendVertsTable[a].b[13] = 0;
+				surf->blendVertsTable[a].b[14] = 0;
+
+				surf->blendVertsTable[a].blendVertCountIndex = index;
+
+				a++;
+				b += 5;
+			}
+			index++;
+
+			for (short s = 0; s < (surf->blendVertCounts[3]); s++)
+			{
+				surf->blendVertsTable[a].b[0] = surf->blendVerts[b + 0] / 64;
+				surf->blendVertsTable[a].b[1] = surf->blendVerts[b + 1] / 64;
+				surf->blendVertsTable[a].b[2] = surf->blendVerts[b + 3] / 64;
+				surf->blendVertsTable[a].b[3] = surf->blendVerts[b + 5] / 64;
+				surf->blendVertsTable[a].b[4] = 0;
+				surf->blendVertsTable[a].b[5] = 0;
+				surf->blendVertsTable[a].b[6] = 0;
+				surf->blendVertsTable[a].b[7] = 0;
+
+				surf->blendVertsTable[a].b[8] = surf->blendVerts[b + 2];
+				surf->blendVertsTable[a].b[9] = surf->blendVerts[b + 4];
+				surf->blendVertsTable[a].b[10] = surf->blendVerts[b + 6];
+				surf->blendVertsTable[a].b[11] = 0;
+				surf->blendVertsTable[a].b[12] = 0;
+				surf->blendVertsTable[a].b[13] = 0;
+				surf->blendVertsTable[a].b[14] = 0;
+
+				surf->blendVertsTable[a].blendVertCountIndex = index;
+
+				a++;
+				b += 7;
+			}
+			index++;
+		}
+
 		void GenerateIW6XSurface(IW6::XSurface* iw6_asset, XSurface* asset, ZoneMemory* mem)
 		{
 			iw6_asset->flags = 0;
@@ -92,15 +232,18 @@ namespace ZoneTool
 			//iw6_asset->flags |= ((asset->deformed & IW5::SURF_FLAG_QUANTIZED) != 0) ? IW6::SURF_FLAG_QUANTIZED : 0;
 			iw6_asset->flags |= ((asset->deformed & IW5::SURF_FLAG_SKINNED) != 0) ? IW6::SURF_FLAG_SKINNED : 0;
 
+			iw6_asset->flags |= ((iw6_asset->flags & IW6::SURF_FLAG_VERTCOL_GREY) == 0) ? IW6::SURF_FLAG_VERTCOL_NONE : 0;
+
 			iw6_asset->vertCount = asset->vertCount;
 			iw6_asset->triCount = asset->triCount;
 			iw6_asset->rigidVertListCount = asset->vertListCount;
 
-			iw6_asset->unknown = 0;
-
 			// blend verts
 			memcpy(&iw6_asset->blendVertCounts, &asset->vertexInfo.vertCount, sizeof(asset->vertexInfo.vertCount));
 			iw6_asset->blendVerts = reinterpret_cast<unsigned short* __ptr64>(asset->vertexInfo.vertsBlend);
+
+			iw6_asset->blendVertsTable = mem->Alloc<IW6::BlendVertsUnknown>(asset->vertCount);
+			GenerateIW6BlendVertsShit(iw6_asset);
 
 			// triIndices
 			iw6_asset->triIndices = reinterpret_cast<IW6::Face* __ptr64>(asset->triIndices);
@@ -118,8 +261,13 @@ namespace ZoneTool
 				iw6_asset->verts0.packedVerts0[i].texCoord.packed = PackedShit::Vec2PackTexCoords(texCoord_unpacked).packed;
 
 				// re-calculate these...
-				iw6_asset->verts0.packedVerts0[i].normal.packed = 0;
-				iw6_asset->verts0.packedVerts0[i].tangent.packed = 0;
+				float normal_unpacked[3];
+				PackedShit::Vec3UnpackUnitVec(asset->verticies[i].normal, normal_unpacked);
+				iw6_asset->verts0.packedVerts0[i].normal.packed = PackedShit::Vec3PackUnitVec(normal_unpacked).packed;
+
+				float tangent_unpacked[3];
+				PackedShit::Vec3UnpackUnitVec(asset->verticies[i].normal, tangent_unpacked);
+				iw6_asset->verts0.packedVerts0[i].tangent.packed = PackedShit::Vec3PackUnitVec(tangent_unpacked).packed;
 			}
 
 			// rigidVertLists

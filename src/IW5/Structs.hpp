@@ -1025,8 +1025,8 @@ namespace ZoneTool
 		struct Material
 		{
 			const char* name; // 0
-			char gameFlags;
-			char sortKey;
+			unsigned char gameFlags;
+			unsigned char sortKey;
 			unsigned char animationX; // 6 // amount of animation frames in X
 			unsigned char animationY; // 7 // amount of animation frames in Y
 			int subRendererIndex; // 8 // 0x00
@@ -1034,10 +1034,10 @@ namespace ZoneTool
 			int unknown;
 			unsigned int surfaceTypeBits; //+20
 			char stateBitsEntry[54];
-			char numMaps;
-			char constantCount;
-			char stateBitsCount;
-			char stateFlags; // 0x03
+			unsigned char numMaps;
+			unsigned char constantCount;
+			unsigned char stateBitsCount;
+			unsigned char stateFlags; // 0x03
 			unsigned short cameraRegion; // 0x04
 			MaterialTechniqueSet* techniqueSet; // '2d' techset
 			MaterialImage* maps; // map references
