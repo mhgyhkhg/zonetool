@@ -10,7 +10,7 @@
 #include "ZoneUtils/Utils/BinaryDumper.hpp"
 #include "../IW5/Assets/MapEnts.hpp"
 
-#define CONVERT_IW5_MAPENTS
+//#define CONVERT_IW5_MAPENTS
 
 namespace ZoneTool
 {
