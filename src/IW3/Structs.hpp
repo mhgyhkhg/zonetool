@@ -1962,6 +1962,33 @@ namespace ZoneTool
 			int count;
 		};
 
+#pragma pack(pop)
+		struct Glyph
+		{
+			unsigned __int16 letter;
+			char x0;
+			char y0;
+			char dx;
+			char pixelWidth;
+			char pixelHeight;
+			float s0;
+			float t0;
+			float s1;
+			float t1;
+		};
+
+#pragma pack(pop)
+		/* 1003 */
+		struct Font_s
+		{
+			const char* fontName;
+			int pixelHeight;
+			int glyphCount;
+			Material* material;
+			Material* glowMaterial;
+			Glyph* glyphs;
+		};
+
 		union XAssetHeader
 		{
 			void* data;
@@ -1988,7 +2015,7 @@ namespace ZoneTool
 			GfxWorld* gfx_map;
 			GfxLightDef* lightDef;
 			LoadedSound* loaded_sound;
-			// 			Font_s *font;
+			Font_s *font;
 			// 			MenuList *menuList;
 			// 			menuDef_t *menu;
 			// 			LocalizeEntry *localize;
