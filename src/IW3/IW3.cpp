@@ -95,7 +95,7 @@ namespace ZoneTool
 
 			if (!memory)
 			{
-				memory = std::make_shared<ZoneMemory>(1024 * 1024 * 128);		// 128mb
+				memory = std::make_shared<ZoneMemory>(1024 * 1024 * 256);		// 128mb
 			}
 			
 			// nice meme
@@ -194,6 +194,7 @@ if (asset->type == __TYPE__) \
 						DECLARE_ASSET(loaded_sound, ILoadedSound);
 						DECLARE_ASSET(sound, ISound);
 						DECLARE_ASSET(fx, IFxEffectDef);
+						DECLARE_ASSET(font, IFontDef);
 						DECLARE_ASSET(gfx_map, IGfxWorld);
 						DECLARE_ASSET(col_map_mp, IClipMap);
 						DECLARE_ASSET(map_ents, IMapEnts);
