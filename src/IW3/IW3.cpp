@@ -95,7 +95,7 @@ namespace ZoneTool
 
 			if (!memory)
 			{
-				memory = std::make_shared<ZoneMemory>(1024 * 1024 * 256);		// 128mb
+				memory = std::make_shared<ZoneMemory>(1024 * 1024 * 128);		// 128mb
 			}
 			
 			// nice meme
