@@ -71,14 +71,14 @@ namespace ZoneTool::IW3
 		iw4_asset->name = asset->name;
 		
 		// iw3xpo
-		MaterialGameFlags iw3_game_flags;
-		iw3_game_flags.packed = asset->gameFlags;
-		IW4::MaterialGameFlags_ iw4_game_flags;
-		iw4_game_flags.packed = iw3_game_flags.packed;
-		iw4_game_flags.fields.unk7 = iw3_game_flags.fields.unkNeededForSModelDisplay;
-		iw4_game_flags.fields.unkCastShadowMaybe = iw3_game_flags.fields.MTL_GAMEFLAG_CASTS_SHADOW;
+		//MaterialGameFlags iw3_game_flags;
+		//iw3_game_flags.packed = asset->gameFlags;
+		//IW4::MaterialGameFlags_ iw4_game_flags;
+		//iw4_game_flags.packed = iw3_game_flags.packed;
+		//iw4_game_flags.fields.unk7 = iw3_game_flags.fields.unkNeededForSModelDisplay;
+		//iw4_game_flags.fields.unkCastShadowMaybe = iw3_game_flags.fields.MTL_GAMEFLAG_CASTS_SHADOW;
 
-		iw4_asset->gameFlags = iw4_game_flags.packed;
+		iw4_asset->gameFlags = asset->gameFlags;
 
 		if (sortKeysTable.contains(asset->sortKey))
 		{
@@ -126,7 +126,6 @@ namespace ZoneTool::IW3
 			static_assert(sizeof IW4::MaterialTextureDef == sizeof IW3::MaterialTextureDef);
 			std::memcpy(iw4Def, iw3Def, sizeof IW4::MaterialTextureDef);
 
-
 			if (iw4Def->semantic == 0xB) // TS_Water
 			{
 				iw4Def->u.water = mem.allocate<IW4::water_t>();
@@ -134,11 +133,13 @@ namespace ZoneTool::IW3
 				static_assert(sizeof IW4::water_t == sizeof IW3::water_t);
 				std::memcpy(iw4Def->u.water, iw3Def->u.water, sizeof IW4::water_t);
 
-				iw4Def->u.water->image = reinterpret_cast<IW4::GfxImage*>(iw3Def->u.water->image);
+				iw4Def->u.water->image = mem.allocate<IW4::GfxImage>();
+				iw4Def->u.water->image->name = iw3Def->u.water->image->name;
 			}
 			else
 			{
-				iw4Def->u.image = reinterpret_cast<IW4::GfxImage*>(iw3Def->u.image);
+				iw4Def->u.image = mem.allocate<IW4::GfxImage>();
+				iw4Def->u.image->name = iw3Def->u.image->name;
 			}
 		}
 
