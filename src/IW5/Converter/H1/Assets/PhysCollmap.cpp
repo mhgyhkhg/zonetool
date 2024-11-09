@@ -395,7 +395,6 @@ namespace ZoneTool::IW5
 
 		void GenerateCapsule(PhysCollmap* asset, PhysGeomInfo* geom, H1::PhysGeomInfo* h1_geom, allocator& allocator)
 		{
-			h1_geom->data = allocator.allocate<H1::dmPolytopeData>();
 			auto* data = h1_geom->data;
 
 			// generate...

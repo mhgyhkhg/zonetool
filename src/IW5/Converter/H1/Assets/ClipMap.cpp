@@ -214,7 +214,7 @@ namespace ZoneTool::IW5
 
 				memcpy(&info->sCollisionData.staticModelList[i].origin, &asset->staticModelList[i].origin, sizeof(float[3]));
 				memcpy(&info->sCollisionData.staticModelList[i].invScaledAxis, &asset->staticModelList[i].invScaledAxis, sizeof(float[3][3]));
-				memcpy(&info->sCollisionData.staticModelList[i].absBounds, &asset->staticModelList[i].absBounds, sizeof(float[2][3]));
+				memcpy(&info->sCollisionData.staticModelList[i].absBounds, &asset->staticModelList[i].absBounds, sizeof(Bounds));
 				info->sCollisionData.staticModelList[i].lightingHandle = 0;
 			}
 		}
@@ -292,7 +292,7 @@ namespace ZoneTool::IW5
 			{
 				h1_asset->dynEntCount[i] = asset->dynEntCount[i];
 				h1_asset->dynEntDefList[i] = mem.allocate<H1::DynEntityDef>(h1_asset->dynEntCount[i]);
-				h1_asset->dynEntPoseList[i] = reinterpret_cast<H1::DynEntityPose * __ptr64>(asset->dynEntPoseList[i]); // check
+				h1_asset->dynEntPoseList[i] = mem.allocate < H1::DynEntityPose>(h1_asset->dynEntCount[i]);
 				h1_asset->dynEntClientList[i] = mem.allocate<H1::DynEntityClient>(h1_asset->dynEntCount[i]);
 				h1_asset->dynEntCollList[i] = reinterpret_cast<H1::DynEntityColl * __ptr64>(asset->dynEntCollList[i]);
 				for (unsigned short j = 0; j < h1_asset->dynEntCount[i]; j++)
@@ -315,6 +315,11 @@ namespace ZoneTool::IW5
 						h1_asset->dynEntDefList[i][j].unk[0] = 2500.00000f;
 						h1_asset->dynEntDefList[i][j].unk[1] = 0.0199999996f;
 					}
+
+					memcpy(&h1_asset->dynEntPoseList[i][j].pose.quat, &asset->dynEntPoseList[i]->pose.quat, sizeof(float[4]));
+					memcpy(&h1_asset->dynEntPoseList[i][j].pose.origin, &asset->dynEntPoseList[i]->pose.origin, sizeof(float[3]));
+					h1_asset->dynEntPoseList[i][j].radius = asset->dynEntPoseList[i]->radius;
+					//h1_asset->dynEntPoseList[i][j].__pad0;
 
 					h1_asset->dynEntClientList[i][j].physObjId = asset->dynEntClientList[i]->physObjId;
 					h1_asset->dynEntClientList[i][j].flags = asset->dynEntClientList[i]->flags;
