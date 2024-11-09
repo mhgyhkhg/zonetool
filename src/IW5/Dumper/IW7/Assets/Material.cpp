@@ -3,16 +3,18 @@
 
 //#include "IW7/Assets/Material.hpp"
 
-//r0 - replace
-//c0 - color map
-//no - normal map
-//s0 - specular map
-//p0 - parallax
-//a0 - Add
-//b0 - Blend
-//d0 - Detail
-//t0 - transparent ? (means that its replace + alpha test >= 128 meaning either full / no transparency per pixel)
-//q0 - (don't know the word, it's a detail map for normals)
+// r0 - replace
+// c0 - color map
+// n0 - normal map
+// s0 - specular map
+// p0 - parallax
+// a0 - Add
+// b0 - Blend
+// d0 - Detail
+// t0 - transparent ? (means that its replace + alpha test >= 128 meaning either full / no transparency per pixel)
+// q0 - (don't know the word, it's a detail map for normals)
+// 
+// _ct_ = colorTint
 
 namespace ZoneTool
 {
@@ -94,6 +96,10 @@ namespace ZoneTool
 						if (offset_end == std::string::npos)
 						{
 							offset_end = 0;
+						}
+						else
+						{
+							offset_end += 1; // '/'
 						}
 
 						const auto replacement = prefix + "/";
@@ -293,17 +299,17 @@ namespace ZoneTool
 
 				//matdata["name"] = new_name;
 
-				std::string iw3_techset;
+				std::string techset;
 				std::string iw7_techset;
 				if (asset->techniqueSet)
 				{
-					iw3_techset = asset->techniqueSet->name;
+					techset = asset->techniqueSet->name;
 
 					bool result = false;
-					iw7_techset = IW7::get_IW7_techset(iw3_techset, asset->name, &result, geotrail);
+					iw7_techset = IW7::get_IW7_techset(techset, asset->name, &result, geotrail);
 					if (!result)
 					{
-						matdata["techniqueSet->original"] = iw3_techset;
+						matdata["techniqueSet->original"] = techset;
 						//ZONETOOL_ERROR("Not dumping material \"%s\"", asset->name);
 						//return;
 					}
@@ -329,17 +335,18 @@ namespace ZoneTool
 				matdata["assetFlags"] = 0;//IW7::MTL_ASSETFLAG_NONE;
 
 				ordered_json constant_table;
-				for (int i = 0; i < asset->constantCount && iw3_techset != "2d"; i++)
+				for (int i = 0; i < asset->constantCount && techset != "2d"; i++)
 				{
 					ordered_json table;
 					std::string constant_name = asset->constantTable[i].name;
+					const auto constant_hash = asset->constantTable[i].nameHash;
 
 					if (constant_name.size() > 12)
 					{
 						constant_name.resize(12);
 					}
 
-					if (constant_name == "envMapParms")
+					if (constant_hash == 1033475292) // envMapParms
 					{
 						continue;
 					}
@@ -358,25 +365,23 @@ namespace ZoneTool
 				}
 
 #define CONSTANT_TABLE_ADD_IF_NOT_FOUND(CONST_NAME, CONST_HASH, LITERAL_1, LITERAL_2, LITERAL_3, LITERAL_4) \
-				bool has_table = false; \
-				unsigned int table_idx = 0; \
+				bool has_const = false; \
+				std::size_t insert_position = constant_table.size(); \
 				for (std::size_t i = 0; i < constant_table.size(); i++) \
 				{ \
-					if (constant_table[i]["nameHash"].get<unsigned int>() == CONST_HASH) \
+					if (constant_table[i]["nameHash"].get<std::size_t>() == CONST_HASH) \
 					{ \
-						has_table = true; \
+						has_const = true; \
+						break; \
+					} \
+					if (constant_table[i]["nameHash"].get<std::size_t>() > CONST_HASH) \
+					{ \
+						insert_position = i; \
+						break; \
 					} \
 				} \
-				if (!has_table) \
+				if (!has_const) \
 				{ \
-					for (std::size_t i = 0; i < constant_table.size(); i++) \
-					{ \
-						if (constant_table[i]["nameHash"].get<unsigned int>() > CONST_HASH) \
-						{ \
-							table_idx = i; \
-							break; \
-						} \
-					} \
 					ordered_json table; \
 					table["name"] = CONST_NAME; \
 					table["nameHash"] = CONST_HASH; \
@@ -386,14 +391,7 @@ namespace ZoneTool
 					literal_entry[2] = LITERAL_3; \
 					literal_entry[3] = LITERAL_4; \
 					table["literal"] = literal_entry; \
-					if (constant_table.is_null()) \
-					{ \
-						constant_table[constant_table.size()] = table; \
-					} \
-					else \
-					{ \
-						constant_table.insert(constant_table.begin() + table_idx, table); \
-					} \
+					constant_table.insert(constant_table.begin() + insert_position, table); \
 				}
 
 				if (iw7_techset.find("s0") != std::string::npos)
@@ -444,6 +442,39 @@ namespace ZoneTool
 
 					// add image data to material
 					material_images.push_back(image);
+				}
+
+#define IMAGE_ADD_IF_NOT_FOUND(IMAGE, SEMANTIC, SAMPLER_STATE, LAST_CHARACTER, FIRST_CHARACTER, HASH) \
+				bool has_image = false; \
+				std::size_t insert_position = material_images.size(); \
+				for (std::size_t i = 0; i < material_images.size(); i++) \
+				{ \
+					if (material_images[i]["typeHash"].get<std::size_t>() == HASH) \
+					{ \
+						has_image = true; \
+						break; \
+					} \
+					if (material_images[i]["typeHash"].get<std::size_t>() > HASH) \
+					{ \
+						insert_position = i; \
+						break; \
+					} \
+				} \
+				if (!has_image) \
+				{ \
+					ordered_json image; \
+					image["image"] = IMAGE; \
+					image["semantic"] = SEMANTIC; \
+					image["samplerState"] = SAMPLER_STATE; \
+					image["lastCharacter"] = LAST_CHARACTER; \
+					image["firstCharacter"] = FIRST_CHARACTER; \
+					image["typeHash"] = HASH; \
+					material_images.insert(material_images.begin() + insert_position, image); \
+				}
+
+				if (iw7_techset.find("n0") != std::string::npos)
+				{
+					IMAGE_ADD_IF_NOT_FOUND("$identitynormalmap", 5, 1, 112, 110, 1507003663);
 				}
 
 				matdata["textureTable"] = material_images;
