@@ -381,7 +381,9 @@ public:
 
 			if ((length & 3) != 0)
 			{
+#ifdef DEBUG
 				_wassert(_CRT_WIDE("!(length & 3)"), _CRT_WIDE(__FILE__), __LINE__);
+#endif
 			}
 
 			if (remainingLength)
@@ -390,7 +392,9 @@ public:
 				{
 					if (remainingLength < 4)
 					{
+#ifdef DEBUG
 						_wassert(_CRT_WIDE("length >= sizeof(uint32_t)"), _CRT_WIDE(__FILE__), __LINE__);
+#endif
 					}
 
 					unsigned int v5 = *ptr >> 8;
