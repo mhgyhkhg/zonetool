@@ -14,6 +14,7 @@ using namespace zonetool;
 
 #include "Structs.hpp"
 
+#include "Assets/AddonMapEnts.hpp"
 #include "Assets/ClipMap.hpp"
 #include "Assets/ComWorld.hpp"
 #include "Assets/FxEffectDef.hpp"

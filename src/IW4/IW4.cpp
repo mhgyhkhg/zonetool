@@ -284,6 +284,7 @@ char**>(0x00799278)[type]);
 				{
 					try
 					{
+						DECLARE_ASSET(addon_map_ents, IAddonMapEnts);
 						DECLARE_ASSET(xmodelsurfs, IXSurface);
 						DECLARE_ASSET(xmodel, IXModel);
 						DECLARE_ASSET(material, IMaterial);

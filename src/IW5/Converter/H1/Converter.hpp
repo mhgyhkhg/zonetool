@@ -1,5 +1,6 @@
 #pragma once
 
+#include "./Assets/AddonMapEnts.hpp"
 #include "./Assets/ClipMap.hpp"
 #include "./Assets/ComWorld.hpp"
 #include "./Assets/FxEffectDef.hpp"

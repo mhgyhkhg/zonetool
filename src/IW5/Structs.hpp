@@ -2233,6 +2233,14 @@ namespace ZoneTool
 			ClientTriggers clientTrigger;
 		};
 
+		struct AddonMapEnts
+		{
+			const char* name;
+			char* entityString;
+			int numEntityChars;
+			MapTriggers trigger;
+		};
+
 		struct GfxSky
 		{
 			int skySurfCount;

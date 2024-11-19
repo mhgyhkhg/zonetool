@@ -228,6 +228,7 @@ namespace ZoneTool
 				}
 					try
 					{
+						DUMPCASE(addon_map_ents, IAddonMapEnts, AddonMapEnts);
 						DUMPCASE(col_map_mp, IClipMap, clipMap_t);
 						DUMPCASE(com_map, IComWorld, ComWorld);
 						DUMPCASE(fx, IFxEffectDef, FxEffectDef);
