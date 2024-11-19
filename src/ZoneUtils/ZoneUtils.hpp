@@ -146,7 +146,18 @@ namespace zonetool
 		h1,
 		s1,
 	};
+
+	enum dump_source
+	{
+		source_none,
+		iw3,
+		iw4,
+		iw5,
+		t6,
+	};
+
 	extern dump_target dumping_target;
+	extern dump_source dumping_source;
 }
 
 template <typename T1, typename T2>

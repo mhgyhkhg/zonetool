@@ -22,6 +22,7 @@
 std::string currentzone;
 
 zonetool::dump_target zonetool::dumping_target = zonetool::dump_target::h1;
+zonetool::dump_source zonetool::dumping_source = zonetool::dump_source::source_none;
 
 namespace ZoneTool
 {

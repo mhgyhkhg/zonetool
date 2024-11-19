@@ -42,6 +42,7 @@ using ordered_json = nlohmann::ordered_json;
 #include "Assets/LoadedSound.hpp"
 #include "Assets/MapEnts.hpp"
 #include "Assets/Material.hpp"
+#include "Assets/PathData.hpp"
 #include "Assets/PhysPreset.hpp"
 #include "Assets/Rawfile.hpp"
 #include "Assets/Sound.hpp"

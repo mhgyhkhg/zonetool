@@ -298,6 +298,7 @@ char**>(0x00799278)[type]);
 						DECLARE_ASSET(image, IGfxImage);
 						DECLARE_ASSET(fx, IFxEffectDef);
 						DECLARE_ASSET(game_map_mp, IGameWorldMp);
+						DECLARE_ASSET(game_map_sp, IGameWorldSp);
 						DECLARE_ASSET(physpreset, IPhysPreset);
 						DECLARE_ASSET(sound, ISound);
 						DECLARE_ASSET(sndcurve, ISoundCurve);
@@ -842,6 +843,7 @@ char**>(0x00799278)[type]);
         void Linker::dump_zone(const std::string& name, zonetool::dump_target target)
 		{
 			zonetool::dumping_target = target;
+			zonetool::dumping_source = zonetool::iw4;
 
 			isDumpingComplete = false;
 			isDumping = true;

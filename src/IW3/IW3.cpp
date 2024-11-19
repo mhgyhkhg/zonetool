@@ -457,6 +457,7 @@ namespace ZoneTool
         void Linker::dump_zone(const std::string& name, zonetool::dump_target target)
 		{
 			zonetool::dumping_target = target;
+			zonetool::dumping_source = zonetool::iw3;
 
 			isDumping = true;
 			currentDumpingZone = name;

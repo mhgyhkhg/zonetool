@@ -220,6 +220,7 @@ namespace ZoneTool
         void Linker::dump_zone(const std::string& name, zonetool::dump_target target)
 		{
 			zonetool::dumping_target = target;
+			zonetool::dumping_source = zonetool::iw5;
 
 			is_dumping_complete = false;
 			is_dumping = true;

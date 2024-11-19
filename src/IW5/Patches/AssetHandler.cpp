@@ -240,6 +240,7 @@ namespace ZoneTool
 						DUMPCASE(loaded_sound, ILoadedSound, LoadedSound);
 						DUMPCASE(map_ents, IMapEnts, MapEnts);
 						DUMPCASE(material, IMaterial, Material);
+						DUMPCASE(ai_paths, IPathData, PathData);
 						DUMPCASE(phys_collmap, IPhysCollmap, PhysCollmap);
 						DUMPCASE(physpreset, IPhysPreset, PhysPreset);
 						DUMPCASE(rawfile, IRawFile, RawFile);
