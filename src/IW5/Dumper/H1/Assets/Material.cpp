@@ -64,6 +64,7 @@ namespace ZoneTool
 			{"wc_l_sm_r0c0q0n0s0",						"wc_l_sm_r0c0q0n0sd0_nfwpf"},
 			{"wc_l_sm_r0c0q0n0s0p0",					"wc_l_sm_r0c0q0n0sd0p0_nfwpf"},
 			{"wc_l_sm_r0c0q0n0s0o0p0",					"wc_l_sm_lmpb_r0c0q0n0sd0om0_nfwpf"},
+			{"wc_l_sm_r0c0q0s0",						"wc_l_sm_r0c0q0n0sd0_nfwpf"},
 			{"wc_l_sm_r0c0q0s0p0",						"wc_l_sm_r0c0q0n0sd0p0_nfwpf"},
 			{"wc_l_sm_r0c0s0",							"wc_l_sm_r0c0sd0_nfwpf"},
 			{"wc_l_sm_r0c0s0_nocast",					"wc_l_sm_r0c0sd0_nfwpf"},
@@ -72,6 +73,7 @@ namespace ZoneTool
 			{"wc_l_sm_r0c0p0_nocast",					"wc_l_sm_r0c0sd0_nfwpf"},
 			{"wc_l_r0c0",								"wc_l_sm_r0c0_nfwpf"},
 			{"wc_l_r0c0_nocast",						"wc_l_sm_r0c0_nfwpf_nocast"},
+			{"wc_l_r0c0s0",								"wc_l_sm_r0c0n0sd0_nfwpf"},
 			{"wc_l_r0c0n0_nocast",						"wc_l_sm_r0c0n0sd0_nfwpf"},
 			{"wc_l_r0c0n0s0_nocast",					"wc_l_sm_r0c0n0sd0_nfwpf"},
 			{"wc_l_r0c0n0s0p0_nocast",					"wc_l_sm_r0c0n0sd0_nfwpf"},
@@ -81,6 +83,7 @@ namespace ZoneTool
 			{"wc_l_sm_ua_r0c0n0s0p0_nocast",			"wc_l_sm_lmpb_ua_r0c0n0sd0_nfwpf_nocast"},
 			{"wc_l_sm_ua_r0c0nf0s0p0_nocast",			"wc_l_sm_lmpb_ua_r0c0n0sd0_nfwpf_nocast"},
 			{"wc_l_sm_ua_r0c0q0n0s0p0",					"wc_l_sm_lmpb_ua_r0c0n0sd0_nfwpf_nocast"},
+			{"wc_l_sm_ua_r0c0q0n0s0p0_nocast",			"wc_l_sm_lmpb_ua_r0c0n0sd0_nfwpf_nocast"},
 
 			{"wc_l_ua_r0c0nf0s0p0_nocast",				"wc_l_sm_lmpb_ua_r0c0n0sd0_nfwpf_nocast"},
 
@@ -119,12 +122,14 @@ namespace ZoneTool
 			{"wc_unlit_replace_lin_nocast",				"wc_unlit_atest_lin_nfwpf"},
 			{"wc_unlit_replace_lin_ua",					"wc_unlit_blend_lin_ndw_ua_cltrans"},
 			{"wc_unlit_screen_lin",						"wc_unlit_add_lin_ndw_cltrans"},
+			{"wc_unlit_screen_lin_ua",					"wc_unlit_add_lin_ndw_ua_nfwpf"},
 			{"wc_effect",								"effect_blend_ndw"}, // ??
 			{"wc_effect_blend",							"effect_blend_ndw"}, // ??
 			{"wc_effect_zfeather_blend",				"effect_zf_blend_ndw"}, // ??
 			{"wc_ambient_t0c0",							"wc_unlit_atest_lin_nfwpf"}, // works
 			{"wc_ambient_t0c0_nocast",					"wc_unlit_atest_lin_nfwpf"}, // works
 			{"wc_sky",									"wc_sky_cso_nfwpf"},
+			{"wc_sky_sg",								"wc_sky_cso_nfwpf"}, // codo
 			{"wc_shadowcaster",							"wc_shadowcaster"},
 			{"wc_water",								"2d"},
 			{"wc_tools",								"wc_tools_r0c0ct0"},
@@ -154,6 +159,7 @@ namespace ZoneTool
 			{"mc_l_sm_r0c0n0_nocast",					"mc_l_sm_r0c0n0_nfwpf"},
 			{"mc_l_sm_r0c0n0p0",						"mc_l_sm_r0c0n0_nfwpf"},
 			{"mc_l_sm_r0c0n0s0",						"mc_l_sm_r0c0n0sd0_nfwpf"},
+			{"mc_l_sm_r0c0n0s0_fgcb",					"mc_l_sm_r0c0n0sd0_nfwpf"}, // codo
 			{"mc_l_sm_r0c0n0s0_em",						"mc_l_sm_r0c0n0sd0_nfwpf"},
 			{"mc_l_sm_r0c0n0s0_nocast",					"mc_l_sm_r0c0n0sd0_nfwpf"},
 			{"mc_l_sm_r0c0n0s0o0",						"mc_l_sm_lmpb_r0c0n0sd0om0_nfwpf"},
@@ -170,9 +176,12 @@ namespace ZoneTool
 			{"mc_l_sm_r0c0q0n0s0o0",					"mc_l_sm_lmpb_r0c0q0n0sd0om0_nfwpf"},
 			{"mc_l_sm_r0c0q0n0s0o0p0",					"mc_l_sm_lmpb_r0c0q0n0sd0om0_nfwpf"},
 
+			{"mc_l_sm_ua_r0c0",							"m_l_sm_ua_r0c0sd0p0_nfwpf"},
 			{"mc_l_sm_ua_r0c0s0p0",						"m_l_sm_ua_r0c0sd0p0_nfwpf"},
 			{"mc_l_sm_ua_r0c0s0p0_nocast",				"m_l_sm_ua_r0c0sd0p0_nfwpf"},
 			{"mc_l_sm_ua_r0c0n0s0p0",					"m_l_sm_ua_r0c0sd0p0_nfwpf"},
+
+			{"mc_l_ua_r0c0_nocast",						"m_l_sm_ua_r0c0sd0p0_nfwpf"},
 
 			{"mc_l_sm_scroll_ua_r0c0s0p0",				"m_l_sm_ua_r0c0sd0p0_nfwpf"},
 
@@ -184,7 +193,9 @@ namespace ZoneTool
 
 			{"mc_l_sm_du_dm_r0c0n0s0",					"m_l_sm_du_dm_r0c0n0sd0_nfwpf"},
 			{"mc_l_sm_du_dm_r0c0n0s0_nocast",			"m_l_sm_du_dm_r0c0n0sd0_nfwpf"},
-			{"mc_l_sm_du_dm_r0c0n0s0p0",				"m_l_sm_du_dm_r0c0n0sd0_nfwpf"},
+			{"mc_l_sm_du_dm_r0c0n0s0p0",				"m_l_sm_du_dm_r0c0n0sd0p0_nfwpf"},
+			{"mc_l_sm_du_dm_r0c0q0n0s0p0",				"m_l_sm_du_dm_r0c0q0n0sd0_nfwpf"},
+			{"mc_l_sm_du_dm_r0c0d0n0s0p0",				"m_l_sm_du_dm_r0c0n0sd0p0_nfwpf"},
 
 			{"mc_l_sm_du_dm_b0c0n0s0",					"mc_l_sm_ndw_b0c0n0sd0_cltrans"},
 
@@ -214,6 +225,7 @@ namespace ZoneTool
 			{"mc_l_r0c0s0_nocast",						"mc_l_sm_r0c0sd0_nfwpf"},
 			{"mc_l_r0c0s0p0_nocast",					"m_l_sm_r0c0sd0p0_nfwpf_nocast"},
 			{"mc_l_r0c0d0n0_nocast",					"m_l_sm_r0c0d0n0sd0_nfwpf"},
+			{"mc_l_r0c0q0n0s0p0_nocast",				"m_l_sm_r0c0q0n0sd0p0_nfwpf"},
 
 			{"mc_l_t0c0q0n0s0o0",						"m_l_sm_lmpb_t0c0q0n0sd0om0_nfwpf"},
 			{"mc_l_t0c0n0s0o0",							"m_l_sm_lmpb_t0c0n0sd0om0_nfwpf"},
@@ -248,6 +260,9 @@ namespace ZoneTool
 			{"mc_unlit_add_lin_ua",						"m_unlit_add_lin_ndw_ua_nfwpf"},
 			{"mc_unlit_add_lin_nofog_ua",				"m_unlit_add_lin_ndw_ua_nfwpf"},
 			{"mc_unlit_blend_lin",						"m_unlit_blend_lin_ndw_cltrans"},
+			{"mc_unlit_blend_lin_ua",					"m_unlit_blend_lin_ndw_cltrans"},
+			{"mc_unlit_blend_lin_nofog_ua",				"m_unlit_blend_lin_ndw_ua_cltrans"},
+			{"mc_unlit_blend_lin_eyeoffset_custom_objective", "m_unlit_blend_lin_ndw_cltrans"},
 			{"mc_unlit_blend_ua",						"m_unlit_blend_lin_ndw_ua_cltrans"},
 			{"mc_unlit_blend_nofog_ua",					"m_unlit_blend_lin_ndw_ua_cltrans"},
 			{"mc_unlit_multiply",						"mc_unlit_multiply_lin_ndw_nfwpf"},
@@ -388,6 +403,8 @@ namespace ZoneTool
 		techset_map mc_l_sm_b0c0n0s0p0 = { "m_l_sm_ndw_b0c0n0sd0p0_nfwpf", "mc_l_sm_ndw_b0c0n0sd0p0_nfwpf_frt_aat", "mc_l_sm_ndw_b0c0n0sd0_nfwpf_frt_im_aat", "m_l_sm_ndw_b0c0n0sd0p0_cltrans" };
 		techset_map mc_l_sm_b0c0q0n0s0 = { "", "mc_l_sm_ndw_b0c0q0n0sd0_nfwpf_frt_aat", "", "m_l_sm_lmpb_ndw_b0c0q0n0sd0_cltrans" };
 
+		techset_map mc_l_sm_ua_b0c0 = { "mc_l_sm_ndw_ua_b0c0_cltrans", "", "", "" };
+
 		techset_map m_l_sm_b0c0s0 = { "", "m_l_sm_ndw_b0c0sd0_nfwpf_frt_aat", "mc_l_sm_ndw_b0c0sd0_nfwpf_frt_im_aat", "m_l_sm_ndw_b0c0sd0_cltrans" };
 		techset_map m_l_sm_b0c0n0s0 = { "m_l_sm_ndw_b0c0n0sd0_nfwpf", "m_l_sm_ndw_b0c0n0sd0_nfwpf_frt_aat", "mc_l_sm_ndw_b0c0n0sd0_nfwpf_frt_im_aat", "m_l_sm_ndw_b0c0n0sd0_cltrans" };
 		techset_map m_l_sm_b0c0n0s0p0 = { "m_l_sm_ndw_b0c0n0sd0p0_nfwpf", "m_l_sm_ndw_b0c0n0sd0_nfwpf_frt_aat", "mc_l_sm_ndw_b0c0n0sd0_nfwpf_frt_im_aat", "m_l_sm_ndw_b0c0n0sd0p0_cltrans" };
@@ -430,6 +447,7 @@ namespace ZoneTool
 			{"wc_l_sm_b0c0s0p0",						wc_l_sm_b0c0s0},
 			{"wc_l_sm_b0c0q0n0",						wc_l_sm_b0c0n0s0},
 			{"wc_l_sm_b0c0q0n0s0",						wc_l_sm_b0c0n0s0},
+			{"wc_l_sm_b0c0q0n0s0_nocast",				wc_l_sm_b0c0n0s0},
 			{"wc_l_sm_b0c0q0n0s0p0",					wc_l_sm_b0c0n0s0},
 
 			{"wc_l_sm_ua_b0c0s0p0_nocast",				wc_l_sm_ua_b0c0n0s0p0},
@@ -472,11 +490,11 @@ namespace ZoneTool
 			{"wc_l_sm_t0c0p0",							wc_l_sm_t0c0},
 			{"wc_l_sm_t0c0d0n0s0p0",					wc_l_sm_t0c0n0s0},
 
-			{"wc_l_sm_ua_t0c0s0_nocast",				wc_l_sm_t0c0s0},
-
 			{"wc_l_t0c0",								wc_l_sm_t0c0},
 			{"wc_l_t0c0_nocast",						wc_l_sm_t0c0},
 			{"wc_l_t0c0n0s0_nocast",					wc_l_sm_t0c0n0s0},
+
+			{"wc_l_sm_ua_t0c0s0_nocast",				wc_l_sm_t0c0s0},
 
 			// mc
 
@@ -494,6 +512,7 @@ namespace ZoneTool
 			{"mc_l_sm_b0c0n0s0p0",						mc_l_sm_b0c0n0s0p0},
 			{"mc_l_sm_b0c0n0s0p0_nocast",				mc_l_sm_b0c0n0s0p0},
 			{"mc_l_sm_b0c0p0",							mc_l_sm_b0c0},
+			{"mc_l_sm_b0c0p0_fgca",						mc_l_sm_b0c0}, // codo
 			{"mc_l_sm_b0c0q0s0",						mc_l_sm_b0c0q0n0s0},
 			{"mc_l_sm_b0c0q0n0s0",						mc_l_sm_b0c0q0n0s0},
 			{"mc_l_sm_b0c0q0n0s0p0",					mc_l_sm_b0c0q0n0s0},
@@ -512,6 +531,7 @@ namespace ZoneTool
 
 			{"mc_l_b0c0_nocast",						mc_l_sm_b0c0},
 			{"mc_l_b0c0s0",								mc_l_sm_b0c0s0},
+			{"mc_l_b0c0s0_nocast",						mc_l_sm_b0c0s0_nocast},
 			{"mc_l_b0c0s0p0",							mc_l_sm_b0c0s0p0},
 			{"mc_l_b0c0n0s0_nocast",					mc_l_sm_b0c0n0s0},
 
@@ -531,9 +551,12 @@ namespace ZoneTool
 			{"mc_l_sm_t0c0q0n0s0p0",					mc_l_sm_t0c0q0n0s0},
 			{"mc_l_sm_t0c0d0n0s0p0",					mc_l_sm_t0c0d0n0s0},
 
+			{"mc_l_sm_ua_t0c0",							mc_l_sm_ua_b0c0}, // ...
+
 			{"mc_l_t0c0",								mc_l_sm_t0c0},
 			{"mc_l_t0c0_nocast",						mc_l_sm_t0c0_nocast},
 			{"mc_l_t0c0o0",								mc_l_sm_t0c0},
+			{"mc_l_t0c0n0",								mc_l_sm_t0c0n0},
 			{"mc_l_t0c0n0s0",							mc_l_sm_t0c0n0s0},
 			{"mc_l_t0c0n0s0_nocast",					mc_l_sm_t0c0n0s0_nocast},
 			{"mc_l_t0c0n0s0p0",							mc_l_sm_t0c0n0s0p0},
@@ -867,21 +890,34 @@ namespace ZoneTool
 				if (asset->techniqueSet)
 				{
 					techset = asset->techniqueSet->name;
-					if (techset.starts_with("iw3/"))
-					{
-						techset.erase(0, 4);
-					}
-
-					if (techset.ends_with("_sat"))
-					{
-						auto idx = techset.find("_sat");
-						techset.erase(idx, 4);
-					}
 
 					if (techset.ends_with(".3x")) // iw3xport
 					{
 						auto idx = techset.find(".3x");
 						techset.erase(idx, 3);
+					}
+
+					if (techset.ends_with(".5x")) // iw5xport
+					{
+						auto idx = techset.find(".5x");
+						techset.erase(idx, 3);
+					}
+
+					if (techset.starts_with("iw3/")) // iw3
+					{
+						techset.erase(0, 4);
+					}
+
+					if (techset.ends_with("_sat")) // iw5
+					{
+						auto idx = techset.find("_sat");
+						techset.erase(idx, 4);
+					}
+
+					if (techset.ends_with("_z")) // codo
+					{
+						auto idx = techset.find("_z");
+						techset.erase(idx, 2);
 					}
 
 					bool result = false;
