@@ -48,7 +48,7 @@ namespace utils::cryptography::jenkins_one_at_a_time
 #define CONTENTS_CLUSTERPORTAL     0x00100000
 #define CONTENTS_DONOTENTER        0x00200000
 #define CONTENTS_DONOTENTER_LARGE  0x00400000
-#define CONTENTS_UNKNOWN           0x00800000 
+#define CONTENTS_UNKNOWN           0x00800000
 #define CONTENTS_MANTLE            0x01000000
 #define CONTENTS_BODY              0x02000000
 #define CONTENTS_CORPSE            0x04000000
@@ -501,7 +501,9 @@ namespace ZoneTool::H1::physworld_gen
 
 			if ((contents & CONTENTS_NONCOLLIDING) != 0 || 
 				(contents & CONTENTS_SOLID) == 0 || 
-				(contents & CONTENTS_GLASS) != 0) 
+				(contents & CONTENTS_GLASS) != 0 ||
+				(contents & CONTENTS_SKY) != 0 || 
+				(contents & CONTENTS_WATER) != 0)
 			{ 
 				return {};
 			}

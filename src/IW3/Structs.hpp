@@ -1960,15 +1960,15 @@ namespace ZoneTool
 		struct LoadedSoundStruct
 		{
 			int waveFormat;
-			int unknown1;
+			void* dataPtr;
 			int dataLength;
 			int sampleRate;
 			int bitPerChannel;
 			int channelCount;
-			int unknown3;
+			int samples;
 			int blockAlign;
-			int unknown5;
-			char* soundData;
+			void* initPtr;
+			char* data;
 		};
 #pragma pack(pop)
 

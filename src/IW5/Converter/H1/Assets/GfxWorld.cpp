@@ -191,7 +191,7 @@ namespace ZoneTool::IW5
 				h1_asset->draw.lightmapOverrideSecondary = nullptr;
 			}
 
-			h1_asset->draw.lightmapParameters.lightmapWidthPrimary = 1024; 
+			h1_asset->draw.lightmapParameters.lightmapWidthPrimary = 1024;
 			h1_asset->draw.lightmapParameters.lightmapHeightPrimary = 1024;
 			h1_asset->draw.lightmapParameters.lightmapWidthSecondary = 512;
 			h1_asset->draw.lightmapParameters.lightmapHeightSecondary = 512;
@@ -619,68 +619,28 @@ namespace ZoneTool::IW5
 
 					auto* draw_inst = &asset->dpvs.smodelDrawInsts[i];
 
-					if (ZoneTool::get_linker_mode() == ZoneTool::linker_mode::iw5)
+					static auto linkermode = ZoneTool::get_linker_mode();
+					if (linkermode == ZoneTool::linker_mode::iw5 || linkermode == ZoneTool::linker_mode::iw4)
 					{
-						Memory mem(0x5D5A00);
+#define SELECT_VALUE(__IW5VAL__, __IW4VAL__) linkermode == ZoneTool::linker_mode::iw5 ? __IW5VAL__ : linkermode == ZoneTool::linker_mode::iw4 ? __IW4VAL__ : 0
+
+						Memory mem(SELECT_VALUE(0x5D5A00, 0x529600));
 						mem.set<std::uint8_t>(0xC3);
 
-						Memory mem2(0x5D6940);
+						Memory mem2(SELECT_VALUE(0x5D6940, 0x52AD00));
 						mem2.jump(ret_true);
 
-						/*const auto sample_pos = asset->dpvs.smodelInsts[i].lightingOrigin;
-						float cornerWeight[8]{};
-						const GfxLightGridEntry* cornerEntry[8]{};
-						unsigned int defaultGridEntry{};
-						float ref{};
-
-						typedef int (*LightingFuncType)(
-							const GfxLightGrid*,
-							const float*,
-							float*,
-							const GfxLightGridEntry**,
-							unsigned int*,
-							const float*
-							);
-
-						LightingFuncType lightingFunc = reinterpret_cast<LightingFuncType>(0x5D6A90);
-						int result = lightingFunc(&asset->lightGrid, sample_pos, cornerWeight, cornerEntry, &defaultGridEntry, &ref);*/
-
-						/*const auto sample_pos = asset->dpvs.smodelInsts[i].lightingOrigin;
-						int grid_pos[3]{};
-						grid_pos[0] = static_cast<int>((static_cast<int>(std::floor(sample_pos[0])) + 0x20000) / 32);
-						grid_pos[1] = static_cast<int>((static_cast<int>(std::floor(sample_pos[1])) + 0x20000) / 32);
-						grid_pos[2] = static_cast<int>((static_cast<int>(std::floor(sample_pos[2])) + 0x20000) / 64);
-
-						const GfxLightGridEntry* cornerEntry[8]{};
-
-						unsigned int defaultGridEntry{};
-
-						typedef void (*R_GetLightGridSampleEntry_t)(const GfxLightGrid* lightGrid, const int* pos, const GfxLightGridEntry** entries, unsigned int* defaultGridEntry);
-
-						R_GetLightGridSampleEntry_t R_GetLightGridSampleEntry = reinterpret_cast<R_GetLightGridSampleEntry_t>(0x5D6590);
-						R_GetLightGridSampleEntry(&asset->lightGrid, grid_pos, cornerEntry, &defaultGridEntry);
-
-						for (auto e = 0; e < 8; e++)
-						{
-							if (cornerEntry[e])
-							{
-								const auto colorsIndex = cornerEntry[e]->colorsIndex;
-								h1_asset->dpvs.smodelLightingInsts[i].ambientLightingInfo.colorIndex = colorsIndex;
-								h1_asset->dpvs.smodelLightingInsts[i].ambientLightingInfo.groundLighting.array[0] = float_to_half(asset->lightGrid.colors[colorsIndex].rgb[0][0] / 255.f);
-								h1_asset->dpvs.smodelLightingInsts[i].ambientLightingInfo.groundLighting.array[1] = float_to_half(asset->lightGrid.colors[colorsIndex].rgb[0][1] / 255.f);
-								h1_asset->dpvs.smodelLightingInsts[i].ambientLightingInfo.groundLighting.array[2] = float_to_half(asset->lightGrid.colors[colorsIndex].rgb[0][2] / 255.f);
-								h1_asset->dpvs.smodelLightingInsts[i].ambientLightingInfo.groundLighting.array[3] = float_to_half(1.0f);
-								break;
-							}
-						}*/
-
-						Memory gfxworld_mem(0x5CB539C);
-						gfxworld_mem.set(asset);
+						Memory gfxworld_mem(SELECT_VALUE(0x5CB539C, 0x66DEE94));
+						gfxworld_mem.write(
+							reinterpret_cast<int*>(SELECT_VALUE(0x1294AC8, 0x112A7F4)),
+							static_cast<std::size_t>(1),
+							static_cast<std::size_t>(SELECT_VALUE(0x280, 0x274))
+						);
 
 						const auto sample_pos = asset->dpvs.smodelInsts[i].lightingOrigin;
 
 						typedef void (*R_GetAverageLightingAtPoint_t)(const float* samplePos, unsigned char* outColor);
-						R_GetAverageLightingAtPoint_t R_GetAverageLightingAtPoint = reinterpret_cast<R_GetAverageLightingAtPoint_t>(0x5D7380);
+						R_GetAverageLightingAtPoint_t R_GetAverageLightingAtPoint = reinterpret_cast<R_GetAverageLightingAtPoint_t>(SELECT_VALUE(0x5D7380, 0x52B870));
 						unsigned char color_out[4];
 						R_GetAverageLightingAtPoint(sample_pos, color_out);
 
@@ -693,6 +653,8 @@ namespace ZoneTool::IW5
 
 						//h1_asset->dpvs.smodelLightingInsts[i].ambientLightingInfo.colorsIndex = h1_asset->lightGrid.missingGridColorIndex;
 						//h1_asset->dpvs.smodelLightingInsts[i].ambientLightingInfo.scale = 1.0f;
+
+#undef SELECT_VALUE
 					}
 					else
 					{

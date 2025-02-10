@@ -179,7 +179,6 @@ namespace ZoneTool::IW5
 			{
 				//h1_asset->physCollmap = mem.allocate<H1::PhysCollmap>();
 				//h1_asset->physCollmap->name = mem.duplicate_string(asset->physCollmap->name);
-				//h1_asset->collLod = 0;
 			}
 
 			// idk

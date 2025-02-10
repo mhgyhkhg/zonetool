@@ -82,7 +82,7 @@ namespace ZoneTool::IW5
 
 		std::unordered_map<D3DFORMAT, DXGI_FORMAT> d3d_dxgi_map =
 		{
-			{D3DFMT_A8R8G8B8, DXGI_FORMAT_R8G8B8A8_UNORM},
+			{D3DFMT_A8R8G8B8, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB},
 			{D3DFMT_L8, DXGI_FORMAT_R8_UNORM},
 		};
 
@@ -95,24 +95,65 @@ namespace ZoneTool::IW5
 			return DXGI_FORMAT_UNKNOWN;
 		}
 
-		// sRGB to Linear conversion
-		inline float sRGBToLinear(uint8_t value) {
-			float normalized = value / 255.0f;
-			if (normalized <= 0.04045f) {
-				return normalized / 12.92f;
+		// Darken RGBA pixels by a specified factor (0.0f = fully dark, 1.0f = no change)
+		void DarkenPixels(uint8_t* pixels, size_t width, size_t height, float darkenFactor)
+		{
+			if (darkenFactor < 0.0f || darkenFactor > 1.0f)
+			{
+				throw std::invalid_argument("Darken factor must be between 0.0 and 1.0");
 			}
-			else {
-				return powf((normalized + 0.055f) / 1.055f, 2.4f);
+
+			size_t numPixels = width * height;
+			for (size_t i = 0; i < numPixels; ++i)
+			{
+				uint8_t* pixel = &pixels[i * 4];
+
+				// Darken RGB channels, keep alpha the same
+				pixel[0] = static_cast<uint8_t>(pixel[0] * darkenFactor); // Red
+				pixel[1] = static_cast<uint8_t>(pixel[1] * darkenFactor); // Green
+				pixel[2] = static_cast<uint8_t>(pixel[2] * darkenFactor); // Blue
+				// Alpha channel (pixel[3]) remains unchanged
 			}
 		}
 
-		// Convert D3DFMT_A8R8G8B8 to DXGI_FORMAT_R8G8B8A8_UNORM
+		// Convert gamma-corrected (sRGB) color in-place to linear color space
+		void GammaToLinear(std::uint8_t* color) 
+		{
+			for (int i = 0; i < 3; ++i)
+			{
+				// Convert 8-bit color to [0, 1] range
+				float normalized = color[i] / 255.0f;
+
+				// Apply gamma correction
+				normalized = (normalized <= 0.04045f)
+					? normalized / 12.92f
+					: std::pow((normalized + 0.055f) / 1.055f, 2.4f);
+
+				// Convert back to 8-bit range and store in the array
+				color[i] = static_cast<std::uint8_t>(std::round(normalized * 255));
+			}
+			// No gamma correction on alpha channel; leave it as is
+		}
+
+		void GammaToLinearPixels(uint8_t* pixels, size_t width, size_t height)
+		{
+			size_t numPixels = width * height;
+			for (size_t i = 0; i < numPixels; ++i) 
+			{
+				uint8_t* pixel = &pixels[i * 4];
+
+				GammaToLinear(pixel);
+			}
+		}
+
 		void ConvertD3DFMT_A8R8G8B8ToDXGI_R8G8B8A8_UNORM(
 			const uint32_t* src,     // Source buffer (D3DFMT_A8R8G8B8)
 			uint8_t* dest,           // Destination buffer (DXGI_FORMAT_R8G8B8A8_UNORM)
 			size_t pixelCount        // Number of pixels to convert
-		) {
-			for (size_t i = 0; i < pixelCount; ++i) {
+		)
+		{
+			for (size_t i = 0; i < pixelCount; ++i)
+			{
 				uint32_t pixel = src[i];
 
 				// Extract the ARGB components
@@ -121,11 +162,43 @@ namespace ZoneTool::IW5
 				uint8_t g = (pixel >> 8) & 0xFF;
 				uint8_t b = pixel & 0xFF;
 
-				// Convert sRGB to linear for RGB components
-				dest[i * 4 + 0] = static_cast<uint8_t>(sRGBToLinear(r) * 255.0f);
-				dest[i * 4 + 1] = static_cast<uint8_t>(sRGBToLinear(g) * 255.0f);
-				dest[i * 4 + 2] = static_cast<uint8_t>(sRGBToLinear(b) * 255.0f);
-				dest[i * 4 + 3] = a;  // Alpha remains unchanged (already linear)
+				// Convert from sRGB to linear space
+				auto srgbToLinear = [](uint8_t value) -> uint8_t {
+					float normalized = value / 255.0f;
+					float linear = (normalized <= 0.04045f)
+						? normalized / 12.92f
+						: std::pow((normalized + 0.055f) / 1.055f, 2.4f);
+					return static_cast<uint8_t>(std::round(linear * 255));
+				};
+
+				dest[i * 4 + 0] = r;//srgbToLinear(r);
+				dest[i * 4 + 1] = g;//srgbToLinear(g);
+				dest[i * 4 + 2] = b;//srgbToLinear(b);
+				dest[i * 4 + 3] = a; // Preserve the alpha channel
+			}
+		}
+
+		// Convert D3DFMT_A8R8G8B8 to DXGI_FORMAT_R8G8B8A8_UNORM
+		void ConvertD3DFMT_A8R8G8B8ToDXGI_R8G8B8A8_UNORM_SRGB(
+			const uint32_t* src,     // Source buffer (D3DFMT_A8R8G8B8)
+			uint8_t* dest,           // Destination buffer (DXGI_FORMAT_R8G8B8A8_UNORM)
+			size_t pixelCount        // Number of pixels to convert
+		)
+		{
+			for (size_t i = 0; i < pixelCount; ++i)
+			{
+				uint32_t pixel = src[i];
+
+				// Extract the ARGB components
+				uint8_t a = (pixel >> 24) & 0xFF;
+				uint8_t r = (pixel >> 16) & 0xFF;
+				uint8_t g = (pixel >> 8) & 0xFF;
+				uint8_t b = pixel & 0xFF;
+
+				dest[i * 4 + 0] = r;
+				dest[i * 4 + 1] = g; 
+				dest[i * 4 + 2] = b;
+				dest[i * 4 + 3] = a;
 			}
 		}
 
@@ -194,7 +267,7 @@ namespace ZoneTool::IW5
 				ZONETOOL_FATAL("Unknown DXGIFORMAT for image \"%s\" (%d)", asset->name, asset->texture.loadDef->format);
 			}
 
-			if (asset->texture.loadDef->format == D3DFMT_A8R8G8B8 && h1_asset->imageFormat == DXGI_FORMAT_R8G8B8A8_UNORM)
+			if (asset->texture.loadDef->format == D3DFMT_A8R8G8B8 && h1_asset->imageFormat == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB)
 			{
 				// Step 1: Convert from D3DFMT_A8R8G8B8 to DXGI_FORMAT_R8G8B8A8_UNORM with sRGB -> Linear conversion
 				{
@@ -203,13 +276,13 @@ namespace ZoneTool::IW5
 					// Calculate the number of pixels
 					size_t pixelCount = h1_asset->dataLen1 / 4;
 
-					ConvertD3DFMT_A8R8G8B8ToDXGI_R8G8B8A8_UNORM(reinterpret_cast<uint32_t*>(h1_asset->pixelData), new_pixels, pixelCount);
+					ConvertD3DFMT_A8R8G8B8ToDXGI_R8G8B8A8_UNORM_SRGB(reinterpret_cast<uint32_t*>(h1_asset->pixelData), new_pixels, pixelCount);
 					h1_asset->pixelData = new_pixels;
 				}
 
-				// Step 2: Convert from DXGI_FORMAT_R8G8B8A8_UNORM to DXGI_FORMAT_R16G16B16A16_FLOAT
+				// Step 3: Convert from DXGI_FORMAT_R8G8B8A8_UNORM to DXGI_FORMAT_R16G16B16A16_FLOAT
 				{
-					const auto original_len = h1_asset->dataLen1;
+				/*	const auto original_len = h1_asset->dataLen1;
 
 					// Update the format to 64bpp (16 bits per channel floating-point)
 					h1_asset->imageFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
@@ -228,7 +301,44 @@ namespace ZoneTool::IW5
 					ConvertR8G8B8A8ToR16G16B16A16Float(h1_asset->pixelData, reinterpret_cast<uint16_t*>(new_pixels), pixelCount);
 
 					// Update the pixel data pointer to the new converted data
+					h1_asset->pixelData = new_pixels;*/
+				}
+			}
+			else if (asset->texture.loadDef->format == D3DFMT_A8R8G8B8 && h1_asset->imageFormat == DXGI_FORMAT_R8G8B8A8_UNORM)
+			{
+				// Step 1: Convert from D3DFMT_A8R8G8B8 to DXGI_FORMAT_R8G8B8A8_UNORM with sRGB -> Linear conversion
+				{
+					auto* new_pixels = mem.allocate<unsigned char>(h1_asset->dataLen1);
+
+					// Calculate the number of pixels
+					size_t pixelCount = h1_asset->dataLen1 / 4;
+
+					ConvertD3DFMT_A8R8G8B8ToDXGI_R8G8B8A8_UNORM(reinterpret_cast<uint32_t*>(h1_asset->pixelData), new_pixels, pixelCount);
 					h1_asset->pixelData = new_pixels;
+				}
+
+				// Step 3: Convert from DXGI_FORMAT_R8G8B8A8_UNORM to DXGI_FORMAT_R16G16B16A16_FLOAT
+				{
+					/*	const auto original_len = h1_asset->dataLen1;
+
+						// Update the format to 64bpp (16 bits per channel floating-point)
+						h1_asset->imageFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+
+						// Update data length values (multiply by 2 because 64bpp is double 32bpp)
+						h1_asset->dataLen1 = original_len * 2;
+						h1_asset->dataLen2 = original_len * 2;
+
+						// Allocate memory for the new pixel data
+						auto* new_pixels = mem.allocate<unsigned char>(h1_asset->dataLen1);
+
+						// Calculate the number of pixels
+						size_t pixelCount = original_len / 4;
+
+						// Perform the conversion from 32bpp to 64bpp
+						ConvertR8G8B8A8ToR16G16B16A16Float(h1_asset->pixelData, reinterpret_cast<uint16_t*>(new_pixels), pixelCount);
+
+						// Update the pixel data pointer to the new converted data
+						h1_asset->pixelData = new_pixels;*/
 				}
 			}
 			else if (asset->texture.loadDef->format == D3DFMT_L8 && h1_asset->imageFormat == DXGI_FORMAT_R8_UNORM)
